@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TELOS | Logic serves Beauty.</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- English Serif (Didot style alternative): Playfair Display -->
+    <!-- English Sans (Light): Lato -->
+    <!-- Japanese Serif (Sharp/Mincho): Shippori Mincho -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sumi: '#1C1C1C',
+              vapor: '#F4F4F4',
+              bronze: '#9C8C74',
+              stone: '#DCD7D2',
+            },
+            fontFamily: {
+              serif: ['"Playfair Display"', '"Shippori Mincho"', 'serif'],
+              sans: ['"Lato"', 'sans-serif'],
+              jp: ['"Shippori Mincho"', 'serif'],
+            },
+            backgroundImage: {
+              'grain': "url('data:image/svg+xml,%3Csvg viewBox=%220 0 400 400%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.05%22/%3E%3C/svg%3E')",
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #F4F4F4;
+        color: #1C1C1C;
+        font-family: "Lato", "Shippori Mincho", sans-serif;
+      }
+      .font-heading {
+        font-family: "Playfair Display", "Shippori Mincho", serif;
+      }
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      /* Desaturated images */
+      .img-quiet {
+        filter: grayscale(100%) contrast(110%);
+        transition: filter 0.7s ease;
+      }
+      .img-quiet:hover {
+        filter: grayscale(80%) contrast(105%);
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #F4F4F4;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #DCD7D2;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #9C8C74;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "framer-motion": "https://esm.sh/framer-motion@^12.34.1",
+    "lucide-react": "https://esm.sh/lucide-react@^0.574.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
