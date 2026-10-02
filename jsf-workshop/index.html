@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSF ワークショップ案内</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Montserrat:wght@600;800&display=swap">
+<style>
+:root{
+  --navy:#10223f; --navy-2:#1b3360; --red:#d0182e; --ink:#1d2433; --sub:#5a6478;
+  --bg:#f4f6fa; --card:#ffffff; --line:#dfe4ee; --fill:#fff6cc; --fill-line:#e0b400;
+  --c-head:#2f80d1; --c-body:#21a366; --c-heart:#e2456b; --c-sense:#f29d1f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.75;font-size:16px}
+img{max-width:100%;display:block}
+.en{font-family:Montserrat,sans-serif;letter-spacing:.18em;font-size:12px;font-weight:600;color:var(--sub)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+
+/* toolbar */
+.toolbar{position:sticky;top:0;z-index:20;background:rgba(16,34,63,.96);color:#fff;backdrop-filter:blur(6px)}
+.toolbar .wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+.toolbar b{font-size:13px;margin-right:auto;opacity:.85}
+.toolbar button{font:inherit;font-size:13px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:999px;padding:6px 14px;cursor:pointer}
+.toolbar button[aria-pressed="true"]{background:var(--red);border-color:var(--red)}
+.nav{display:flex;gap:4px;overflow-x:auto;padding:0 16px 8px;max-width:1080px;margin:0 auto;scrollbar-width:none}
+.nav a{flex:none;color:#cfd8ea;text-decoration:none;font-size:13px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.07)}
+
+/* hero */
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden;border-bottom:6px solid var(--red)}
+.hero .wrap{display:grid;grid-template-columns:1.25fr .75fr;gap:32px;align-items:center;padding-top:48px;padding-bottom:48px}
+.hero .bar{width:56px;height:4px;background:var(--red);margin-bottom:18px}
+.hero .org{font-size:14px;letter-spacing:.12em;opacity:.85}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.25;margin:10px 0 14px;font-weight:900}
+.hero p.lead{font-size:clamp(16px,2.2vw,19px);opacity:.92;margin:0 0 22px}
+.event{display:inline-flex;flex-wrap:wrap;gap:8px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:12px 18px;font-size:15px}
+.event strong{color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{background:#fff;color:var(--navy);font-weight:700;font-size:14px;padding:6px 14px;border-radius:999px}
+.chip.red{background:var(--red);color:#fff}
+.hero-img{border-radius:14px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+
+/* sections */
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+section.alt{background:#fff}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-left:6px solid var(--red);padding-left:14px;margin-bottom:26px}
+.sec-head h2{margin:0;font-size:clamp(22px,3.4vw,30px);line-height:1.35;font-weight:900;color:var(--navy)}
+.sec-head .num{font-family:Montserrat,sans-serif;font-weight:800;color:var(--red);font-size:14px;letter-spacing:.1em}
+.intro{font-size:17px;margin:0 0 24px;color:var(--ink)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+section.alt .card{background:var(--bg)}
+.card h3{margin:0 0 6px;font-size:18px;color:var(--navy)}
+.card p{margin:0;color:var(--sub);font-size:15px}
+.photo{border-radius:12px;overflow:hidden;background:#dde3ee}
+.photo img{width:100%;height:100%;object-fit:cover}
+.cap{font-size:13px;color:var(--sub);margin-top:6px}
+
+/* today */
+.today{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+.moves{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+.moves li{background:var(--navy);color:#fff;font-weight:700;padding:8px 16px;border-radius:999px;font-size:16px}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fact dt{font-size:12px;color:var(--sub);letter-spacing:.08em}
+.fact dd{margin:2px 0 0;font-weight:700;font-size:17px}
+
+/* steps */
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;list-style:none;padding:0;margin:0}
+.steps li{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:44px 16px 16px}
+.steps li::before{counter-increment:s;content:"STEP " counter(s);position:absolute;top:14px;left:16px;font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:.12em;color:var(--red)}
+.steps h3{margin:0 0 4px;font-size:17px;color:var(--navy)}
+.steps p{margin:0;font-size:14px;color:var(--sub)}
+.steps .min{display:inline-block;margin-top:8px;font-size:13px;font-weight:700}
+
+/* savings */
+.save{border-top:6px solid var(--c);}
+.save h3{color:var(--c);font-size:20px}
+.save .tag{font-size:13px;color:var(--sub);margin-bottom:8px}
+.save ul{margin:0;padding-left:1.1em;font-size:15px}
+.save .q{margin-top:10px;font-weight:700;color:var(--c)}
+.power{border-left:5px solid var(--c)}
+.power h3{color:var(--c)}
+.note{font-size:12px;color:var(--sub);margin-top:14px}
+
+/* coordination */
+.why{background:var(--navy);color:#fff;border-radius:14px;padding:18px 22px;margin:0 0 24px;font-size:16px}
+.why b{color:#ffd400}
+.coord{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.co{background:var(--card);border:2px solid var(--navy);border-radius:12px;padding:12px 10px;text-align:center}
+.co .n{font-family:Montserrat,sans-serif;font-weight:800;color:var(--c-body);font-size:22px;line-height:1}
+.co h4{margin:4px 0 4px;font-size:15px;color:var(--navy)}
+.co p{margin:0;font-size:12px;color:var(--sub);line-height:1.5}
+.multi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.multi .card{text-align:center}
+.multi .tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.multi .tags span{background:var(--c-head);color:#fff;border-radius:999px;font-size:13px;font-weight:700;padding:3px 12px}
+.motto{margin-top:14px;background:var(--navy);color:#fff;border-radius:14px;padding:16px 22px;text-align:center;font-size:clamp(17px,2.4vw,22px);font-weight:900}
+.motto em{font-style:normal;color:#ffd400}
+.motto small{display:block;font-size:14px;font-weight:500;opacity:.85;margin-top:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+
+/* class */
+.class{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.class .photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.class .photos .photo{aspect-ratio:4/3}
+.badge{display:inline-block;background:#ffd400;color:var(--navy);font-weight:900;padding:4px 14px;border-radius:999px;margin-bottom:10px}
+.access{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.access li{padding:6px 0;border-bottom:1px dashed var(--line)}
+
+/* trust */
+.trust .card{border-left:5px solid var(--red)}
+.trust .k{font-size:13px;color:var(--red);font-weight:700}
+.tool .photo{aspect-ratio:16/10;margin-bottom:10px}
+.tool h3{font-size:16px}
+.tool p{font-size:14px}
+.parks .photo{aspect-ratio:16/10}
+
+/* business */
+.biz{background:var(--navy);color:#fff}
+.biz .sec-head h2{color:#fff}
+.biz .grid{align-items:stretch}
+.stat{font-size:15px}
+.stat b{font-size:44px;color:#ff4d61;font-family:Montserrat,sans-serif;line-height:1}
+.biz .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:#fff}
+.biz .card p{color:#d4dbea}
+
+/* faq */
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+summary{font-weight:700;cursor:pointer;color:var(--navy);list-style:none}
+summary::before{content:"Q. ";color:var(--red);font-family:Montserrat,sans-serif}
+details p{margin:8px 0 0;color:var(--ink)}
+details p::before{content:"A. ";font-weight:700;color:var(--sub)}
+
+/* contact */
+.contact{display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center}
+.contact dl{display:grid;grid-template-columns:120px 1fr;gap:8px 12px;margin:0;font-size:17px}
+.contact dt{color:var(--sub);font-size:14px}
+.contact dd{margin:0;font-weight:700}
+.qr{aspect-ratio:1;border:2px dashed var(--fill-line);background:var(--fill);border-radius:14px;display:grid;place-items:center;text-align:center;font-size:13px;color:#7a6200;padding:12px}
+.qr img{width:100%;height:100%;object-fit:contain}
+
+/* template fills */
+.fill{background:var(--fill);border-bottom:2px dashed var(--fill-line);padding:0 4px;border-radius:3px}
+body.clean .fill{background:none;border:0;padding:0}
+
+/* staff */
+.staff{display:none;background:#fffbea;border-top:6px solid #ffd400}
+body.show-staff .staff{display:block}
+.staff .sec-head{border-color:#e0b400}
+.script{background:#fff;border:1px solid #f0e2a8;border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.script h3{margin:0 0 6px;font-size:16px;color:var(--navy)}
+.script .time{font-size:12px;font-weight:700;color:#a07a00;letter-spacing:.06em}
+.script p,.script li{font-size:15px}
+.script ol,.script ul{margin:6px 0 0;padding-left:1.2em}
+
+body.editing [data-edit]{outline:1px dashed #9db3d9;outline-offset:2px}
+body.editing [data-edit]:focus{outline:2px solid var(--red)}
+
+footer{padding:28px 0 40px;font-size:12px;color:var(--sub);text-align:center}
+
+@media (max-width:860px){
+  .coord{grid-template-columns:repeat(4,1fr)}
+  .two{grid-template-columns:1fr}
+  .hero .wrap,.today,.class,.contact{grid-template-columns:1fr}
+  .hero-img{aspect-ratio:16/10;max-height:320px}
+  .g4,.g5,.steps{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr}
+  .contact .qr{max-width:220px}
+}
+@media (max-width:520px){
+  .coord{grid-template-columns:repeat(2,1fr)}
+  .multi{grid-template-columns:1fr}
+  .g2,.g4,.g5,.steps,.facts{grid-template-columns:1fr}
+  .contact dl{grid-template-columns:1fr}
+  section{padding:40px 0}
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff;font-size:12px}
+  .toolbar,.nav,.no-print{display:none!important}
+  section{padding:14px 0}
+  .hero .wrap{grid-template-columns:1.4fr .6fr}
+  .hero-img{aspect-ratio:3/4;max-height:none}
+  .today,.class{grid-template-columns:1fr 1fr}
+  .contact{grid-template-columns:1fr 150px}
+  .g2,.facts{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4,.steps{grid-template-columns:repeat(4,1fr)}
+  .g5{grid-template-columns:repeat(5,1fr)}
+  .coord{grid-template-columns:repeat(7,1fr)}
+  .multi,.two{grid-template-columns:repeat(3,1fr)}
+  .two{grid-template-columns:1fr 1fr}
+  .contact dl{grid-template-columns:110px 1fr}
+  .intro{font-size:13px;margin-bottom:12px}
+  .page-break{break-before:page}
+  .hero .wrap{padding-top:24px;padding-bottom:24px}
+  .fill{background:none;border:0;padding:0}
+  .card,.steps li,details,.co{break-inside:avoid}
+  .sec-head,h2,h3{break-after:avoid}
+  details{display:block}
+  details>*{display:block}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <div class="wrap">
+    <b>JSF ワークショップ案内｜ブース用テンプレート</b>
+    <button id="btnEdit" aria-pressed="false">✎ 編集モード</button>
+    <button id="btnStaff" aria-pressed="false">スタッフ台本</button>
+    <button id="btnClean" aria-pressed="false">黄色マーカーを隠す</button>
+    <button id="btnPrint">印刷 / PDF</button>
+    <button id="btnReset">編集をリセット</button>
+  </div>
+  <nav class="nav">
+    <a href="#today">今日の体験</a><a href="#flow">体験の流れ</a><a href="#concept">感覚の貯金</a>
+    <a href="#class">教室</a><a href="#trust">JSFについて</a><a href="#tech">テクノロジー</a>
+    <a href="#biz">企業・施設の方へ</a><a href="#faq">よくある質問</a><a href="#contact">お問い合わせ</a>
+    <a href="#staff" class="staff-link">スタッフ台本</a>
+  </nav>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="bar"></div>
+      <div class="org" data-edit="h-org">一般社団法人 日本スケートボーディング連盟（JSF）</div>
+      <h1 data-edit="h-title">遊びが、<br>未来のチカラになる。</h1>
+      <p class="lead" data-edit="h-lead">「登る・渡る・跳ぶ・くぐる・バランスをとる」。<br>いろんな動きを遊びながら体験して、子どもたちの「感覚の貯金」を増やすワークショップです。</p>
+      <div class="event" data-edit="h-event">
+        <span>📍 <strong>MIFA Football Park 豊洲</strong></span>
+        <span>🎉 12周年アニバーサリーパーティー</span>
+        <span>🕙 <strong>10/3　10:00–17:00</strong></span>
+      </div>
+      <div class="chips">
+        <span class="chip red">初めてでもOK！</span>
+        <span class="chip">プロの講師が丁寧に教えます</span>
+        <span class="chip" data-edit="h-chip"><span class="fill">参加費：無料</span></span>
+      </div>
+    </div>
+    <div class="hero-img"><img src="img/hero.jpg" alt="ボウルを滑るスケーター"></div>
+  </div>
+</header>
+
+<!-- ============ 01 TODAY ============ -->
+<section id="today">
+  <div class="wrap">
+    <div class="sec-head"><h2>今日、ここで体験できること</h2><span class="num">01 TODAY</span></div>
+    <div class="today">
+      <div>
+        <p class="intro" data-edit="t-intro"><strong>バランスアスレチック</strong>は、自然の中の遊びにある多様な動きを、屋内でも屋外でも<strong>安全に・楽しく</strong>体験できるようにデザインされた運動プログラムです。スケートボードにも乗ってみよう！</p>
+        <ul class="moves"><li>登る</li><li>渡る</li><li>跳ぶ</li><li>くぐる</li><li>バランスをとる</li><li>スケボーに乗る</li></ul>
+        <dl class="facts">
+          <div class="fact"><dt>対象</dt><dd data-edit="f-age"><span class="fill">3歳〜小学生</span></dd></div>
+          <div class="fact"><dt>所要時間</dt><dd data-edit="f-time"><span class="fill">1回 約15分</span></dd></div>
+          <div class="fact"><dt>参加費</dt><dd data-edit="f-fee"><span class="fill">無料</span></dd></div>
+          <div class="fact"><dt>持ち物・服装</dt><dd data-edit="f-wear"><span class="fill">動きやすい服・運動靴</span></dd></div>
+        </dl>
+        <p class="note" data-edit="t-note">※ヘルメット・プロテクターは会場で貸し出します。<span class="fill">（内容は当日の運営に合わせて書き換えてください）</span></p>
+      </div>
+      <div>
+        <div class="photo" style="aspect-ratio:16/9"><img src="img/studio.jpg" alt="人工芝の上にバランス遊具とクライミングウォールを設置した様子"></div>
+        <div class="cap">常設スタジオでの設置イメージ（人工芝・バランス遊具・クライミングウォール）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 FLOW ============ -->
+<section id="flow" class="alt">
+  <div class="wrap">
+    <div class="sec-head"><h2>体験の流れ</h2><span class="num">02 FLOW</span></div>
+    <ol class="steps">
+      <li><h3 data-edit="s1">受付</h3><p data-edit="s1p">お名前・年齢を伺います。ヘルメットやプロテクターをつけます。</p><span class="min fill" data-edit="s1m">約2分</span></li>
+      <li><h3 data-edit="s2">準備運動・安全のお約束</h3><p data-edit="s2p">講師と一緒に体をほぐし、遊び方とルールを確認します。</p><span class="min fill" data-edit="s2m">約3分</span></li>
+      <li><h3 data-edit="s3">バランスアスレチック＆スケボー体験</h3><p data-edit="s3p">登る・渡る・跳ぶ・くぐる。スケートボードにも乗ってみます。</p><span class="min fill" data-edit="s3m">約8分</span></li>
+      <li><h3 data-edit="s4">できた！をふりかえり</h3><p data-edit="s4p">がんばったことを一緒に確認。続けたい方には教室をご案内します。</p><span class="min fill" data-edit="s4m">約2分</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 03 CONCEPT ============ -->
+<section id="concept">
+  <div class="wrap">
+    <div class="sec-head"><h2>コンセプト「感覚の貯金」</h2><span class="num">03 CONCEPT</span></div>
+    <div class="why">海・山・川などの自然遊びの機会が減り、子どもの運動能力の低下が課題になっています。<br>アーバンスポーツは、都市でできる<b>「現代版の自然遊び」</b>として子どもの成長を支えます。</div>
+    <p class="intro">幼児期〜小学生のうちに、いろいろな動きの経験を積み重ねることは、子どもの心と体、そして脳の発達にとって大切です。<br>小さいころに貯めた経験は、将来必要になったときに<strong>引き出せる力</strong>になります。</p>
+    <div class="grid g3">
+      <div class="card save" style="--c:var(--c-head)">
+        <h3>頭の貯金</h3><div class="tag">考える・学ぶ力</div>
+        <ul><li>集中力・判断力</li><li>チャレンジする力</li><li>問題解決力</li><li>創造力・表現力</li></ul>
+        <div class="q">「考えるって楽しい！」</div>
+      </div>
+      <div class="card save" style="--c:var(--c-body)">
+        <h3>体の貯金</h3><div class="tag">動けるカラダ</div>
+        <ul><li>バランスアスレチック</li><li>スケートボード</li><li>フリースタイルバスケットボール・ダンス</li><li>体幹・バランス・協調性</li></ul>
+        <div class="q">「動けるって楽しい！」</div>
+      </div>
+      <div class="card save" style="--c:var(--c-heart)">
+        <h3>心の貯金</h3><div class="tag">生きるチカラ</div>
+        <ul><li>挑戦する心・自己肯定感</li><li>仲間との交流</li><li>成功・失敗の経験</li><li>レジリエンス（回復する力）</li></ul>
+        <div class="q">「できた！が自信になる！」</div>
+      </div>
+    </div>
+
+    <h3 style="margin:36px 0 6px;color:var(--navy);font-size:20px">幼児期に育てたい「7つのコーディネーション能力」</h3>
+    <p style="margin:0 0 14px;color:var(--sub)">運動神経は<strong style="color:var(--red)">5歳ごろまでに80〜90%</strong>が育つといわれています。この時期にどれだけ多様な動きを経験するかが、すべての運動の土台になります。</p>
+    <div class="coord">
+      <div class="co"><div class="n">1</div><h4>リズム</h4><p>動くタイミングを上手につかむ</p></div>
+      <div class="co"><div class="n">2</div><h4>バランス</h4><p>崩れた姿勢を立て直す</p></div>
+      <div class="co"><div class="n">3</div><h4>変換</h4><p>状況に合わせて動きを切り替える</p></div>
+      <div class="co"><div class="n">4</div><h4>反応</h4><p>合図に素早く適切に反応する</p></div>
+      <div class="co"><div class="n">5</div><h4>連結</h4><p>体全体をスムーズに動かす</p></div>
+      <div class="co"><div class="n">6</div><h4>定位</h4><p>自分と物の位置関係をつかむ</p></div>
+      <div class="co"><div class="n">7</div><h4>識別</h4><p>道具を上手に操作する</p></div>
+    </div>
+    <div class="multi">
+      <div class="card"><h3>スケートボード</h3><div class="tags"><span>バランス</span><span>変換</span></div></div>
+      <div class="card"><h3>フリースタイルバスケット</h3><div class="tags"><span>識別</span><span>反応</span><span>定位</span></div></div>
+      <div class="card"><h3>ダンス</h3><div class="tags"><span>リズム</span><span>連結</span></div></div>
+    </div>
+    <div class="motto">一つに特化する前に、<em>多様な動き</em>を経験する。<small>好きなことが見つかったとき、自由に力を引き出せる身体の土台へ。</small></div>
+
+    <h3 style="margin:36px 0 14px;color:var(--navy);font-size:20px">このような力が育まれます</h3>
+    <div class="grid g4">
+      <div class="card power" style="--c:var(--red)"><h3>運動能力</h3><p>バランス感覚／体幹・姿勢／ジャンプ力／敏捷性・協調性</p></div>
+      <div class="card power" style="--c:var(--c-head)"><h3>認知機能</h3><p>集中力／判断力／空間認識力／記憶力</p></div>
+      <div class="card power" style="--c:var(--c-body)"><h3>感覚機能</h3><p>足裏の刺激／触覚・前庭覚／身体のコントロール／自己認識</p></div>
+      <div class="card power" style="--c:var(--c-sense)"><h3>非認知能力</h3><p>挑戦する力／やり抜く力／自己肯定感／社会性</p></div>
+    </div>
+    <p class="note">※研究に基づく知見をもとにした一般的な説明であり、効果を保証するものではありません。</p>
+  </div>
+</section>
+
+<!-- ============ 04 CLASS ============ -->
+<section id="class" class="alt">
+  <div class="wrap">
+    <div class="sec-head"><h2>続けて通える「晴海アーバンスポーツ教室」</h2><span class="num">04 CLASS</span></div>
+    <div class="class">
+      <div>
+        <span class="badge">毎週 水曜日 開催！</span>
+        <h3 style="margin:0 0 6px;font-size:22px;color:var(--navy)">CHILL GYM（チルジム）</h3>
+        <p style="margin:0 0 10px">遊びながら、できるがふえる。新しい自分に出会える。<br>日本スケートボーディング連盟が推進する、子どもたちの「感覚の貯金」を育てるプログラムです。プロの講師が丁寧に教えます。</p>
+        <dl class="facts" style="margin-top:14px">
+          <div class="fact"><dt>開催日</dt><dd>毎週水曜日</dd></div>
+          <div class="fact"><dt>時間</dt><dd data-edit="c-time"><span class="fill">◯◯:◯◯〜◯◯:◯◯</span></dd></div>
+          <div class="fact"><dt>対象</dt><dd data-edit="c-age"><span class="fill">幼児〜小学生</span></dd></div>
+          <div class="fact"><dt>料金</dt><dd data-edit="c-fee"><span class="fill">月額 ◯,◯◯◯円／体験 ◯◯◯円</span></dd></div>
+        </dl>
+        <div class="card" style="margin-top:14px;border-left:5px solid var(--red)"><h3 style="font-size:16px">「0時限の授業」という考え方</h3><p>学習前の運動は効果を高めます。バランス感覚を養う運動は、集中力・記憶力など学習に必要な力を高めます。</p></div>
+        <p style="margin:16px 0 0;font-weight:700">会場：FitLAnd TOKYO DOME 晴海</p>
+        <p style="margin:0;font-size:15px">三井ショッピングパーク ららテラス HARUMI FLAG 3階<br>東京都中央区晴海5丁目2-31</p>
+        <ul class="access">
+          <li>🚇 都営大江戸線「勝どき駅」A5出口から徒歩12分</li>
+          <li>🚌 都営バス「はるみらい前」すぐ</li>
+          <li>🚌 東京BRT「はるみらい」すぐ</li>
+        </ul>
+      </div>
+      <div class="photos">
+        <div class="photo"><img src="img/class1.jpg" alt="スケートボードに乗る子どもと講師"></div>
+        <div class="photo"><img src="img/class2.jpg" alt="教室で運動する子どもたち"></div>
+        <div class="photo"><img src="img/class3.jpg" alt="ボールを使ったプログラム"></div>
+        <div class="photo"><img src="img/class4.jpg" alt="講師の話を聞く子どもたち"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 TRUST ============ -->
+<section id="trust" class="trust">
+  <div class="wrap">
+    <div class="sec-head"><h2>JSFだから、安心して任せられる</h2><span class="num">05 ABOUT JSF</span></div>
+    <p class="intro">日本スケートボーディング連盟（JSF）は、トップアスリートの育成から子どもの運動教育まで、国・競技団体・学校と連携して取り組んでいます。</p>
+    <div class="grid g3">
+      <div class="card"><div class="k">JOC加盟協力団体</div><h3>国の育成方針を共有</h3><p>日本オリンピック委員会 → ワールドスケートジャパン（JOC公認団体）の協力団体として、県・地域の協会や学校と連携。</p></div>
+      <div class="card"><div class="k">日本代表を支える体制</div><h3>JOCハイパフォーマンスディレクター</h3><p>平野英功氏が2023年度からスケートボード日本代表のハイパフォーマンスディレクターを務めています。</p></div>
+      <div class="card"><div class="k">スポーツ庁 認定</div><h3>競技別強化拠点（NTC）</h3><p>ブルボンスケートパーク村上が2023年度から認定。<strong>スケートボードでは日本で唯一</strong>です。</p></div>
+      <div class="card"><div class="k">JSPO公認</div><h3>スケートボード指導者資格</h3><p>日本スポーツ協会公認の指導者育成資格（コーチ1・3）を構築。</p></div>
+      <div class="card"><div class="k">日本スポーツ振興センター（JSC）</div><h3>選手の発掘・育成事業を受託</h3><p>J-STAR事業、アスリート育成パスウェイ構築支援事業、JISSとの動作解析連携。</p></div>
+      <div class="card"><div class="k">教育連携</div><h3>学校・専門学校と連携</h3><p>開志創造高等学校・開志国際高等学校・国際スノーボード＆スケートボード専門学校（JWSC）・新潟医療福祉大学ほか。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 TECH ============ -->
+<section id="tech" class="alt">
+  <div class="wrap">
+    <div class="sec-head"><h2>上達と安全を支えるJSFの仕組み</h2><span class="num">06 TECHNOLOGY</span></div>
+    <div class="grid g5">
+      <div class="card tool"><div class="photo"><img src="img/sensor.jpg" alt="足裏センサーの画面"></div><h3>足裏センサー</h3><p>定期的なデジタル診断で、日々の変化を確認。才能ある選手の発掘にも。</p></div>
+      <div class="card tool"><div class="photo"><img src="img/airmat.jpg" alt="エアマットへの着地"></div><h3>エアマット</h3><p>ケガのリスクを最小限に抑えて、新しいトリックを練習できます。</p></div>
+      <div class="card tool"><div class="photo"><img src="img/license.jpg" alt="ライセンスを確認する子ども"></div><h3>昇級ライセンス制度</h3><p>完全オンライン。自分のレベルと次の課題がわかります。</p></div>
+      <div class="card tool"><div class="photo"><img src="img/camera.jpg" alt="遠隔カメラシステムのイメージ"></div><h3>遠隔カメラシステム</h3><p>レベルに合ったコーチとのマッチング。</p></div>
+      <div class="card tool"><div class="photo"><img src="img/board.jpg" alt="スケートボードデッキの製造"></div><h3>国産スケートボード</h3><p>国産材を使ったデッキを、設計から製造・販売まで。</p></div>
+    </div>
+
+    <h3 style="margin:36px 0 14px;color:var(--navy);font-size:20px">全国の施設・拠点</h3>
+    <div class="grid g3 parks">
+      <div><div class="photo"><img src="img/park1.jpg" alt="ブルボンスケートパーク村上"></div><div class="cap">● ブルボンスケートパーク村上（2019年〜）</div></div>
+      <div><div class="photo"><img src="img/park2.jpg" alt="AIRMANスケートパーク"></div><div class="cap">● AIRMAN スケートパーク（2023年〜）</div></div>
+      <div><div class="photo"><img src="img/snow.jpg" alt="村上スノーリサーチ＆トレーニングセンター"></div><div class="cap">● 村上スノーリサーチ＆トレーニングセンター（2024年〜）</div></div>
+    </div>
+    <p class="note">ほか JWパーク、サマーキッカー、青森スプリングス。連携施設：南魚沼スケートパーク、南魚沼市トレーニングセンター、石打丸山スキー場、村上バグジャンプ、カムイみさか 室内ハーフパイプ など。2027年にはインドネシア・バリ島に「HPアカデミー」を開設予定です。</p>
+  </div>
+</section>
+
+<!-- ============ 07 BUSINESS ============ -->
+<section id="biz" class="biz page-break">
+  <div class="wrap">
+    <div class="sec-head"><h2>企業・施設の方へ｜JAPAN URBAN SPORTS SHOW</h2><span class="num" style="color:#ff4d61">07 BUSINESS</span></div>
+    <div class="grid g2">
+      <div><div class="photo" style="aspect-ratio:16/9"><img src="img/show.jpg" alt="JAPAN URBAN SPORTS SHOWのステージ演出イメージ"></div><div class="cap" style="color:#b9c4da">ステージ演出イメージ</div></div>
+      <div class="card">
+        <p style="color:#fff;font-size:16px">アーバンスポーツのプロチームが、複数種目の演技に映像と演出を組み合わせる、<strong>世界初のアーバンスポーツ版「シルク・ドゥ・ソレイユ」</strong>。普段は常設、イベント時は持ち運びも可能です。</p>
+        <p style="margin-top:14px">2025年11月 アフターハロウィンショー＠ららぽーと堺<br>（JSF × 三井不動産 × 日テレアックスオン）</p>
+        <div class="grid g2" style="margin-top:14px">
+          <div class="stat">最大<br><b>3,000</b> 名が観覧</div>
+          <div class="stat">周囲の飲食店<br><b>3割</b>以上 売上向上</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px"><p style="color:#fff">アーバンスポーツは2028年以降、国スポ（国民スポーツ大会）の種目として認定される可能性があり、その場合は学校・部活動への導入も検討されます。<br>商業施設のイベント、自治体のスポーツイベント、幼稚園・保育園の運動プログラム、学校・企業の健康施策などでご活用いただけます。</p></div>
+  </div>
+</section>
+
+<!-- ============ 08 FAQ ============ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><h2>よくある質問</h2><span class="num">08 FAQ</span></div>
+    <details open><summary>運動が苦手でも大丈夫？</summary><p data-edit="q1">大丈夫です。遊びの延長で、一人ひとりのレベルに合わせて講師がサポートします。初めての方がほとんどです。</p></details>
+    <details><summary>何歳から参加できますか？</summary><p data-edit="q2"><span class="fill">◯歳から参加できます。</span>保護者の方の付き添いをお願いする場合があります。</p></details>
+    <details><summary>ケガが心配です。</summary><p data-edit="q3">ヘルメット・プロテクターを着用し、安全に配慮した遊具と内容で行います。スケートボードも講師がそばで支えます。</p></details>
+    <details><summary>道具は必要ですか？</summary><p data-edit="q4">必要ありません。スケートボードや防具は貸し出します。動きやすい服装と運動靴でお越しください。</p></details>
+    <details><summary>今日のあとも続けられますか？</summary><p data-edit="q5">晴海アーバンスポーツ教室（CHILL GYM）で毎週水曜日に開催しています。<span class="fill">体験レッスンのお申し込みは右下のQRコードから。</span></p></details>
+  </div>
+</section>
+
+<!-- ============ 09 CONTACT ============ -->
+<section id="contact" class="alt">
+  <div class="wrap">
+    <div class="sec-head"><h2>お問い合わせ・お申し込み</h2><span class="num">09 CONTACT</span></div>
+    <div class="contact">
+      <div>
+        <p style="margin:0 0 16px;color:var(--red);font-weight:700">ご興味のある方は、お気軽にご連絡ください。</p>
+        <dl>
+          <dt>運営</dt><dd>一般社団法人 日本スケートボーディング連盟（JSF）</dd>
+          <dt>担当者</dt><dd data-edit="ct-name">牛嶋 彪（うしじま ひょう）</dd>
+          <dt>メール</dt><dd data-edit="ct-mail"><span class="fill">hyoushijima@gmeil.com</span></dd>
+          <dt>電話</dt><dd data-edit="ct-tel">080-1881-6093</dd>
+          <dt>Web / SNS</dt><dd data-edit="ct-web"><span class="fill">URL・Instagram などを記入</span></dd>
+        </dl>
+      </div>
+      <label class="qr" id="qrBox" title="クリックしてQRコード画像を選択">
+        <span id="qrText">ここにQRコード<br>（申込フォーム・LINEなど）<br><br><small class="no-print">タップして画像を選択</small></span>
+        <input type="file" accept="image/*" id="qrInput" hidden>
+      </label>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAFF SCRIPT ============ -->
+<section id="staff" class="staff page-break">
+  <div class="wrap">
+    <div class="sec-head"><h2>スタッフ用トーク台本（お客さまには見せない）</h2><span class="num" style="color:#a07a00">STAFF ONLY</span></div>
+
+    <div class="script"><span class="time">① 声かけ｜5秒</span><h3>通りがかりの親子へ</h3>
+      <p data-edit="sc1">「こんにちは！ <span class="fill">無料で15分</span>、バランスアスレチックとスケボーの体験ができます。お子さん、やってみませんか？」</p></div>
+
+    <div class="script"><span class="time">② ひとこと説明｜30秒</span><h3>何をするところか</h3>
+      <p data-edit="sc2">「日本スケートボーディング連盟がやっている、<strong>“感覚の貯金”</strong>というプログラムです。登る・渡る・跳ぶ・バランスをとる、みたいな色々な動きを遊びながら経験すると、体だけじゃなく集中力や“できた！”という自信も育つんです。初めての子がほとんどなので安心してください。」</p></div>
+
+    <div class="script"><span class="time">③ 体験中の保護者向け｜1〜3分</span><h3>伝えるポイントを3つだけ</h3>
+      <ol>
+        <li><strong>安心：</strong>日本代表を支えている団体（JOC加盟協力団体／スポーツ庁のNTC認定はスケートボードで日本唯一）。指導者はJSPO公認資格の仕組みあり。</li>
+        <li><strong>効果：</strong>頭・体・心の3つの貯金。運動神経は5歳ごろまでに大きく育つので、今いろんな動きを経験するのが大事。運動が苦手な子ほど「できた！」が増える。</li>
+        <li><strong>続け方：</strong>晴海の「CHILL GYM」で毎週水曜。勝どき駅から徒歩12分、ららテラス HARUMI FLAG 3階。</li>
+      </ol></div>
+
+    <div class="script"><span class="time">④ クロージング｜30秒</span><h3>次の行動につなげる</h3>
+      <p data-edit="sc4">「今日楽しかったら、晴海の教室で続けられます。このQRから体験レッスンの申し込みができるので、よかったら登録だけでもどうぞ！」<br>→ チラシを渡す／QRを読んでもらう／<span class="fill">お名前・連絡先をリストに記入</span></p></div>
+
+    <div class="script"><span class="time">⑤ 企業・施設関係の方だったら</span><h3>ビジネス向けに切り替え</h3>
+      <p data-edit="sc5">「商業施設向けに、アーバンスポーツのショーもやっています。ららぽーと堺では最大3,000人が観覧して、周りの飲食店の売上も3割以上上がりました。担当の牛嶋から詳しい資料をお送りできます。」→ 名刺交換</p></div>
+
+    <div class="script"><span class="time">チェックリスト</span><h3>開場前に確認</h3>
+      <ul data-edit="sc6">
+        <li>ヘルメット・プロテクター（サイズ別）の数</li>
+        <li>受付表・ペン／同意書の要否</li>
+        <li>QRコード・チラシの印刷</li>
+        <li>タブレットの充電、このページを開いておく</li>
+        <li><span class="fill">集合時間・担当の割り振り</span></li>
+      </ul></div>
+  </div>
+</section>
+
+<footer>© 一般社団法人 日本スケートボーディング連盟（JSF）｜MIFA Football Park 12th Anniversary Party ワークショップ資料</footer>
+
+<script>
+(function(){
+  var KEY='jsf-workshop-v1';
+  var body=document.body;
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
+  function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+  var data=load();
+  document.querySelectorAll('[data-edit]').forEach(function(el){
+    var k=el.getAttribute('data-edit');
+    if(data[k]!=null) el.innerHTML=data[k];
+    el.addEventListener('input',function(){data[k]=el.innerHTML;save(data)});
+  });
+  if(data.__qr) setQR(data.__qr);
+
+  function toggle(btn,cls,cb){
+    btn.addEventListener('click',function(){
+      var on=btn.getAttribute('aria-pressed')!=='true';
+      btn.setAttribute('aria-pressed',on);
+      body.classList.toggle(cls,on);
+      if(cb) cb(on);
+    });
+  }
+  toggle(document.getElementById('btnEdit'),'editing',function(on){
+    document.querySelectorAll('[data-edit]').forEach(function(el){el.contentEditable=on});
+  });
+  toggle(document.getElementById('btnStaff'),'show-staff',function(on){
+    if(on) document.getElementById('staff').scrollIntoView({behavior:'smooth'});
+  });
+  toggle(document.getElementById('btnClean'),'clean');
+  document.querySelector('.staff-link').addEventListener('click',function(){
+    var b=document.getElementById('btnStaff');
+    if(b.getAttribute('aria-pressed')!=='true') b.click();
+  });
+  window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true})});
+  document.getElementById('btnPrint').addEventListener('click',function(){window.print()});
+  document.getElementById('btnReset').addEventListener('click',function(){
+    if(confirm('編集内容をすべて元に戻しますか？')){try{localStorage.removeItem(KEY)}catch(e){} location.reload()}
+  });
+
+  function setQR(src){
+    var box=document.getElementById('qrBox');
+    var t=document.getElementById('qrText'); if(t) t.remove();
+    var img=box.querySelector('img')||box.insertBefore(document.createElement('img'),box.firstChild);
+    img.src=src; img.alt='お申し込み用QRコード';
+    box.style.background='#fff'; box.style.borderStyle='solid';
+  }
+  document.getElementById('qrInput').addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){setQR(r.result);data.__qr=r.result;save(data)};
+    r.readAsDataURL(f);
+  });
+})();
+</script>
+</body>
+</html>
