@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>バランスアスレチック説明スライド</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Montserrat:wght@600;800&display=swap">
+<style>
+:root{--navy:#10223f;--red:#d0182e;--ink:#1d2433;--sub:#5a6478;--bg:#f4f6fa;--line:#dfe4ee;--yellow:#ffd400;
+--c1:#e2456b;--c2:#2f80d1;--c3:#21a366;--c4:#f29d1f}
+*{box-sizing:border-box}
+body{margin:0;background:#2a2f3a;font-family:"Noto Sans JP",system-ui,sans-serif;color:var(--ink)}
+.deck{display:flex;flex-direction:column;align-items:center;gap:24px;padding:24px 0}
+.slide{width:1280px;height:720px;background:var(--bg);position:relative;overflow:hidden;flex:none;transform-origin:top left}
+.hd{height:112px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 64px;border-bottom:5px solid var(--red)}
+.hd h2{margin:0;font-size:36px;font-weight:900;letter-spacing:.02em}
+.hd small{display:block;font-size:16px;font-weight:500;opacity:.85;margin-top:4px}
+.hd .en{font-family:Montserrat;font-size:13px;letter-spacing:.2em;opacity:.7}
+.bd{padding:36px 64px}
+.pg{position:absolute;right:28px;bottom:18px;font-family:Montserrat;font-size:13px;color:#8a93a6}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+.lead{font-size:22px;line-height:1.7;margin:0 0 22px}
+.grid{display:grid;gap:18px}
+img{display:block;width:100%;height:100%;object-fit:cover}
+.note{font-size:12px;color:var(--sub)}
+.big{font-family:Montserrat;font-weight:800}
+
+/* cover */
+.cover{background:var(--navy);color:#fff;display:grid;grid-template-columns:1.05fr .95fr}
+.cover .l{padding:80px 64px;display:flex;flex-direction:column;justify-content:center}
+.cover .bar{width:64px;height:5px;background:var(--red);margin-bottom:22px}
+.cover .org{font-size:16px;letter-spacing:.14em;opacity:.8}
+.cover h1{font-size:64px;line-height:1.2;margin:14px 0 6px;font-weight:900}
+.cover .sub{font-size:24px;color:var(--yellow);font-weight:700;margin-bottom:28px}
+.cover .copy{font-size:30px;font-weight:900;border-top:1px solid rgba(255,255,255,.25);padding-top:22px}
+.cover .r{position:relative}
+.cover .r::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--navy),transparent 30%)}
+.cover .redline{position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--red)}
+
+.moves{display:flex;gap:12px;flex-wrap:wrap}
+.moves span{background:var(--navy);color:#fff;font-weight:900;font-size:24px;padding:10px 24px;border-radius:999px}
+.chip{display:inline-block;background:var(--yellow);color:var(--navy);font-weight:900;padding:4px 14px;border-radius:999px;font-size:15px}
+.map{display:grid;grid-template-columns:1fr 70px 1fr;gap:14px 0;align-items:center}
+.map .a,.map .b{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 22px;font-size:22px;font-weight:700}
+.map .a{border-left:6px solid var(--c3)}
+.map .b{border-left:6px solid var(--red)}
+.map .arw{text-align:center;color:var(--red);font-size:28px;font-weight:900}
+.map .h{font-size:15px;color:var(--sub);font-weight:700;letter-spacing:.1em;padding-left:4px}
+.pt{display:flex;gap:14px;align-items:flex-start}
+.pt .n{flex:none;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-family:Montserrat;font-weight:800;font-size:22px}
+.pt h3{margin:2px 0 6px;font-size:26px;color:var(--navy)}
+.pt p{margin:0;font-size:19px;color:var(--sub);line-height:1.6}
+.pillar{border-top:8px solid var(--c);text-align:left}
+.pillar h3{color:var(--c);font-size:26px;margin:0 0 6px}
+.pillar .k{font-size:14px;color:var(--sub);letter-spacing:.1em;font-weight:700}
+.pillar ul{margin:10px 0 0;padding-left:1.1em;font-size:21px;line-height:2}
+table{border-collapse:collapse;width:100%;font-size:19px;background:#fff;border-radius:12px;overflow:hidden}
+th,td{padding:12px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--navy);color:#fff;font-size:15px;font-weight:700}
+td b{color:var(--navy)}
+.tag{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:1px 10px;color:#fff;background:var(--c2);margin:1px 2px}
+.co{background:#fff;border:2px solid var(--navy);border-radius:14px;padding:16px 10px;text-align:center}
+.co .n{font-family:Montserrat;font-weight:800;color:var(--c3);font-size:30px;line-height:1}
+.co h4{margin:6px 0;font-size:21px;color:var(--navy)}
+.co p{margin:0;font-size:16px;color:var(--sub);line-height:1.5}
+.lv{border-radius:16px;padding:22px;color:#fff}
+.lv h3{margin:0 0 4px;font-size:28px}
+.lv .age{font-size:16px;opacity:.9;margin-bottom:10px}
+.lv ul{margin:0;padding-left:1.1em;font-size:20px;line-height:2}
+.fact .big{font-size:56px;color:var(--red);line-height:1}
+.fact h3{margin:12px 0 8px;font-size:23px;color:var(--navy)}
+.fact p{margin:0;font-size:17px;color:var(--sub);line-height:1.6}
+.fact .src{margin-top:10px;font-size:12px;color:#8a93a6}
+.motto{background:var(--navy);color:#fff;border-radius:16px;padding:18px 24px;text-align:center;font-size:26px;font-weight:900}
+.motto em{font-style:normal;color:var(--yellow)}
+
+.ctrl{position:fixed;right:16px;bottom:16px;display:flex;gap:8px;z-index:9}
+.ctrl button{font:inherit;border:0;border-radius:999px;padding:8px 16px;background:var(--red);color:#fff;font-weight:700;cursor:pointer}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  body{background:none}
+  .deck{display:block;padding:0;gap:0}
+  .slide{break-after:page;transform:none!important;margin:0!important}
+  .ctrl{display:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="ctrl"><button onclick="window.print()">印刷 / PDF</button></div>
+<div class="deck">
+
+<!-- 1 cover -->
+<section class="slide cover">
+  <div class="l">
+    <div class="bar"></div>
+    <div class="org">一般社団法人 日本スケートボーディング連盟（JSF）｜アーバンスポーツ事業</div>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="r"><img src="../img/studio.jpg" alt="バランスアスレチックの設置例"></div>
+  <div class="redline"></div>
+</section>
+
+<!-- 2 problem -->
+<section class="slide">
+  <div class="hd"><div><h2>自然の中で遊ぶ機会が、減っています</h2></div><span class="en">01 BACKGROUND</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="card fact"><div class="big">1985</div><h3>子どもの体力は、このころがピーク</h3><p>走る・投げる・握るなどの力は、その後長期的に低下しています。</p><div class="src">文部科学省・スポーツ庁「体力・運動能力調査」</div></div>
+      <div class="card fact"><div class="big">60<span style="font-size:28px">分</span></div><h3>幼児は毎日60分以上、体を動かそう</h3><p>しかも「いろいろな遊びで、多様な動きを経験すること」が大切とされています。</p><div class="src">文部科学省「幼児期運動指針」（2012年）</div></div>
+      <div class="card fact"><div class="big" style="font-size:44px;padding-top:12px">都市</div><h3>近くに自然がない／自然は危ない</h3><p>木登りや川渡りのような動きを、日常で経験しにくい環境になっています。</p></div>
+    </div>
+    <div class="motto" style="margin-top:28px">自然の中にしかなかった動きを、<em>都市で、安全に</em>。</div>
+  </div>
+  <div class="pg">02</div>
+</section>
+
+<!-- 3 what -->
+<section class="slide">
+  <div class="hd"><div><h2>バランスアスレチックとは</h2></div><span class="en">02 WHAT</span></div>
+  <div class="bd" style="display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center">
+    <div>
+      <p class="lead">自然の中での遊びにある多様な動きを、<b>屋内・屋外のどちらでも安全に、楽しく</b>体験できるようにデザインされた運動プログラムです。</p>
+      <div class="moves"><span>登る</span><span>渡る</span><span>跳ぶ</span><span>くぐる</span><span>バランスをとる</span></div>
+      <p style="font-size:19px;line-height:1.7;margin:24px 0 0">幼児期に必要な「さまざまな感覚への刺激」を遊びの中に詰め込み、子どもたちの<b>生きる力の土台</b>を育てます。</p>
+    </div>
+    <div style="height:420px;border-radius:16px;overflow:hidden"><img src="../img/studio.jpg" alt="スラックライン・切り株・クライミングウォール"></div>
+  </div>
+  <div class="pg">03</div>
+</section>
+
+<!-- 4 nature -> city -->
+<section class="slide">
+  <div class="hd"><div><h2>自然遊びの動きを、そのまま再現</h2></div><span class="en">03 NATURE → CITY</span></div>
+  <div class="bd">
+    <div class="map">
+      <div class="h">自然の中の遊び</div><div></div><div class="h">バランスアスレチック</div>
+      <div class="a">でこぼこの地面を歩く</div><div class="arw">→</div><div class="b">切り株・三角ブロック・人工芝の上を歩く</div>
+      <div class="a">木に登る</div><div class="arw">→</div><div class="b">クライミングウォール</div>
+      <div class="a">川の石を渡る・跳ぶ</div><div class="arw">→</div><div class="b">切り株を飛び石のように渡る</div>
+      <div class="a">倒木の上でバランスをとる</div><div class="arw">→</div><div class="b">スラックライン・平均台</div>
+      <div class="a">枝の下をくぐる・しゃがむ</div><div class="arw">→</div><div class="b">バーやトンネルをくぐる</div>
+      <div class="a">野原を走る・跳ぶ</div><div class="arw">→</div><div class="b">コースをつないで走る・跳ぶ</div>
+    </div>
+  </div>
+  <div class="pg">04</div>
+</section>
+
+<!-- 5 strengths -->
+<section class="slide">
+  <div class="hd"><div><h2>都市でできるから、続けられる</h2><small>自然遊びと同じ動きを、自然遊びにはない安心とともに</small></div><span class="en">04 STRENGTHS</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:40px 48px;padding-top:14px">
+      <div class="pt"><div class="n">1</div><div><h3>天候に左右されにくい</h3><p>屋内にも設置できるので、雨の日も暑い日も実施できます。</p></div></div>
+      <div class="pt"><div class="n">2</div><div><h3>場所を選ばない</h3><p>商業施設、園庭、体育館、オフィスなど都市部のどこでも。</p></div></div>
+      <div class="pt"><div class="n">3</div><div><h3>目の届く範囲で、安全に</h3><p>大人が見守れる範囲で、高さや難しさを調整して体験できます。</p></div></div>
+      <div class="pt"><div class="n">4</div><div><h3>配置を変えてカスタムできる</h3><p>年齢や能力に合わせて、難易度を自由に設定できます。</p></div></div>
+      <div class="pt"><div class="n">5</div><div><h3>飽きずに続く</h3><p>遊び方が変わるので、継続的な運動習慣につながります。</p></div></div>
+      <div class="pt"><div class="n">6</div><div><h3>遊びながら、多様な動き</h3><p>「練習」ではなく「遊び」だから、子どもが自分から動きます。</p></div></div>
+    </div>
+  </div>
+  <div class="pg">05</div>
+</section>
+
+<!-- 6 two components -->
+<section class="slide">
+  <div class="hd"><div><h2>サービスは「現物」と「使い方」の2本柱</h2></div><span class="en">05 SERVICE</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:28px">
+      <div class="card" style="border-top:8px solid var(--red)">
+        <div class="chip">① アスレチック現物</div>
+        <h3 style="font-size:28px;margin:12px 0 8px;color:var(--navy)">組み替えられる遊具セット</h3>
+        <p style="font-size:21px;line-height:1.85;margin:0">スラックライン／切り株・丸太／平均台／クライミングホールド／三角ブロック／人工芝 など</p>
+        <p class="note" style="margin-top:10px">屋内・屋外どちらにも設置可能</p>
+      </div>
+      <div class="card" style="border-top:8px solid var(--navy)">
+        <div class="chip">② 使い方マニュアル</div>
+        <h3 style="font-size:28px;margin:12px 0 8px;color:var(--navy)">1つのコースで、何通りも</h3>
+        <p style="font-size:21px;line-height:1.85;margin:0">遊び方のルール集と、年齢・能力別の難易度設定。先生や保護者だけでも運営できます。</p>
+        <p class="note" style="margin-top:10px">ルールを変えるだけで、育つ力が変わる</p>
+      </div>
+    </div>
+    <div class="motto" style="margin-top:28px">コンセプト：<em>感覚の貯金</em>　— 幼児期の多様な経験は、将来引き出せる力になる</div>
+  </div>
+  <div class="pg">06</div>
+</section>
+
+<!-- 7 ways to play -->
+<section class="slide">
+  <div class="hd"><div><h2>1つのコースで、8つの遊び方（例）</h2></div><span class="en">06 HOW TO PLAY</span></div>
+  <div class="bd" style="padding-top:26px">
+    <table>
+      <tr><th style="width:22%">遊び方</th><th>ルール</th><th style="width:22%">主に育つ力</th><th style="width:10%">目安</th></tr>
+      <tr><td><b>① ふつうに一周</b></td><td>落ちないようにゴールまで</td><td><span class="tag">バランス</span><span class="tag">定位</span></td><td>3歳〜</td></tr>
+      <tr><td><b>② リズム渡り</b></td><td>拍手や音楽に合わせて1歩ずつ</td><td><span class="tag">リズム</span></td><td>3歳〜</td></tr>
+      <tr><td><b>③ いろタッチ</b></td><td>合図の色のホールドやブロックにタッチ</td><td><span class="tag">反応</span><span class="tag">変換</span></td><td>4歳〜</td></tr>
+      <tr><td><b>④ うしろ向き・横歩き</b></td><td>向きを変えて同じコースを進む</td><td><span class="tag">バランス</span><span class="tag">定位</span></td><td>4歳〜</td></tr>
+      <tr><td><b>⑤ おもちゃ運び</b></td><td>ボールやお手玉を持ったまま渡る</td><td><span class="tag">識別</span><span class="tag">連結</span></td><td>4歳〜</td></tr>
+      <tr><td><b>⑥ じゃんけんバトル</b></td><td>両端からスタート、出会ったらじゃんけん</td><td><span class="tag">反応</span><span class="tag" style="background:var(--c4)">社会性</span></td><td>4歳〜</td></tr>
+      <tr><td><b>⑦ おぼえてコース</b></td><td>言われた順番どおりに進む</td><td><span class="tag" style="background:var(--c2)">記憶力</span><span class="tag">変換</span></td><td>5歳〜</td></tr>
+      <tr><td><b>⑧ タイムチャレンジ</b></td><td>前回の自分のタイムを超える</td><td><span class="tag" style="background:var(--c4)">挑戦する力</span></td><td>5歳〜</td></tr>
+    </table>
+  </div>
+  <div class="pg">07</div>
+</section>
+
+<!-- 8 levels -->
+<section class="slide">
+  <div class="hd"><div><h2>年齢・能力に合わせて、配置で難易度を変える</h2></div><span class="en">07 LEVEL</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:22px">
+      <div class="lv" style="background:var(--c3)"><h3>やさしい</h3><div class="age">2〜3歳・はじめての子</div><ul><li>切り株の間隔をせまく</li><li>スラックラインは低く</li><li>スタッフが手をつなぐ</li></ul></div>
+      <div class="lv" style="background:var(--c2)"><h3>ふつう</h3><div class="age">4〜5歳</div><ul><li>切り株の間隔をバラバラに</li><li>三角ブロックを混ぜる</li><li>遊び方②〜⑥を取り入れる</li></ul></div>
+      <div class="lv" style="background:var(--navy)"><h3>むずかしい</h3><div class="age">6歳〜小学生</div><ul><li>間隔を広げ、高さを混ぜる</li><li>ルールを組み合わせる</li><li>タイムや順番で挑戦</li></ul></div>
+    </div>
+    <div class="motto" style="margin-top:30px;background:#fff;color:var(--navy);border:2px solid var(--navy)">できたら一段上げる、できなければ一段下げる。<em style="color:var(--red)">「ちょっと難しい」</em>がいちばん楽しい。</div>
+  </div>
+  <div class="pg">08</div>
+</section>
+
+<!-- 9 four powers -->
+<section class="slide">
+  <div class="hd"><div><h2>このような力が育まれます</h2></div><span class="en">08 BENEFITS</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="card pillar" style="--c:var(--c1)"><div class="k">MOTOR</div><h3>運動能力</h3><ul><li>バランス感覚</li><li>体幹・姿勢</li><li>ジャンプ力</li><li>敏捷性・協調性</li></ul></div>
+      <div class="card pillar" style="--c:var(--c2)"><div class="k">COGNITIVE</div><h3>認知機能</h3><ul><li>集中力</li><li>判断力</li><li>空間認識力</li><li>記憶力</li></ul></div>
+      <div class="card pillar" style="--c:var(--c3)"><div class="k">SENSORY</div><h3>感覚機能</h3><ul><li>足裏の刺激</li><li>触覚・前庭覚</li><li>身体のコントロール</li><li>自己認識</li></ul></div>
+      <div class="card pillar" style="--c:var(--c4)"><div class="k">NON-COGNITIVE</div><h3>非認知能力</h3><ul><li>挑戦する力</li><li>やり抜く力</li><li>自己肯定感</li><li>社会性</li></ul></div>
+    </div>
+    <p class="note" style="margin-top:18px">※前庭覚：体の傾きや揺れ、スピードを感じる感覚。　※研究に基づく一般的な説明であり、効果を保証するものではありません。</p>
+  </div>
+  <div class="pg">09</div>
+</section>
+
+<!-- 10 coordination -->
+<section class="slide">
+  <div class="hd"><div><h2>土台になる「7つのコーディネーション能力」</h2><small>一つに特化する前に、多様な動きを経験する</small></div><span class="en">09 COORDINATION</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:repeat(7,1fr);gap:12px">
+      <div class="co"><div class="n">1</div><h4>リズム</h4><p>動くタイミングをつかむ</p></div>
+      <div class="co"><div class="n">2</div><h4>バランス</h4><p>崩れた姿勢を立て直す</p></div>
+      <div class="co"><div class="n">3</div><h4>変換</h4><p>状況に合わせて動きを切り替える</p></div>
+      <div class="co"><div class="n">4</div><h4>反応</h4><p>合図に素早く反応する</p></div>
+      <div class="co"><div class="n">5</div><h4>連結</h4><p>体全体をスムーズに動かす</p></div>
+      <div class="co"><div class="n">6</div><h4>定位</h4><p>自分と物の位置関係をつかむ</p></div>
+      <div class="co"><div class="n">7</div><h4>識別</h4><p>道具を上手に操作する</p></div>
+    </div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-top:24px">
+      <div class="card" style="text-align:center"><h3 style="margin:0 0 8px;color:var(--navy);font-size:22px">バランスアスレチック</h3><span class="tag">バランス</span><span class="tag">定位</span><span class="tag">変換</span><span class="tag">リズム</span></div>
+      <div class="card" style="text-align:center"><h3 style="margin:0 0 8px;color:var(--navy);font-size:22px">スケートボード</h3><span class="tag">バランス</span><span class="tag">変換</span></div>
+      <div class="card" style="text-align:center"><h3 style="margin:0 0 8px;color:var(--navy);font-size:22px">バスケ・ダンス</h3><span class="tag">識別</span><span class="tag">反応</span><span class="tag">リズム</span><span class="tag">連結</span></div>
+    </div>
+    <p class="note" style="margin-top:14px">分類：旧東ドイツのスポーツ科学（Blume）による7つのコーディネーション能力</p>
+  </div>
+  <div class="pg">10</div>
+</section>
+
+<!-- 11 science -->
+<section class="slide">
+  <div class="hd"><div><h2>なぜ幼児期に、なぜ足の裏から？</h2><small>研究からわかっていること</small></div><span class="en">10 SCIENCE</span></div>
+  <div class="bd">
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:22px">
+      <div class="card fact"><div class="big">約9<span style="font-size:28px">割</span></div><h3>脳の大きさは、6歳ごろまでに大人の約9割に</h3><p>脳が急速に育つ時期に、いろいろな動きと感覚を経験しておくことが「感覚の貯金」になります。</p><div class="src">MRI研究：Giedd ら 1999／Lenroot & Giedd 2006</div></div>
+      <div class="card fact"><div class="big" style="font-size:44px;padding-top:12px">足の裏</div><h3>足裏は、バランスのセンサー</h3><p>足の裏には地面の硬さ・傾き・重心の位置を感じる受容器がたくさんあり、脳はその情報で姿勢を調整しています。凸凹や不安定な足場は、このセンサーをたくさん使います。</p><div class="src">Kavounoudias ら 1998（NeuroReport）ほか</div></div>
+      <div class="card fact"><div class="big" style="font-size:44px;padding-top:12px">考える<br>×動く</div><h3>考えながら動く運動は、集中力や記憶にも</h3><p>ルールを覚えて体を動かす運動は、我慢する力・覚えておく力（実行機能）を高めると報告されています。</p><div class="src">23研究・2,857人のメタ分析（2024）</div></div>
+    </div>
+    <p class="note" style="margin-top:18px">※研究に基づく一般的な説明であり、効果を保証するものではありません。運動能力は小学生以降も伸び続けます。</p>
+  </div>
+  <div class="pg">11</div>
+</section>
+
+<!-- 12 scenes / cta -->
+<section class="slide">
+  <div class="hd"><div><h2>こんな場所で、使われています</h2></div><span class="en">11 USE CASES</span></div>
+  <div class="bd" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card" style="padding:28px 22px"><h3 style="margin:0;color:var(--navy);font-size:21px">商業施設のイベント</h3></div>
+      <div class="card" style="padding:28px 22px"><h3 style="margin:0;color:var(--navy);font-size:21px">自治体のスポーツイベント</h3></div>
+      <div class="card" style="padding:28px 22px"><h3 style="margin:0;color:var(--navy);font-size:21px">幼稚園・保育園の運動プログラム</h3></div>
+      <div class="card" style="padding:28px 22px"><h3 style="margin:0;color:var(--navy);font-size:21px">学校・企業の健康施策</h3></div>
+      <div class="card" style="grid-column:1/3;border-left:6px solid var(--red)"><div class="chip">毎週水曜日</div><h3 style="margin:8px 0 4px;color:var(--navy);font-size:22px">晴海アーバンスポーツ教室 CHILL GYM</h3><p style="margin:0;font-size:16px;color:var(--sub)">FitLAnd TOKYO DOME 晴海（ららテラス HARUMI FLAG 3階）</p></div>
+    </div>
+    <div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+        <div style="height:170px;border-radius:12px;overflow:hidden"><img src="../img/class1.jpg" alt=""></div>
+        <div style="height:170px;border-radius:12px;overflow:hidden"><img src="../img/class3.jpg" alt=""></div>
+      </div>
+      <div class="motto" style="margin-top:16px;font-size:24px">今、遊ぶことが、<em>将来の選択肢</em>を増やす。</div>
+      <p style="font-size:16px;margin:14px 0 0">導入・レンタル・体験のご相談：<span style="background:#fff6cc;padding:0 6px">担当者名・連絡先を記入</span></p>
+    </div>
+  </div>
+  <div class="pg">12</div>
+</section>
+
+</div>
+<script>
+(function(){
+  function fit(){var w=Math.min(window.innerWidth-32,1280),s=w/1280;
+    document.querySelectorAll('.slide').forEach(function(el){el.style.transform='scale('+s+')';el.style.marginBottom=(720*s-720)+'px';el.style.marginRight=(1280*s-1280)+'px'});}
+  if(!window.matchMedia('print').matches){fit();window.addEventListener('resize',fit);}
+  window.addEventListener('beforeprint',function(){document.querySelectorAll('.slide').forEach(function(el){el.style.transform='';el.style.margin=''})});
+})();
+</script>
+</body>
+</html>
