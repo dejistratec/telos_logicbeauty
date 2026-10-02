@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="自然遊びに代わる「感覚の貯金」プログラム。バランスアスレチックの法人・施設・園向けご案内。">
+<style>body{margin:0}</style>
+<title>バランスアスレチック 法人向けご案内</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Oswald:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone-first single column, 2–3 column grids from 720px, 1120px max.
+   White page + deep indigo navy, neon yellow only as an accent (fills, markers, highlights).
+   Olympic-style pictograms carry the "moving body" theme. Generous spacing throughout. */
+:root{
+  --bg:#ffffff; --fg:#0b1430; --muted:#5b6479; --line:#e1e5ee; --soft:#f5f6fa;
+  --navy:#0b1430; --navy-2:#16224a; --on-navy:#ffffff; --on-navy-muted:#a9b3cc;
+  --accent:#e4ff1a; --accent-ink:#0b1430;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
+  --f-en:"Oswald","Arial Narrow",Impact,sans-serif;
+  --gut:24px; --sec:96px; --gap:24px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#070d1f; --fg:#eef1f8; --muted:#a3acc4; --line:#1f2a4a; --soft:#0e1730;
+  --navy:#111c3d; --navy-2:#1a2852; --on-navy:#ffffff; --on-navy-muted:#b3bdd6;
+  --accent:#e4ff1a; --accent-ink:#0b1430; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#070d1f; --fg:#eef1f8; --muted:#a3acc4; --line:#1f2a4a; --soft:#0e1730;
+  --navy:#111c3d; --navy-2:#1a2852; --on-navy:#ffffff; --on-navy-muted:#b3bdd6;
+  --accent:#e4ff1a; --accent-ink:#0b1430; color-scheme:dark }
+@media (max-width:719px){ :root{ --gut:20px; --sec:72px; --gap:18px } }
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.85;font-size:15.5px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:var(--gut)}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.35;font-weight:900}
+h2{font-size:clamp(26px,4.6vw,40px);letter-spacing:.01em}
+h3{font-size:18px;font-weight:700;line-height:1.5}
+p{margin:0}
+.hl{background:linear-gradient(transparent 58%,var(--accent) 58%,var(--accent) 92%,transparent 92%);padding-inline:2px}
+.eyebrow{font-family:var(--f-en);font-size:14px;letter-spacing:.22em;color:var(--muted);font-weight:500;text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:28px;height:4px;background:var(--accent);transform:skewX(-24deg)}
+.sec{padding-block:var(--sec)}
+.sec.soft{background:var(--soft)}
+.sec-head{display:grid;gap:16px;margin-bottom:48px;max-width:760px}
+.sec-head .lead{color:var(--muted)}
+.sec-no{font-family:var(--f-en);font-weight:700;font-size:clamp(60px,11vw,96px);line-height:.85;color:transparent;-webkit-text-stroke:1.5px var(--line);letter-spacing:.02em;user-select:none}
+.sec.soft .sec-no{-webkit-text-stroke-color:#cfd5e2}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 26px;font-weight:700;font-size:15px;text-decoration:none;border:2px solid var(--fg);color:var(--fg);background:transparent;cursor:pointer;font-family:inherit;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);transition:background .2s,color .2s,transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--navy);color:var(--on-navy);border-color:var(--navy)}
+.btn.primary:hover{background:var(--navy-2)}
+.btn.accent{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn .arr{font-family:var(--f-en)}
+.btn:not(.primary):not(.accent){clip-path:none}
+.btn:focus-visible,.copy:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* sticky bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand .mark{width:36px;height:36px;background:#0b1430;color:#e4ff1a;display:grid;place-items:center;flex:none;clip-path:polygon(20% 0,100% 0,80% 100%,0 100%)}
+.brand .mark svg{width:24px;height:24px}
+.brand .name{font-family:var(--f-en);font-weight:700;letter-spacing:.12em;font-size:15px;line-height:1.15;text-transform:uppercase;color:var(--fg);min-width:0}
+.brand .name small{display:block;font-family:var(--f-body);font-weight:500;letter-spacing:0;font-size:10.5px;color:var(--muted);text-transform:none;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .btn{white-space:nowrap;padding:10px 18px;font-size:13px;flex:none}
+
+/* hero */
+.hero{position:relative;overflow:hidden;background:var(--bg)}
+.hero .wrap{display:grid;gap:56px;padding-block:56px 72px;position:relative}
+.hero h1{font-size:clamp(34px,7vw,64px);line-height:1.2;letter-spacing:.01em}
+.hero .lead{color:var(--muted);max-width:560px}
+.hero .ctas{display:flex;gap:14px;flex-wrap:wrap}
+.hero-copy{display:grid;gap:26px;align-content:center;position:relative;z-index:1}
+.hero-visual{position:relative;z-index:1}
+.hero .photo{position:relative;aspect-ratio:4/3;max-width:100%;overflow:hidden;clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);background:var(--soft)}
+.hero .photo img{width:100%;height:100%;object-fit:cover;transform:scale(1.04);transform-origin:60% 40%}
+.hero .badge{position:absolute;left:-4px;bottom:-26px;background:#0b1430;color:#ffffff;padding:16px 24px 16px 20px;display:flex;align-items:center;gap:14px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.hero .badge .n{font-family:var(--f-en);font-weight:700;font-size:36px;line-height:1;color:#e4ff1a}
+.hero .badge span{font-size:12px;line-height:1.5;color:#a9b3cc;display:block}
+.hero .badge b{font-size:13.5px;display:block}
+.hero .slash{position:absolute;right:-12%;top:-30%;width:30%;height:160%;background:var(--accent);transform:skewX(-18deg);pointer-events:none}
+@media (min-width:880px){ .hero .wrap{grid-template-columns:1.05fr .95fr;align-items:center;padding-block:88px 104px;gap:64px} }
+@media (max-width:879px){ .hero .slash{right:-34%;top:auto;bottom:-6%;height:46%;width:72%} }
+
+/* pictograms */
+.pg{fill:none;stroke:currentColor;stroke-width:6.5;stroke-linecap:round;stroke-linejoin:round}
+.pg .hd{fill:currentColor;stroke:none}
+.pg .prop{stroke-width:3;opacity:.5}
+.picto-band{padding-block:56px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.picto-band .cap{font-family:var(--f-en);font-size:13px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-bottom:28px;text-align:center}
+.picto-row{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,2.5vw,28px);max-width:860px;margin:0 auto}
+.picto{display:grid;justify-items:center;gap:12px;text-align:center;min-width:0}
+.picto .tile{width:100%;max-width:128px;aspect-ratio:1;display:grid;place-items:center;background:var(--soft);color:var(--fg);clip-path:polygon(14% 0,100% 0,86% 100%,0 100%);transition:background .35s,color .35s}
+.picto .tile svg{width:62%;height:62%}
+.picto b{font-size:14px;font-weight:700;line-height:1.3}
+.picto.on .tile{background:#0b1430;color:#e4ff1a}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.js .picto .tile svg{animation:bob 2.4s ease-in-out infinite}
+.js .picto:nth-child(2) .tile svg{animation-delay:.25s}.js .picto:nth-child(3) .tile svg{animation-delay:.5s}.js .picto:nth-child(4) .tile svg{animation-delay:.75s}.js .picto:nth-child(5) .tile svg{animation-delay:1s}
+
+/* marquee */
+.marq{background:#0b1430;color:#ffffff;overflow:hidden}
+.marq .track{display:flex;white-space:nowrap;font-family:var(--f-en);font-weight:600;font-size:18px;letter-spacing:.16em;text-transform:uppercase;padding-block:16px;width:max-content}
+.marq .track span{padding-inline:28px;display:inline-flex;align-items:center;gap:28px}
+.marq .track span::after{content:"";width:8px;height:8px;background:#e4ff1a;transform:rotate(45deg)}
+@keyframes slide{to{transform:translateX(-50%)}}
+.js .marq .track{animation:slide 30s linear infinite}
+
+/* numbers */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid var(--fg)}
+.strip > div{padding:28px 24px 24px;border-left:1px solid var(--line);min-width:0;display:grid;gap:10px;align-content:start}
+.strip > div:first-child{border-left:0;padding-left:0}
+.big{font-family:var(--f-en);font-weight:600;font-size:clamp(40px,7.5vw,64px);line-height:1;color:var(--fg);font-variant-numeric:tabular-nums}
+.big small{font-family:var(--f-body);font-weight:700;font-size:14px;margin-left:4px}
+.strip b{display:block;font-size:14px;line-height:1.6}
+.strip .src{font-size:11.5px;color:var(--muted);line-height:1.6}
+@media (max-width:599px){
+  .strip{grid-template-columns:1fr}
+  .strip>div{border-left:0;border-top:1px solid var(--line);padding:24px 0;grid-template-columns:96px 1fr;column-gap:16px;row-gap:6px}
+  .strip>div:first-child{border-top:0}
+  .strip .big{grid-row:span 2;font-size:38px;align-self:center}
+}
+
+/* flow */
+.flow{display:grid;gap:var(--gap);margin-top:56px}
+.flow .st{border:2px solid var(--line);padding:30px 28px;display:grid;gap:10px;align-content:start;background:var(--bg)}
+.flow .st.on{background:#0b1430;color:#ffffff;border-color:#0b1430}
+.flow .t{font-family:var(--f-en);font-size:14px;letter-spacing:.2em;color:var(--muted)}
+.flow .on .t{color:#e4ff1a}
+.flow b{font-size:19px;line-height:1.45}
+.flow p{font-size:14.5px;color:var(--muted)}
+.flow .on p{color:#a9b3cc}
+@media (min-width:720px){ .flow{grid-template-columns:1fr 1fr 1fr} }
+
+/* service */
+.pillars{display:grid;gap:56px}
+@media (min-width:760px){ .pillars{grid-template-columns:1fr 1fr;gap:48px} }
+.pillar{border-top:4px solid var(--fg);padding-top:28px;display:grid;gap:18px;align-content:start;position:relative}
+.pillar::before{content:"";position:absolute;top:-4px;left:0;width:64px;height:4px;background:var(--accent)}
+.pillar .tag{font-family:var(--f-en);font-size:14px;letter-spacing:.2em;color:var(--muted)}
+.pillar h3{font-size:22px;font-weight:900}
+.pillar .photo{aspect-ratio:16/9;max-width:100%;overflow:hidden;background:var(--soft);clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+.pillar .photo img{width:100%;height:100%;object-fit:cover}
+.pillar p{font-size:15px;color:var(--muted)}
+.pillar ul{margin:0;padding:0;list-style:none;display:grid;gap:12px;font-size:15px}
+.pillar li{display:flex;gap:14px;align-items:flex-start}
+.pillar li::before{content:"";flex:none;width:8px;height:8px;background:var(--accent);box-shadow:0 0 0 1.5px var(--fg);transform:rotate(45deg);margin-top:11px}
+.curr-icons{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.curr-icons div{border:1.5px solid var(--line);padding:18px 6px 14px;display:grid;justify-items:center;gap:10px;text-align:center;font-size:12.5px;font-weight:700;line-height:1.4;min-width:0}
+.curr-icons svg{width:28px;height:28px;color:var(--fg)}
+.kit{margin-top:64px;background:var(--soft);padding:36px 32px;display:grid;gap:20px;border-left:6px solid var(--accent)}
+.kit h3{font-size:18px;font-weight:900}
+.kit ul{margin:0;padding:0;list-style:none;display:grid;gap:14px;font-size:15px}
+@media (min-width:600px){ .kit ul{grid-template-columns:1fr 1fr;column-gap:40px} }
+.kit li{display:flex;gap:12px;align-items:flex-start}
+.kit li::before{content:"✓";color:var(--fg);font-weight:900;flex:none}
+.kit .note{font-size:13px;color:var(--muted)}
+
+/* powers */
+.powers{display:grid;gap:var(--gap)}
+@media (min-width:640px){ .powers{grid-template-columns:1fr 1fr} }
+.power{display:flex;gap:22px;padding:30px 28px;border:2px solid var(--line);background:var(--bg);align-items:flex-start}
+.power .pic{flex:none;width:68px;height:68px;background:#0b1430;color:#e4ff1a;display:grid;place-items:center;clip-path:polygon(18% 0,100% 0,82% 100%,0 100%)}
+.power .pic svg{width:44px;height:44px}
+.power .e{font-family:var(--f-en);font-size:13px;letter-spacing:.2em;color:var(--muted)}
+.power h3{margin:4px 0 10px;font-size:20px;font-weight:900}
+.power p{font-size:14.5px;color:var(--muted)}
+.co-head{margin-top:80px;margin-bottom:28px;display:grid;gap:10px}
+.co-head h3{font-size:21px;font-weight:900}
+.co-head p{font-size:14px;color:var(--muted)}
+.co{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:14px}
+.co div{border:2px solid var(--line);padding:22px 12px 20px;text-align:center;min-width:0;background:var(--bg);transition:border-color .2s,transform .2s}
+.co div:hover{transform:translateY(-3px)}
+.co .n{font-family:var(--f-en);font-weight:700;font-size:30px;color:var(--fg);line-height:1}
+.co .n::after{content:"";display:block;width:20px;height:3px;background:var(--line);margin:12px auto 0}
+.co b{display:block;margin:12px 0 6px;font-size:15px}
+.co span{font-size:12px;color:var(--muted);line-height:1.6;display:block}
+.co div.use{border-color:var(--fg)}
+.co div.use .n::after{width:36px;background:var(--accent)}
+.co-note{font-size:12.5px;color:var(--muted);margin-top:20px}
+
+/* science */
+.loop{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:start;gap:10px;padding:44px 28px;border:2px solid var(--line);background:var(--bg)}
+.loop .nd{text-align:center;display:grid;justify-items:center;gap:12px;min-width:0}
+.loop .nd .ic{width:80px;height:80px;display:grid;place-items:center;background:var(--soft);color:var(--fg);clip-path:polygon(18% 0,100% 0,82% 100%,0 100%);transition:background .4s,color .4s}
+.loop .nd .ic svg{width:44px;height:44px}
+.loop .nd.lit .ic{background:#0b1430;color:#e4ff1a}
+.loop .nd b{font-size:17px}
+.loop .nd p{font-size:12.5px;color:var(--muted);line-height:1.7}
+.loop .ar{color:var(--fg);padding-top:28px;font-family:var(--f-en);font-weight:700;font-size:20px}
+@media (max-width:520px){ .loop{padding:32px 14px;gap:4px} .loop .nd .ic{width:64px;height:64px} .loop .nd .ic svg{width:36px;height:36px} .loop .ar{padding-top:20px;font-size:16px} }
+.evid{display:grid;gap:40px var(--gap);margin-top:56px}
+@media (min-width:760px){ .evid{grid-template-columns:1fr 1fr 1fr;gap:32px} }
+.ev{border-top:3px solid var(--fg);padding-top:26px;display:grid;gap:12px;align-content:start}
+.ev .big{font-size:42px}
+.ev h3{font-size:16.5px}
+.ev p{font-size:14px;color:var(--muted)}
+.ev .src{font-size:11.5px;color:var(--muted);opacity:.85}
+.disclaimer{font-size:12.5px;color:var(--muted);margin-top:36px}
+
+/* scenes */
+.scenes{display:grid;gap:var(--gap)}
+@media (min-width:760px){ .scenes{grid-template-columns:1fr 1fr} }
+.scene{border:2px solid var(--line);padding:32px 30px;display:grid;gap:16px;align-content:start;background:var(--bg);position:relative;overflow:hidden;transition:border-color .2s}
+.scene:hover{border-color:var(--fg)}
+.scene::after{content:"";position:absolute;right:-22px;top:-22px;width:44px;height:44px;background:var(--accent);transform:rotate(45deg)}
+.scene .e{font-family:var(--f-en);font-size:13px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.scene h3{font-size:20px;font-weight:900}
+.scene ul{margin:0;padding:0;list-style:none;display:grid;gap:12px;font-size:15px}
+.scene li{display:flex;gap:14px}
+.scene li::before{content:"";flex:none;width:14px;height:3px;background:var(--fg);margin-top:13px}
+.pains{margin-top:64px;background:#0b1430;color:#ffffff;padding:48px 36px;display:grid;gap:32px;clip-path:polygon(0 0,100% 0,100% calc(100% - 28px),calc(100% - 28px) 100%,0 100%)}
+.pains h3{font-size:22px;font-weight:900}
+.pains h3 .hl{color:#0b1430;background:linear-gradient(transparent 8%,#e4ff1a 8%,#e4ff1a 92%,transparent 92%);padding-inline:6px}
+.pains ul{margin:0;padding:0;list-style:none;display:grid;gap:28px 48px;font-size:15px}
+@media (min-width:640px){ .pains ul{grid-template-columns:1fr 1fr} }
+.pains li{display:flex;gap:14px;align-items:flex-start}
+.pains li::before{content:"✓";color:#e4ff1a;font-weight:900;flex:none;font-size:17px;line-height:1.6}
+.pains li span{color:#a9b3cc;display:block;margin-top:6px;font-size:14px}
+@media (max-width:719px){ .pains{padding:40px 24px} }
+
+/* about */
+.cred{display:grid;gap:36px var(--gap)}
+@media (min-width:600px){ .cred{grid-template-columns:1fr 1fr} }
+@media (min-width:920px){ .cred{grid-template-columns:1fr 1fr 1fr;column-gap:40px} }
+.cr{padding:4px 0 4px 22px;border-left:3px solid var(--line);display:grid;gap:8px;align-content:start;position:relative}
+.cr::before{content:"";position:absolute;left:-3px;top:0;width:3px;height:32px;background:var(--fg)}
+.cr .k{font-family:var(--f-en);font-size:13px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.cr b{font-size:16px}
+.cr p{font-size:14px;color:var(--muted)}
+.parks{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:64px}
+.parks figure{margin:0;min-width:0}
+.parks .ph{aspect-ratio:4/3;max-width:100%;overflow:hidden;background:var(--soft);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
+.parks img{width:100%;height:100%;object-fit:cover}
+.parks figcaption{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+@media (max-width:599px){ .parks{grid-template-columns:1fr 1fr;gap:14px} .parks figure:last-child{grid-column:span 2} }
+.designer{margin-top:64px;background:#0b1430;color:#ffffff;padding:40px 36px;display:grid;gap:14px;position:relative;overflow:hidden}
+.designer::after{content:"";position:absolute;right:-48px;bottom:-48px;width:140px;height:140px;background:#e4ff1a;transform:rotate(45deg)}
+.designer .k{font-family:var(--f-en);font-size:13px;letter-spacing:.2em;color:#e4ff1a;text-transform:uppercase}
+.designer h3{font-size:21px;font-weight:900;position:relative}
+.designer p{font-size:15px;color:#a9b3cc;max-width:640px;position:relative;z-index:1}
+@media (max-width:719px){ .designer{padding:36px 24px 72px} }
+
+/* steps */
+.steps{counter-reset:s;display:grid;gap:0;list-style:none;margin:0;padding:0;max-width:840px}
+.steps li{display:grid;grid-template-columns:72px 1fr;gap:20px;padding:30px 0;border-top:1px solid #cfd5e2}
+.steps li:last-child{border-bottom:1px solid #cfd5e2}
+.steps li::before{counter-increment:s;content:"0" counter(s);font-family:var(--f-en);font-weight:700;font-size:40px;color:transparent;-webkit-text-stroke:1.5px var(--fg);line-height:1}
+.steps b{display:block;font-size:17px;margin-bottom:8px}
+.steps p{font-size:14.5px;color:var(--muted)}
+
+/* contact */
+.contact{background:#0b1430;color:#ffffff;position:relative;overflow:hidden}
+.contact .slash{position:absolute;left:-4%;top:-20%;width:10%;height:140%;background:#e4ff1a;transform:skewX(-18deg);pointer-events:none}
+.contact .wrap{display:grid;gap:48px;padding-block:var(--sec);position:relative}
+.contact .eyebrow{color:#a9b3cc}
+.contact h2{color:#ffffff;margin-top:18px}
+.contact .lead{color:#a9b3cc;margin-top:20px}
+.card{background:#ffffff;color:#0b1430;padding:40px 36px;display:grid;gap:22px;clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
+.card .k{font-family:var(--f-en);font-size:13px;letter-spacing:.2em;color:#5b6479;text-transform:uppercase}
+.card .who{font-size:22px;font-weight:900;line-height:1.4}
+.card .who small{display:block;font-size:12.5px;font-weight:500;color:#5b6479;margin-top:6px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid #0b1430;padding-top:22px}
+.row .lab{font-family:var(--f-en);font-size:13px;color:#5b6479;letter-spacing:.2em;text-transform:uppercase}
+.row .val{font-family:var(--f-en);font-size:34px;font-weight:600;letter-spacing:.03em;user-select:all;color:#0b1430;line-height:1.1;margin-top:4px}
+.copy{font:inherit;font-size:13px;font-weight:700;border:0;background:#e4ff1a;color:#0b1430;padding:12px 20px;cursor:pointer;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.card .hint{font-size:12.5px;color:#5b6479;line-height:1.8}
+@media (min-width:880px){ .contact .wrap{grid-template-columns:1fr 1fr;align-items:center;gap:72px} }
+@media (max-width:879px){ .contact .slash{left:auto;right:-36%;top:-8%;height:32%;width:62%} .card{padding:32px 24px} }
+
+footer{padding-block:40px 56px;font-size:12.5px;color:var(--muted);display:grid;gap:8px}
+
+/* motion */
+.rv{transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.js .rv{opacity:0;transform:translateY(26px)}
+.js .rv.in{opacity:1;transform:none}
+.js .rv.d1{transition-delay:.08s}.js .rv.d2{transition-delay:.16s}.js .rv.d3{transition-delay:.24s}
+@keyframes kb{from{transform:scale(1.04) translate(1%,1%)}to{transform:scale(1.12) translate(-1%,-1%)}}
+.js .hero .photo img{animation:kb 18s ease-in-out infinite alternate}
+@keyframes rise{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.js .hero-copy>*{animation:rise .75s cubic-bezier(.2,.8,.2,1) both}
+.js .hero-copy>*:nth-child(2){animation-delay:.08s}.js .hero-copy>*:nth-child(3){animation-delay:.16s}.js .hero-copy>*:nth-child(4){animation-delay:.24s}
+@keyframes slashIn{from{transform:skewX(-18deg) translateX(60%)}to{transform:skewX(-18deg)}}
+.js .hero .slash{animation:slashIn 1s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion: reduce){
+  .js .rv{opacity:1;transform:none;transition:none}
+  .js .hero .photo img,.js .hero-copy>*,.js .marq .track,.js .picto .tile svg,.js .hero .slash{animation:none}
+  .loop .nd .ic,.picto .tile{transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+
+<!-- pictogram symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="p-climb" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="33" cy="11" r="6"/><path d="M31 19 L29 35"/><path d="M31 21 L39 14 L42 6"/><path d="M30 22 L22 24 L20 16"/><path d="M29 35 L38 40 L37 50"/><path d="M29 35 L25 46 L27 56"/><circle class="prop" cx="44" cy="4" r="2"/><circle class="prop" cx="18" cy="13" r="2"/><circle class="prop" cx="40" cy="53" r="2"/></g></symbol>
+    <symbol id="p-cross" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="32" cy="9" r="6"/><path d="M32 17 L31 33"/><path d="M32 21 L21 23 L12 19"/><path d="M32 21 L43 23 L52 19"/><path d="M31 33 L24 43 L19 51"/><path d="M31 33 L38 42 L43 51"/><path class="prop" d="M12 56 h14 M36 56 h14"/></g></symbol>
+    <symbol id="p-jump" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="32" cy="8" r="6"/><path d="M32 16 L32 31"/><path d="M32 19 L23 11"/><path d="M32 19 L41 11"/><path d="M32 31 L23 35 L27 44"/><path d="M32 31 L41 35 L37 44"/><path class="prop" d="M14 58 h36" stroke-dasharray="4 5"/></g></symbol>
+    <symbol id="p-under" viewBox="0 0 64 64"><g class="pg"><path class="prop" d="M6 24 H58 M10 24 V58 M54 24 V58"/><circle class="hd" cx="19" cy="35" r="6"/><path d="M25 38 L39 41"/><path d="M26 40 L19 48 L16 55"/><path d="M39 41 L44 50 L50 52"/><path d="M39 41 L34 50 L37 56"/></g></symbol>
+    <symbol id="p-bal" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="30" cy="8" r="6"/><path d="M30 16 L31 33"/><path d="M30 20 L17 15"/><path d="M30 20 L44 16"/><path d="M31 33 L31 52"/><path d="M31 33 L42 39 L50 35"/><path class="prop" d="M14 56 H50"/></g></symbol>
+    <symbol id="p-run" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="38" cy="8" r="6"/><path d="M36 16 L30 31"/><path d="M35 19 L43 25 L50 21"/><path d="M35 19 L26 21 L21 28"/><path d="M30 31 L40 39 L38 51"/><path d="M30 31 L22 40 L13 39"/></g></symbol>
+    <symbol id="p-think" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="30" cy="12" r="6"/><path d="M30 20 L30 38"/><path d="M30 24 L21 31"/><path d="M30 24 L38 18 L36 12"/><path d="M30 38 L23 54"/><path d="M30 38 L37 54"/><path class="prop" d="M46 6 q7 0 7 6 t-7 6 M49 24 v1"/></g></symbol>
+    <symbol id="p-heart" viewBox="0 0 64 64"><g class="pg"><circle class="hd" cx="32" cy="9" r="6"/><path d="M32 17 L32 34"/><path d="M32 21 L22 10"/><path d="M32 21 L42 10"/><path d="M32 34 L25 52"/><path d="M32 34 L39 52"/><path class="prop" d="M12 28 l3 -3 l3 3 l-3 3z M46 28 l3 -3 l3 3 l-3 3z"/></g></symbol>
+    <symbol id="p-foot" viewBox="0 0 64 64"><g class="pg" stroke-width="5"><path d="M27 8c8 0 12 9 12 21 0 9-2 13-2 20 0 4-3 7-7 7s-6-4-6-8c0-9 2-13 0-22-2-10-3-18 3-18z"/><circle class="hd" cx="45" cy="10" r="3.5"/><circle class="hd" cx="50" cy="18" r="3"/><circle class="hd" cx="52" cy="26" r="2.6"/></g></symbol>
+    <symbol id="p-brain" viewBox="0 0 64 64"><g class="pg" stroke-width="5"><path d="M32 12c-5-6-16-3-16 5-6 1-8 8-5 13-4 4-3 12 4 13 1 7 9 9 17 5V12zM32 12c5-6 16-3 16 5 6 1 8 8 5 13 4 4 3 12-4 13-1 7-9 9-17 5"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 64 64"><use href="#p-bal"/></svg></div>
+      <div class="name">Balance Athletic<small>日本スケートボーディング連盟（JSF）</small></div>
+    </div>
+    <a class="btn accent" href="#contact">担当者に相談</a>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="slash" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="hero-copy">
+      <div class="eyebrow">法人・施設・園のみなさまへ</div>
+      <h1>自然遊びに代わる、<br><span class="hl">「感覚の貯金」</span><br>プログラム。</h1>
+      <p class="lead">登る・渡る・跳ぶ・くぐる・バランスをとる。自然の中にしかなかった動きを、都市の屋内外で安全に再現する運動プログラムです。アスレチックの現物と、動画つきのカリキュラムをセットで販売しています。</p>
+      <div class="ctas"><a class="btn primary" href="#service">サービス内容を見る <span class="arr">→</span></a><a class="btn" href="#contact">お問い合わせ</a></div>
+    </div>
+    <div class="hero-visual">
+      <div class="photo"><img src="img/studio.jpg" alt="人工芝の上にスラックライン、切り株、クライミングウォールを設置したバランスアスレチックのコース"></div>
+      <div class="badge"><div class="n">5</div><div><b>自然遊びの動きを再現</b><span>登る・渡る・跳ぶ・くぐる・バランス</span></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="picto-band">
+  <div class="wrap">
+    <div class="cap">5 Moves from Nature Play</div>
+    <div class="picto-row" id="pictos">
+      <div class="picto on"><div class="tile"><svg viewBox="0 0 64 64"><use href="#p-climb"/></svg></div><b>登る</b></div>
+      <div class="picto"><div class="tile"><svg viewBox="0 0 64 64"><use href="#p-cross"/></svg></div><b>渡る</b></div>
+      <div class="picto"><div class="tile"><svg viewBox="0 0 64 64"><use href="#p-jump"/></svg></div><b>跳ぶ</b></div>
+      <div class="picto"><div class="tile"><svg viewBox="0 0 64 64"><use href="#p-under"/></svg></div><b>くぐる</b></div>
+      <div class="picto"><div class="tile"><svg viewBox="0 0 64 64"><use href="#p-bal"/></svg></div><b>バランス</b></div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">01</div>
+      <div class="eyebrow">Why now</div>
+      <h2>自然遊びが減った今、<br>その動きを都市で取り戻す。</h2>
+      <p class="lead">自然の中の遊びには、子どもの体と神経を育てる動きがたくさんあります。けれど今の都市では、その機会が少なく、危険も伴います。バランスアスレチックは「動き」だけを取り出し、安全な環境で再現します。</p>
+    </div>
+    <div class="strip rv">
+      <div><div class="big"><span data-count="1985">1985</span></div><b>子どもの体力は、このころがピーク</b><div class="src">文部科学省・スポーツ庁「体力・運動能力調査」</div></div>
+      <div><div class="big"><span data-count="60">60</span><small>分</small></div><b>幼児は毎日60分以上、多様な動きを</b><div class="src">文部科学省「幼児期運動指針」2012年</div></div>
+      <div><div class="big"><span data-count="90">90</span><small>%</small></div><b>脳は6歳ごろまでに大人の約9割に</b><div class="src">Giedd ら 1999／Lenroot &amp; Giedd 2006</div></div>
+    </div>
+    <div class="flow">
+      <div class="st rv"><div class="t">01 NOW</div><b>自然遊びが減った</b><p>近くに自然がない。あっても危険が伴う。外遊びの時間そのものも減っている。</p></div>
+      <div class="st rv d1"><div class="t">02 BUT</div><b>自然の動きは大切</b><p>でこぼこを歩く、登る、渡る。多様な動きが、体と神経の土台になる。</p></div>
+      <div class="st on rv d2"><div class="t">03 SO</div><b>都市で、安全に再現</b><p>天候や場所を選ばず、大人の目が届く範囲で、同じ動きを経験できる。</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="marq" aria-hidden="true"><div class="track"><span>Climb</span><span>Cross</span><span>Jump</span><span>Crawl</span><span>Balance</span><span>Balance Athletic</span><span>Climb</span><span>Cross</span><span>Jump</span><span>Crawl</span><span>Balance</span><span>Balance Athletic</span></div></div>
+
+<section class="sec" id="service">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">02</div>
+      <div class="eyebrow">What we offer</div>
+      <h2>販売するのは、<br><span class="hl">「現物」と「カリキュラム」</span>のセット。</h2>
+      <p class="lead">遊具を置くだけでは、運動プログラムになりません。コースの現物と、使い方を伝えるカリキュラム（マニュアル・動画・検定）を一緒にお届けします。先生やスタッフだけで、すぐに運営を始められます。</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar rv">
+        <div class="tag">01 EQUIPMENT</div>
+        <h3>アスレチックの現物</h3>
+        <div class="photo"><img src="img/studio.jpg" alt="バランスアスレチックの遊具一式"></div>
+        <p>足の裏への刺激を最大化するよう設計された遊具セット。屋内・屋外のどちらにも設置できます。</p>
+        <ul><li>スラックライン、切り株・丸太、平均台</li><li>クライミングホールド、三角ブロック</li><li>人工芝など、足裏の感覚を変える足場</li></ul>
+      </div>
+      <div class="pillar rv d1">
+        <div class="tag">02 CURRICULUM</div>
+        <h3>カリキュラム（マニュアル・動画・検定）</h3>
+        <div class="curr-icons">
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>マニュアル</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M10 9l5 3-5 3z"/></svg>解説動画</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg>検定</div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M18 14c2 .8 3 3 3 6"/></svg>スタッフ資料</div>
+        </div>
+        <p>コースの配置は同じまま、「渡り方」で難易度を変えます。幼児から小学生まで、同じコースで段階的に取り組めます。</p>
+        <ul><li>使い方マニュアル：渡り方と難易度、年齢別の目安</li><li>解説動画：渡り方と声かけを映像で確認</li><li>検定：段階ごとの合格基準で「できた」を見える化</li><li>スタッフ向け説明資料：安全ルール、運営の流れ、トーク例</li></ul>
+      </div>
+    </div>
+    <div class="kit rv">
+      <h3>セットに含まれるもの</h3>
+      <ul><li>アスレチック遊具一式</li><li>使い方マニュアル</li><li>渡り方の解説動画</li><li>検定（級と合格基準）</li><li>スタッフ向け説明資料</li><li>導入時のレクチャー（ご相談）</li></ul>
+      <p class="note">内容と構成は、設置場所・対象年齢・ご予算に合わせてご提案します。イベントへの体験出展も行っています。</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec soft" id="benefits">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">03</div>
+      <div class="eyebrow">Benefits</div>
+      <h2>遊びながら育つ、<br>4つの力と7つの能力。</h2>
+      <p class="lead">一つのスポーツに特化する前に、多様な動きを経験する。好きなことが見つかったとき、自由に力を引き出せる身体の土台をつくります。小さいころに貯めた動きと感覚の経験を、私たちは「感覚の貯金」と呼んでいます。</p>
+    </div>
+    <div class="powers">
+      <div class="power rv"><div class="pic"><svg viewBox="0 0 64 64"><use href="#p-run"/></svg></div><div><div class="e">MOTOR</div><h3>運動能力</h3><p>バランス感覚、体幹・姿勢、ジャンプ力、敏捷性・協調性</p></div></div>
+      <div class="power rv d1"><div class="pic"><svg viewBox="0 0 64 64"><use href="#p-think"/></svg></div><div><div class="e">COGNITIVE</div><h3>認知機能</h3><p>集中力・判断力、空間認識力、記憶力、次の一歩を考える力</p></div></div>
+      <div class="power rv"><div class="pic"><svg viewBox="0 0 64 64"><use href="#p-bal"/></svg></div><div><div class="e">SENSORY</div><h3>感覚機能</h3><p>足裏の刺激、触覚・前庭覚（傾きや揺れの感覚）、身体のコントロール、自己認識</p></div></div>
+      <div class="power rv d1"><div class="pic"><svg viewBox="0 0 64 64"><use href="#p-heart"/></svg></div><div><div class="e">NON-COGNITIVE</div><h3>非認知能力</h3><p>挑戦する力、やり抜く力、自己肯定感、社会性</p></div></div>
+    </div>
+    <div class="co-head rv">
+      <h3>土台になる「7つのコーディネーション能力」</h3>
+      <p>黒い枠は、バランスアスレチックで主に使う能力です。</p>
+    </div>
+    <div class="co rv">
+      <div class="use"><div class="n">1</div><b>リズム</b><span>動くタイミングをつかむ</span></div>
+      <div class="use"><div class="n">2</div><b>バランス</b><span>崩れた姿勢を立て直す</span></div>
+      <div class="use"><div class="n">3</div><b>変換</b><span>動きを素早く切り替える</span></div>
+      <div><div class="n">4</div><b>反応</b><span>合図にすぐ反応する</span></div>
+      <div><div class="n">5</div><b>連結</b><span>体全体をなめらかに</span></div>
+      <div class="use"><div class="n">6</div><b>定位</b><span>自分と物の位置をつかむ</span></div>
+      <div><div class="n">7</div><b>識別</b><span>道具を上手に操る</span></div>
+    </div>
+    <p class="co-note rv">7つのコーディネーション能力：旧東ドイツのスポーツ科学（Blume）による分類。</p>
+  </div>
+</section>
+
+<section class="sec" id="science">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">04</div>
+      <div class="eyebrow">Science</div>
+      <h2>足の裏は、<br><span class="hl">からだのセンサー。</span></h2>
+      <p class="lead">でこぼこの上を歩くとき、子どもの足の裏と脳は大忙しです。感じて、考えて、動く。そのくり返しが、遊びの中で何百回も起こります。</p>
+    </div>
+    <div class="loop rv" id="loop">
+      <div class="nd lit"><div class="ic"><svg viewBox="0 0 64 64"><use href="#p-foot"/></svg></div><b>感じる</b><p>足の裏が、地面の硬さ・傾き・重心を感じとる</p></div>
+      <div class="ar" aria-hidden="true">→</div>
+      <div class="nd"><div class="ic"><svg viewBox="0 0 64 64"><use href="#p-brain"/></svg></div><b>考える</b><p>脳が、目や耳の奥の感覚と合わせて姿勢を判断する</p></div>
+      <div class="ar" aria-hidden="true">→</div>
+      <div class="nd"><div class="ic"><svg viewBox="0 0 64 64"><use href="#p-bal"/></svg></div><b>動く</b><p>体幹や足首をこまかく調整して、バランスをとる</p></div>
+    </div>
+    <div class="evid">
+      <div class="ev rv"><div class="big">足裏</div><h3>足の裏は、バランスをとるための「力の地図」</h3><p>足の裏には圧力や振動を感じる受容器が多くあり、脳はその情報で体の傾きを立て直しています。足裏の一部を刺激すると、体がその反対方向へ傾くことも実験で確かめられています。</p><div class="src">Kavounoudias A, Roll R, Roll JP. NeuroReport, 1998</div></div>
+      <div class="ev rv d1"><div class="big">90<small>%</small></div><h3>脳の大きさは、6歳ごろまでに大人の約9割に</h3><p>幼児期は脳がもっとも急速に育つ時期です。このころにいろいろな動きと感覚を経験しておくことが大切だと考えられています。小学生以降も力は伸び続けます。</p><div class="src">MRI研究：Giedd JN ら 1999／Lenroot RK &amp; Giedd JN 2006</div></div>
+      <div class="ev rv d2"><div class="big">23<small>研究</small></div><h3>考えながら動く運動は、集中力や記憶にも</h3><p>「この順番で渡る」のように頭を使いながら体を動かす運動は、我慢する力や覚えておく力（実行機能）を高めると報告されています。</p><div class="src">子ども〜思春期の2,857人を対象としたメタ分析（Frontiers in Psychology, 2024）</div></div>
+    </div>
+    <p class="disclaimer rv">研究に基づく一般的な説明であり、効果を保証するものではありません。</p>
+  </div>
+</section>
+
+<section class="sec soft" id="scenes">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">05</div>
+      <div class="eyebrow">Where it works</div>
+      <h2>どんな施設で、<br>どんなときに使われるのか。</h2>
+      <p class="lead">配置を変えずに渡り方で難易度を調整できるので、年齢や経験の差があるグループでも、同じコースで一緒に取り組めます。屋内にも置けるため、天候に左右されません。</p>
+    </div>
+    <div class="scenes">
+      <div class="scene rv"><div class="e">Commercial</div><h3>商業施設・ショッピングモール</h3><ul><li>親子連れの集客と滞在時間の確保</li><li>雨天時のイベント代替、季節イベントの体験コーナー</li><li>キッズスペースの常設コンテンツ</li></ul></div>
+      <div class="scene rv d1"><div class="e">Municipal</div><h3>自治体・公共施設</h3><ul><li>スポーツイベント、子育て支援施設の運動プログラム</li><li>健康づくり・子どもの体力向上の施策</li><li>公園や体育館への期間限定設置</li></ul></div>
+      <div class="scene rv"><div class="e">Kindergarten</div><h3>幼稚園・保育園・こども園</h3><ul><li>園庭が狭い、またはない園の運動あそび</li><li>雨の日・猛暑日の屋内プログラム</li><li>運動の専門職がいなくても、先生だけで運営できる</li></ul></div>
+      <div class="scene rv d1"><div class="e">School / Corporate</div><h3>学校・学童・企業</h3><ul><li>低学年の体育の補助教材、学童保育のプログラム</li><li>社員と家族のイベント、健康経営の取り組み</li><li>地域貢献・CSR活動の体験ブース</li></ul></div>
+    </div>
+    <div class="pains rv">
+      <h3>こんな課題があるときに、<span class="hl">効果を発揮します</span></h3>
+      <ul>
+        <li><div><b>雨や暑さで、外で遊べない日が多い</b><span>屋内に設置できるので、天候に関係なく実施できます。</span></div></li>
+        <li><div><b>園庭や広場が狭い</b><span>限られたスペースでも、多様な動きを引き出せる配置です。</span></div></li>
+        <li><div><b>運動を教えられる人がいない</b><span>マニュアルと動画があるので、先生やスタッフだけで始められます。</span></div></li>
+        <li><div><b>年齢や運動経験がバラバラ</b><span>同じコースで、渡り方を変えて難易度を調整できます。</span></div></li>
+        <li><div><b>一度きりのイベントで終わってしまう</b><span>検定で「次の目標」が見えるので、継続的な運動習慣につながります。</span></div></li>
+        <li><div><b>子どもの体力低下が気になる</b><span>幼児期に多様な動きを経験することが、国の指針でも勧められています。</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="about">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">06</div>
+      <div class="eyebrow">Who we are</div>
+      <h2>日本代表の育成から、<br>子どもの運動教育まで。</h2>
+      <p class="lead">運営は、一般社団法人 日本スケートボーディング連盟（JSF）です。国や競技団体、学校と連携しながら、トップアスリートの育成と、子どもの運動教育の両方に取り組んでいます。</p>
+    </div>
+    <div class="cred">
+      <div class="cr rv"><div class="k">JOC</div><b>JOC加盟協力団体</b><p>日本オリンピック委員会公認団体ワールドスケートジャパンの協力団体として、国の育成方針を共有。</p></div>
+      <div class="cr rv d1"><div class="k">Sports Agency</div><b>競技別強化拠点（NTC）認定</b><p>ブルボンスケートパーク村上が2023年度にスポーツ庁の認定を受ける。スケートボードでは日本で唯一。</p></div>
+      <div class="cr rv d2"><div class="k">Team Japan</div><b>日本代表を支える体制</b><p>平野英功氏が2023年度からスケートボード日本代表のハイパフォーマンスディレクターを務める。</p></div>
+      <div class="cr rv"><div class="k">JSPO</div><b>公認指導者資格</b><p>日本スポーツ協会公認のスケートボード指導者育成資格（コーチ1・3）を構築。</p></div>
+      <div class="cr rv d1"><div class="k">JSC</div><b>選手の発掘・育成事業を受託</b><p>J-STAR事業、アスリート育成パスウェイ構築支援事業、JISS（国立スポーツ科学センター）との動作解析連携。</p></div>
+      <div class="cr rv d2"><div class="k">Education</div><b>学校・専門学校との連携</b><p>開志創造高等学校、開志国際高等学校、国際スノーボード＆スケートボード専門学校、新潟医療福祉大学ほか。</p></div>
+    </div>
+    <div class="parks rv">
+      <figure><div class="ph"><img src="img/park1.jpg" alt="ブルボンスケートパーク村上の屋内ボウル"></div><figcaption>ブルボンスケートパーク村上（2019年〜）</figcaption></figure>
+      <figure><div class="ph"><img src="img/park2.jpg" alt="AIRMANスケートパークの全景"></div><figcaption>AIRMAN スケートパーク（2023年〜）</figcaption></figure>
+      <figure><div class="ph"><img src="img/snow.jpg" alt="村上スノーリサーチ＆トレーニングセンターのジャンプ台"></div><figcaption>村上スノーリサーチ＆トレーニングセンター（2024年〜）</figcaption></figure>
+    </div>
+    <div class="designer rv">
+      <div class="k">Course design</div>
+      <h3>コース設計：三浦豪太氏と共同</h3>
+      <p>バランスアスレチックのコースは、プロスキーヤーで登山家の三浦豪太氏（三浦雄一郎氏の次男）とともに、「足の裏への刺激をいかに最大化するか」を軸に設計しました。配置は同じまま、渡り方で難易度を変える考え方も、この設計から生まれています。</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec soft" id="flow">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-no" aria-hidden="true">07</div>
+      <div class="eyebrow">How to start</div>
+      <h2>導入までの流れ（目安）</h2>
+      <p class="lead">まずは、設置したい場所と対象のお子さまの年齢を教えてください。内容と構成を一緒に決めていきます。</p>
+    </div>
+    <ol class="steps">
+      <li class="rv"><div><b>お問い合わせ</b><p>下の連絡先から担当者へ。「どこで」「誰に」「何のために」の3点があれば十分です。</p></div></li>
+      <li class="rv"><div><b>ヒアリング</b><p>設置場所の広さ、屋内か屋外か、対象年齢、運営する人数を確認します。</p></div></li>
+      <li class="rv"><div><b>ご提案・お見積り</b><p>遊具の構成とカリキュラムの内容をご提案します。イベント出展も、この段階でご相談ください。</p></div></li>
+      <li class="rv"><div><b>納品・設置・レクチャー</b><p>設置とあわせて、安全ルールと渡り方のレクチャーを行います。</p></div></li>
+      <li class="rv"><div><b>運用開始</b><p>マニュアルと動画で、先生やスタッフだけで運営できます。検定で継続の目標をつくります。</p></div></li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<section class="contact" id="contact">
+  <div class="slash" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Contact</div>
+      <h2>詳しくは、<br>担当者におつなぎします。</h2>
+      <p class="lead">導入のご相談、お見積り、イベントへの体験出展、資料のご請求は、担当の牛嶋までご連絡ください。園・施設の見学や、体験会の実施もご相談いただけます。</p>
+    </div>
+    <div class="card rv d1">
+      <div class="k">Person in charge</div>
+      <div class="who">牛嶋 彪<small>うしじま ひょう｜一般社団法人 日本スケートボーディング連盟</small></div>
+      <div class="row"><div><div class="lab">Tel</div><div class="val" id="tel">080-1881-6093</div></div><button class="copy" type="button" data-copy="080-1881-6093">番号をコピー</button></div>
+      <p class="hint">お電話がつながらない場合は、お名前・ご所属・ご希望の連絡先を留守番電話にお残しください。折り返しご連絡します。</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div>© 一般社団法人 日本スケートボーディング連盟（JSF）｜バランスアスレチック「感覚の貯金」プログラム</div>
+  <div>本ページの研究に関する記述は一般的な説明であり、効果を保証するものではありません。</div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  root.classList.add('js');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // reveal on scroll; everything becomes visible even if the observer never fires
+  var items=[].slice.call(document.querySelectorAll('.rv'));
+  function showAll(){ items.forEach(function(el){ el.classList.add('in'); }); }
+  if('IntersectionObserver' in window && !reduce){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{rootMargin:'0px 0px -8% 0px',threshold:.08});
+    items.forEach(function(el){ io.observe(el); });
+    setTimeout(showAll,2500);
+  } else { showAll(); }
+
+  // counters
+  var nums=[].slice.call(document.querySelectorAll('[data-count]'));
+  function run(el){
+    var end=parseInt(el.getAttribute('data-count'),10), t0=null, dur=1400;
+    function step(ts){ if(!t0)t0=ts; var p=Math.min(1,(ts-t0)/dur); var e=1-Math.pow(1-p,3); el.textContent=Math.round(end*e); if(p<1)requestAnimationFrame(step); else el.textContent=end; }
+    requestAnimationFrame(step);
+  }
+  if('IntersectionObserver' in window && !reduce){
+    var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(e.target); io2.unobserve(e.target);} }); },{threshold:.5});
+    nums.forEach(function(el){ io2.observe(el); });
+  }
+
+  // cycle highlights: pictogram row and sense → think → move
+  function cycle(sel,cls,ms){
+    var els=[].slice.call(document.querySelectorAll(sel)); if(!els.length||reduce) return;
+    var i=0; setInterval(function(){ els[i].classList.remove(cls); i=(i+1)%els.length; els[i].classList.add(cls); },ms);
+  }
+  cycle('#pictos .picto','on',1200);
+  cycle('#loop .nd','lit',1400);
+
+  // copy phone number
+  [].forEach.call(document.querySelectorAll('.copy'),function(btn){
+    btn.addEventListener('click',function(){
+      var v=btn.getAttribute('data-copy'), old=btn.textContent;
+      function done(ok){ btn.textContent= ok?'コピーしました':'長押しで選択してください'; setTimeout(function(){btn.textContent=old;},1800); }
+      function sel(){ var t=document.getElementById('tel'); if(t&&window.getSelection){ var r=document.createRange(); r.selectNodeContents(t); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);} done(false); }
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(function(){done(true)},sel); } else { sel(); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
