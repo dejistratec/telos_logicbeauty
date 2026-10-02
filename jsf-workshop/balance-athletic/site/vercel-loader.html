@@ -1,0 +1,10 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>t</title></head><body><div class="ld">loading</div>
+<script>
+(function(){
+  var B='https://raw.githubusercontent.com/dejistratec/telos_logicbeauty/4896842826633ec4790878efd2d4ffb317075409/jsf-workshop/balance-athletic/site/';
+  fetch(B+'index.html',{cache:'force-cache'}).then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); }).then(function(html){
+    html=html.replace(/src="img\//g,'src="'+B+'img/');
+    document.open(); document.write(html); document.close();
+  }).catch(function(e){ document.querySelector('.ld').textContent='ERR '+e; });
+})();
+</script></body></html>
