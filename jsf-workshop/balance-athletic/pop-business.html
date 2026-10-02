@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>法人向けQR POP</title>
+<link rel="stylesheet" href="fonts2/fonts.css">
+<style>
+:root{--ai:#18264a;--ai2:#2c3d6b;--tint:#eef1f7;--tint2:#d5dcea;--ink:#1b2236;--gray:#6b7385;--line:#cfd6e4;--acc:#d9a521}
+*{box-sizing:border-box}
+body{margin:0;background:#3a3f4a;font-family:"Zen Kaku Gothic New",sans-serif;color:var(--ink)}
+.page{width:210mm;height:297mm;margin:16px auto;background:#fff;position:relative;overflow:hidden;padding:12mm 13mm 0;display:flex;flex-direction:column}
+.hdr{display:flex;justify-content:space-between;align-items:baseline;font-family:Montserrat;font-size:8pt;letter-spacing:.32em;color:var(--gray);padding-bottom:3mm;border-bottom:.3mm solid var(--ai)}
+.hdr b{color:var(--ai);font-weight:700}
+.ftr{margin-top:auto;display:flex;justify-content:space-between;align-items:center;border-top:.3mm solid var(--line);padding:2.5mm 0 6mm;font-size:7.3pt;color:var(--gray)}
+.ftr b{color:var(--ai);font-weight:700;letter-spacing:.05em}
+.kicker{font-family:Montserrat;font-weight:500;font-size:8.5pt;letter-spacing:.3em;color:var(--acc);margin-top:5mm}
+h1{font-weight:700;font-size:24pt;line-height:1.3;letter-spacing:.04em;margin:2mm 0 3mm;color:var(--ai)}
+.lead{font-size:9.8pt;line-height:1.75;color:var(--gray);margin:0}
+.qrwrap{margin-top:4mm;display:grid;grid-template-columns:52mm 1fr;gap:7mm;align-items:center;border-top:.3mm solid var(--ai);border-bottom:.25mm solid var(--line);padding:4mm 0}
+.qr{width:52mm;height:52mm;padding:3mm;border:.3mm solid var(--line);background:#fff}
+.qr svg{width:100%;height:100%;display:block}
+.qrtext .t{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:var(--acc);font-weight:500}
+.qrtext h2{margin:1.5mm 0 2mm;font-size:17pt;color:var(--ai);line-height:1.35}
+.qrtext p{margin:0;font-size:9.5pt;line-height:1.75;color:var(--ink)}
+.qrtext .url{margin-top:3mm;font-family:Montserrat;font-size:7pt;color:var(--gray);word-break:break-all;letter-spacing:.02em;line-height:1.5}
+.sec{display:flex;align-items:center;gap:3mm;margin:5mm 0 2mm;font-weight:700;font-size:12pt;color:var(--ai);letter-spacing:.06em}
+.sec .n{font-family:Montserrat;font-weight:300;font-size:9pt;color:var(--gray);letter-spacing:.2em}
+.sec::after{content:"";flex:1;height:.25mm;background:var(--line)}
+.toc{display:grid;grid-template-columns:1fr 1fr;column-gap:6mm}
+.toc>div{display:grid;grid-template-columns:8mm 1fr;gap:1.5mm;padding:1.5mm 0;border-bottom:.25mm solid var(--line);align-items:start}
+.toc>div>div{display:block;min-width:0}
+.toc .n{font-family:Montserrat;font-weight:300;font-size:12pt;color:var(--ai);line-height:1.1}
+.toc b{display:block;font-size:9.5pt;color:var(--ai);line-height:1.4;margin-bottom:.5mm}
+.toc span{font-size:7.8pt;color:var(--gray);line-height:1.45}
+.pillars{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:1mm}
+.pl{border-top:.8mm solid var(--ai);padding-top:3mm}
+.pl .t{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:var(--acc);font-weight:500}
+.pl h3{margin:1mm 0 1.5mm;font-size:12.5pt;color:var(--ai)}
+.pl p{margin:0;font-size:8.5pt;line-height:1.6}
+.cta{display:grid;grid-template-columns:1fr auto;gap:5mm;align-items:center;background:var(--ai);color:#fff;padding:4mm 6mm;margin-top:5mm}
+.cta .t{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:#aab6d3}
+.cta h3{margin:1mm 0 1.5mm;font-size:13pt;font-weight:700}
+.cta p{margin:0;font-size:8.8pt;line-height:1.7;color:#dfe5f2}
+.cta .tel{font-family:Montserrat;font-weight:600;font-size:16pt;letter-spacing:.04em;color:#fff;text-align:right;line-height:1.2}
+.cta .tel small{display:block;font-family:"Zen Kaku Gothic New";font-weight:400;font-size:7.5pt;color:#aab6d3;letter-spacing:.1em}
+@media print{@page{size:A4;margin:0} body{background:none} .page{margin:0} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<section class="page">
+  <div class="hdr"><span><b>BALANCE ATHLETIC</b>　法人・施設・園のみなさまへ</span><span>FOR BUSINESS</span></div>
+  <div class="kicker">INTRODUCTION</div>
+  <h1>導入をご検討の<br>企業・施設・園のみなさまへ。</h1>
+  <p class="lead">バランスアスレチックの販売内容、期待できる効果、活用シーン、運営団体、導入の流れを1ページにまとめました。<br>スマートフォンでQRコードを読み取ると、その場でご覧いただけます。</p>
+
+  <div class="qrwrap">
+    <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" width="330" height="330" class="segno"><path transform="scale(10)" class="qrline" stroke="#18264a" d="M0 0.5h7m4 0h3m2 0h5m2 0h1m2 0h7m-33 1h1m5 0h1m2 0h3m1 0h3m1 0h1m3 0h1m2 0h1m1 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m3 0h2m1 0h2m4 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m4 0h1m1 0h1m3 0h3m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h2m3 0h1m1 0h2m2 0h1m4 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h2m1 0h1m1 0h4m1 0h1m1 0h3m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m6 0h1m5 0h3m-24 1h1m1 0h5m2 0h7m1 0h1m2 0h1m2 0h2m1 0h5m-24 1h2m1 0h3m2 0h2m1 0h4m1 0h1m2 0h2m1 0h3m-32 1h5m1 0h5m4 0h2m1 0h1m7 0h1m1 0h1m1 0h2m-23 1h1m1 0h2m1 0h3m2 0h1m1 0h1m3 0h1m2 0h3m1 0h1m-33 1h1m1 0h2m1 0h3m3 0h2m2 0h1m2 0h1m5 0h2m3 0h1m-30 1h1m1 0h4m2 0h1m1 0h3m1 0h3m3 0h1m1 0h2m1 0h1m3 0h4m-32 1h3m1 0h3m2 0h1m1 0h2m3 0h1m1 0h1m2 0h1m2 0h5m1 0h1m-32 1h1m1 0h4m3 0h2m1 0h1m3 0h1m1 0h4m1 0h4m3 0h1m-31 1h3m1 0h1m1 0h1m2 0h1m2 0h3m2 0h1m1 0h2m1 0h2m1 0h1m1 0h3m2 0h1m-33 1h1m2 0h2m2 0h3m1 0h3m1 0h7m1 0h1m2 0h2m1 0h2m-29 1h1m1 0h1m1 0h1m3 0h8m2 0h1m1 0h1m2 0h1m1 0h2m1 0h2m-32 1h2m3 0h1m1 0h1m1 0h1m1 0h3m2 0h3m2 0h1m2 0h1m2 0h5m-32 1h1m1 0h2m2 0h2m4 0h2m2 0h1m4 0h2m1 0h1m3 0h2m2 0h1m-33 1h1m2 0h1m1 0h1m4 0h4m1 0h1m2 0h1m2 0h3m1 0h2m5 0h1m-33 1h1m1 0h2m2 0h2m1 0h3m2 0h3m1 0h1m2 0h1m2 0h1m2 0h1m1 0h3m-32 1h1m2 0h1m1 0h1m2 0h2m1 0h2m2 0h1m5 0h2m1 0h8m-32 1h1m2 0h1m2 0h4m5 0h1m1 0h1m4 0h9m-23 1h1m1 0h2m2 0h1m3 0h4m2 0h1m3 0h1m1 0h3m-33 1h7m2 0h1m2 0h1m1 0h2m2 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h2m-32 1h1m5 0h1m1 0h1m1 0h1m2 0h1m1 0h2m2 0h3m1 0h2m3 0h4m-32 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h3m2 0h2m2 0h1m1 0h6m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h3m7 0h2m2 0h5m-33 1h1m1 0h3m1 0h1m1 0h1m2 0h3m3 0h2m1 0h2m1 0h1m2 0h2m1 0h2m-31 1h1m5 0h1m2 0h1m1 0h3m2 0h1m2 0h5m1 0h1m2 0h3m-31 1h7m1 0h2m2 0h1m3 0h2m5 0h2m2 0h1m3 0h1"/></svg>
+</div>
+    <div class="qrtext">
+      <div class="t">SCAN TO READ</div>
+      <h2>法人向けご案内ページ</h2>
+      <p>カメラをかざすだけで開きます。<br>お持ち帰り後も、同じQRコードから何度でもご確認いただけます。</p>
+      <div class="url">https://claude.ai/artifact/EJfiyBW9UhvYT4xkoHB6Pg</div>
+    </div>
+  </div>
+
+  <div class="sec"><span class="n">CONTENTS</span>ページでわかること</div>
+  <div class="toc">
+    <div><div class="n">1</div><div><b>なぜ、いま必要なのか</b><span>自然遊びの減少と、子どもの体力・脳の発達に関するデータ</span></div></div>
+    <div><div class="n">2</div><div><b>販売内容</b><span>アスレチックの現物と、マニュアル・動画・検定を含むカリキュラム</span></div></div>
+    <div><div class="n">3</div><div><b>期待できる効果</b><span>運動・認知・感覚・非認知の4つの力と、7つのコーディネーション能力</span></div></div>
+    <div><div class="n">4</div><div><b>科学的な背景</b><span>足の裏の感覚とバランス、幼児期の脳の発達に関する研究</span></div></div>
+    <div><div class="n">5</div><div><b>活用シーンと効果を発揮する場面</b><span>商業施設、自治体、幼稚園・保育園、学校・企業</span></div></div>
+    <div><div class="n">6</div><div><b>運営団体と導入の流れ</b><span>日本スケートボーディング連盟の体制、コース設計、お問い合わせから運用開始まで</span></div></div>
+  </div>
+
+  <div class="sec"><span class="n">SERVICE</span>販売するのは、現物とカリキュラムのセット</div>
+  <div class="pillars">
+    <div class="pl"><div class="t">01 EQUIPMENT</div><h3>アスレチックの現物</h3><p>三浦豪太氏と共同で、足の裏への刺激を最大化するよう設計した遊具セット。屋内・屋外のどちらにも設置できます。</p></div>
+    <div class="pl"><div class="t">02 CURRICULUM</div><h3>カリキュラム（マニュアル・動画・検定）</h3><p>配置は同じまま、渡り方で難易度を変える使い方マニュアルと解説動画、段階ごとの検定。先生やスタッフだけで運営できます。</p></div>
+  </div>
+
+  <div class="cta">
+    <div><div class="t">CONTACT</div><h3>詳しくは、担当者におつなぎします。</h3><p>導入のご相談、お見積り、イベントへの体験出展、資料のご請求はこちらへ。<br>担当：牛嶋 彪（うしじま ひょう）｜一般社団法人 日本スケートボーディング連盟</p></div>
+    <div class="tel">080-1881-6093<small>TEL</small></div>
+  </div>
+
+  <div class="ftr"><span>コース設計：三浦豪太氏と共同｜研究に関する記述は一般的な説明であり、効果を保証するものではありません。</span><b>JSF｜BALANCE ATHLETIC</b></div>
+</section>
+</body>
+</html>
