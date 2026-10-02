@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POPデザインスタイル見本</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#2a2f3a;font-family:"Noto Sans JP",sans-serif}
+.page{width:210mm;height:297mm;margin:16px auto;position:relative;overflow:hidden}
+.label{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.82);color:#fff;font:700 13pt "Noto Sans JP";padding:3mm 6mm;z-index:50;display:flex;justify-content:space-between;align-items:center}
+.label small{font-weight:400;font-size:9.5pt;opacity:.85}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* 1 corporate */
+.s1{background:#f4f6fa;font-family:"Noto Sans JP"}
+.s1 .hero{height:130mm;position:relative}
+.s1 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(16,34,63,.97) 88%)}
+.s1 .t{position:absolute;left:12mm;bottom:9mm;color:#fff;z-index:2}
+.s1 h1{font-size:46pt;font-weight:900;line-height:1.1;margin:0 0 2mm}
+.s1 .sub{color:#ffd400;font-weight:900;font-size:15pt}
+.s1 .copy{background:#d0182e;color:#fff;font-weight:900;font-size:21pt;text-align:center;padding:5mm}
+.s1 .mv{display:grid;grid-template-columns:repeat(5,1fr);gap:3mm;padding:9mm 12mm}
+.s1 .mv span{background:#10223f;color:#fff;font-weight:900;font-size:14pt;text-align:center;padding:5mm 0;border-radius:4mm}
+.s1 p{margin:0 12mm;font-size:12pt;line-height:1.8;color:#1d2433}
+
+/* 2 kids pop */
+.s2{background:#ffe23d;font-family:"M PLUS Rounded 1c"}
+.s2::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#fff 2.2mm,transparent 2.4mm) 0 0/14mm 14mm;opacity:.45}
+.s2 .in{position:relative;padding:12mm 10mm}
+.s2 .burst{position:absolute;right:8mm;top:10mm;width:42mm;height:42mm;background:#ff3d6e;color:#fff;display:grid;place-items:center;text-align:center;font-weight:900;font-size:13pt;line-height:1.25;clip-path:polygon(50% 0,61% 13%,77% 6%,79% 23%,96% 25%,89% 41%,100% 54%,86% 64%,91% 81%,74% 82%,67% 98%,52% 88%,37% 99%,30% 83%,13% 85%,15% 68%,0 58%,11% 45%,3% 29%,20% 25%,22% 8%,38% 14%);transform:rotate(8deg)}
+.s2 .kick{display:inline-block;background:#1b4fd8;color:#fff;font-weight:900;font-size:13pt;padding:1.5mm 5mm;border-radius:99px;transform:rotate(-3deg)}
+.s2 h1{font-weight:900;font-size:50pt;line-height:1.05;margin:5mm 0 2mm;color:#1b4fd8;-webkit-text-stroke:2.4mm #fff;paint-order:stroke fill;text-shadow:1.5mm 1.5mm 0 #1b2b6b}
+.s2 .sub{font-weight:900;font-size:15pt;color:#1b2b6b;background:#fff;display:inline-block;padding:1.5mm 4mm;border-radius:3mm}
+.s2 .photo{margin:7mm 0 5mm;height:82mm;border:2.4mm solid #fff;border-radius:8mm;overflow:hidden;box-shadow:2mm 2mm 0 #1b2b6b;transform:rotate(-1.5deg)}
+.s2 .mv{display:grid;grid-template-columns:repeat(5,1fr);gap:2.5mm}
+.s2 .mv span{border-radius:50%;aspect-ratio:1;display:grid;place-items:center;color:#fff;font-weight:900;font-size:13pt;box-shadow:1mm 1mm 0 #1b2b6b}
+.s2 .copy{margin-top:6mm;background:#ff3d6e;color:#fff;font-weight:900;font-size:20pt;text-align:center;padding:4mm;border-radius:6mm;box-shadow:1.5mm 1.5mm 0 #1b2b6b}
+
+/* 3 picture book */
+.s3{background:#fff9f0;font-family:"Zen Maru Gothic"}
+.s3 .in{padding:14mm 12mm;text-align:center}
+.s3 .kick{font-family:Yomogi;font-size:15pt;color:#e98a6b}
+.s3 h1{font-weight:900;font-size:42pt;color:#5b8fb9;margin:3mm 0;letter-spacing:.05em}
+.s3 .sub{font-size:13.5pt;color:#7a6a5a;font-weight:700}
+.s3 .frame{margin:8mm auto 6mm;width:150mm;height:95mm;border-radius:48% 52% 45% 55%/55% 45% 55% 45%;overflow:hidden;border:2mm solid #f6d6c3;box-shadow:0 0 0 2mm #fff,0 0 0 3mm #f6d6c3}
+.s3 .mv{display:flex;justify-content:center;gap:3mm;flex-wrap:wrap}
+.s3 .mv span{font-family:Yomogi;font-size:15pt;padding:2mm 5mm;border:.7mm dashed currentColor;border-radius:99px}
+.s3 .copy{font-family:Yomogi;font-size:24pt;color:#5b8fb9;margin-top:9mm}
+.s3 .deco{position:absolute;font-size:20pt}
+
+/* 4 natural forest */
+.s4{background:#d9c7a3;font-family:"Kiwi Maru"}
+.s4::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(0,0,0,.025) 0 1px,transparent 1px 4px),radial-gradient(circle at 30% 20%,rgba(255,255,255,.25),transparent 60%)}
+.s4 .in{position:relative;padding:14mm 13mm}
+.s4 .kick{color:#3f6b3a;font-size:12pt;letter-spacing:.2em}
+.s4 h1{font-weight:500;font-size:44pt;color:#2f4a2b;margin:3mm 0 2mm;line-height:1.15}
+.s4 .sub{color:#5c4a32;font-size:14pt}
+.s4 .photo{margin:8mm 0;height:96mm;border-radius:3mm;overflow:hidden;box-shadow:0 2mm 4mm rgba(60,40,20,.3);border:3mm solid #f5ecd8}
+.s4 .mv{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm}
+.s4 .mv span{background:#3f6b3a;color:#f5ecd8;text-align:center;padding:3.5mm 0;font-size:13pt;border-radius:50% 50% 45% 55%/60% 60% 40% 40%}
+.s4 .copy{margin-top:8mm;text-align:center;font-size:21pt;color:#2f4a2b;border-top:.5mm solid #3f6b3a;border-bottom:.5mm solid #3f6b3a;padding:4mm 0}
+.s4 .leaf{position:absolute;right:-8mm;top:-6mm;width:70mm;opacity:.9}
+
+/* 5 minimal */
+.s5{background:#fff;font-family:"Zen Kaku Gothic New"}
+.s5 .in{padding:20mm 18mm;height:100%;display:flex;flex-direction:column}
+.s5 .kick{font-family:Montserrat;font-weight:600;font-size:9pt;letter-spacing:.35em;color:#888}
+.s5 h1{font-weight:300;font-size:40pt;letter-spacing:.12em;margin:12mm 0 4mm;color:#111;line-height:1.3}
+.s5 .line{width:18mm;height:.6mm;background:#e4572e;margin:2mm 0 6mm}
+.s5 .sub{font-size:12pt;color:#555;letter-spacing:.08em}
+.s5 .photo{margin:14mm 0;height:80mm;filter:grayscale(.15)}
+.s5 .mv{display:flex;gap:9mm;font-size:12pt;letter-spacing:.2em;color:#111}
+.s5 .copy{margin-top:auto;margin-bottom:12mm;font-size:17pt;font-weight:400;letter-spacing:.2em;color:#111}
+
+/* 6 street */
+.s6{background:#111;font-family:"Dela Gothic One";color:#fff}
+.s6 .photo{position:absolute;inset:0;opacity:.35;filter:grayscale(1) contrast(1.3)}
+.s6 .in{position:relative;padding:14mm 11mm}
+.s6 .tape{display:inline-block;background:#d7ff1f;color:#111;font-size:13pt;padding:2mm 6mm;transform:rotate(-4deg)}
+.s6 h1{font-size:54pt;line-height:1.05;margin:10mm 0 4mm;transform:skewY(-5deg);text-shadow:2mm 2mm 0 #ff2e63}
+.s6 .sub{font-family:"Noto Sans JP";font-weight:900;font-size:14pt;background:#fff;color:#111;display:inline-block;padding:1.5mm 4mm;transform:rotate(-2deg)}
+.s6 .mv{display:flex;flex-wrap:wrap;gap:3mm;margin-top:72mm}
+.s6 .mv span{border:.8mm solid #d7ff1f;color:#d7ff1f;font-size:15pt;padding:2mm 5mm}
+.s6 .copy{margin-top:9mm;background:#ff2e63;font-size:21pt;padding:4mm 6mm;transform:skewX(-8deg);display:inline-block}
+.s6 .num{position:absolute;right:8mm;top:58mm;font-family:Montserrat;font-weight:900;font-size:110pt;color:transparent;-webkit-text-stroke:.6mm #d7ff1f;opacity:.7;line-height:1}
+
+/* 7 editorial */
+.s7{background:#f2eee6;font-family:"Shippori Mincho B1"}
+.s7 .photo{position:absolute;left:0;right:0;top:0;height:190mm}
+.s7 .mast{position:absolute;top:10mm;left:12mm;right:12mm;display:flex;justify-content:space-between;color:#fff;font-family:Montserrat;font-weight:600;font-size:9pt;letter-spacing:.3em;text-shadow:0 0 3mm rgba(0,0,0,.5)}
+.s7 .box{position:absolute;left:12mm;right:12mm;top:160mm;background:#f2eee6;padding:9mm 9mm 0}
+.s7 h1{font-weight:800;font-size:40pt;margin:0;color:#1d1a16;letter-spacing:.06em}
+.s7 .sub{font-size:13pt;color:#6b5f50;margin:3mm 0 6mm}
+.s7 .copy{font-size:19pt;font-weight:800;color:#8a2a1c;border-top:.3mm solid #1d1a16;padding-top:5mm}
+.s7 .mv{font-size:12pt;color:#1d1a16;margin-top:5mm;letter-spacing:.3em}
+
+/* 8 paper cut */
+.s8{background:#bfe3f2;font-family:"Zen Maru Gothic"}
+.s8 svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.s8 .in{position:relative;padding:16mm 12mm;text-align:center}
+.s8 .kick{display:inline-block;background:#fff;color:#2c6e8f;font-weight:900;font-size:12pt;padding:1.5mm 5mm;border-radius:99px;box-shadow:0 1mm 1.5mm rgba(0,0,0,.2)}
+.s8 h1{font-weight:900;font-size:46pt;color:#fff;margin:5mm 0 2mm;text-shadow:0 1.2mm 0 #2c6e8f,0 2mm 3mm rgba(0,0,0,.25)}
+.s8 .sub{font-weight:700;font-size:14pt;color:#1f4f66}
+.s8 .copy{position:absolute;left:12mm;right:12mm;bottom:24mm;background:#fff7e6;color:#c2532e;font-weight:900;font-size:21pt;padding:5mm;border-radius:4mm;box-shadow:0 1.5mm 2.5mm rgba(0,0,0,.25);text-align:center}
+.s8 .mv{position:absolute;left:12mm;right:12mm;bottom:52mm;display:flex;justify-content:center;gap:3mm}
+.s8 .mv span{background:#f2a541;color:#fff;font-weight:900;font-size:13pt;padding:2.5mm 4.5mm;border-radius:3mm;box-shadow:0 1mm 1.5mm rgba(0,0,0,.25)}
+
+/* 9 infographic */
+.s9{background:#fff;font-family:"Noto Sans JP"}
+.s9 .top{background:#0e9f6e;color:#fff;padding:12mm 12mm 9mm}
+.s9 .kick{font-family:Montserrat;font-weight:800;font-size:10pt;letter-spacing:.25em;opacity:.85}
+.s9 h1{font-weight:900;font-size:40pt;margin:2mm 0 1mm}
+.s9 .sub{font-size:13pt;font-weight:700}
+.s9 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3mm;padding:9mm 12mm 0}
+.s9 .ic{text-align:center}
+.s9 .ic div{width:26mm;height:26mm;margin:0 auto 2mm;border-radius:6mm;background:#e8f7f1;display:grid;place-items:center}
+.s9 .ic b{font-size:12pt;color:#0b3d2e}
+.s9 .row{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;padding:8mm 12mm 0}
+.s9 .st{border:.5mm solid #e3e7ee;border-radius:4mm;padding:4mm;text-align:center}
+.s9 .st .n{font-family:Montserrat;font-weight:900;font-size:28pt;color:#0e9f6e;line-height:1}
+.s9 .st p{margin:1.5mm 0 0;font-size:9.5pt;color:#444}
+.s9 .flow{display:flex;align-items:center;justify-content:center;gap:2mm;padding:8mm 12mm 0;font-weight:900;font-size:12pt;color:#0b3d2e}
+.s9 .flow span{background:#f1f5f9;border-radius:3mm;padding:3mm 4mm}
+.s9 .flow i{color:#0e9f6e;font-style:normal}
+.s9 .copy{margin:9mm 12mm 0;background:#0b3d2e;color:#fff;font-weight:900;font-size:19pt;text-align:center;padding:5mm;border-radius:4mm}
+
+@media print{@page{size:A4;margin:0} body{background:none} .page{margin:0;break-after:page} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+
+<section class="page s1">
+  <div class="hero"><img src="../img/studio.jpg" alt=""><div class="t"><h1>バランス<br>アスレチック</h1><div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div></div></div>
+  <div class="copy">遊びが、未来のチカラになる。</div>
+  <div class="mv"><span>登る</span><span>渡る</span><span>跳ぶ</span><span>くぐる</span><span>バランス</span></div>
+  <p>自然の中での遊びにある多様な動きを、屋内・屋外のどちらでも安全に、楽しく体験できる運動プログラムです。</p>
+  <div class="label">① コーポレート（いまのデザイン）<small>ネイビー×赤／信頼感・公式感</small></div>
+</section>
+
+<section class="page s2">
+  <div class="in">
+    <div class="burst">体験<br>できるよ！</div>
+    <span class="kick">あそびが みらいの チカラに！</span>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="sub">自然あそびに代わる「感覚の貯金」プログラム</div>
+    <div class="photo"><img src="../img/studio.jpg" alt=""></div>
+    <div class="mv"><span style="background:#ff3d6e">登る</span><span style="background:#1b4fd8">渡る</span><span style="background:#13b26b">跳ぶ</span><span style="background:#ff8a00">くぐる</span><span style="background:#8a4dff;font-size:10pt">バランス</span></div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="label">② キッズポップ（元気・にぎやか）<small>ビビッド色／太い縁取り文字／ステッカー</small></div>
+</section>
+
+<section class="page s3">
+  <span class="deco" style="left:14mm;top:20mm;color:#f2b8a0">✿</span><span class="deco" style="right:16mm;top:30mm;color:#9cc5e6">☁</span><span class="deco" style="right:22mm;top:150mm;color:#f7d36b">★</span><span class="deco" style="left:18mm;top:160mm;color:#a8d5a2">♪</span>
+  <div class="in">
+    <div class="kick">〜 あそびが、みらいのチカラになる 〜</div>
+    <h1>バランスアスレチック</h1>
+    <div class="sub">しぜんあそびに代わる「感覚の貯金」プログラム</div>
+    <div class="frame"><img src="../img/studio.jpg" alt=""></div>
+    <div class="mv"><span style="color:#e98a6b">のぼる</span><span style="color:#5b8fb9">わたる</span><span style="color:#7cb46b">とぶ</span><span style="color:#d9a43a">くぐる</span><span style="color:#b07cc6">バランス</span></div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="label">③ 絵本・やさしい（パステル）<small>手書き風文字／丸い形／保護者・幼児向け</small></div>
+</section>
+
+<section class="page s4">
+  <svg class="leaf" viewBox="0 0 100 100"><path d="M90 10C40 10 10 40 15 90 60 90 90 60 90 10Z" fill="#5f8a4f"/><path d="M85 15 20 85" stroke="#d9c7a3" stroke-width="1.5"/><path d="M60 22C40 40 30 60 28 80" stroke="#3f6b3a" stroke-width="1" fill="none"/></svg>
+  <div class="in">
+    <div class="kick">NATURE PLAY IN THE CITY</div>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+    <div class="photo"><img src="../img/studio.jpg" alt=""></div>
+    <div class="mv"><span>登る</span><span>渡る</span><span>跳ぶ</span><span>くぐる</span><span style="font-size:10.5pt">バランス</span></div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="label">④ ナチュラル・森（クラフト紙×緑）<small>木・葉・土の色／自然遊びの世界観</small></div>
+</section>
+
+<section class="page s5">
+  <div class="in">
+    <div class="kick">BALANCE ATHLETIC</div>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="line"></div>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+    <div class="photo"><img src="../img/studio.jpg" alt=""></div>
+    <div class="mv"><span>登る</span><span>渡る</span><span>跳ぶ</span><span>くぐる</span><span>保つ</span></div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="label">⑤ ミニマル（余白・細い文字）<small>白×1色／上質・落ち着き／企業・施設向け</small></div>
+</section>
+
+<section class="page s6">
+  <div class="photo"><img src="../img/hero.jpg" alt=""></div>
+  <div class="num">05</div>
+  <div class="in">
+    <span class="tape">URBAN SPORTS × KIDS</span>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+    <div class="mv"><span>登る</span><span>渡る</span><span>跳ぶ</span><span>くぐる</span><span>バランス</span></div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="label">⑥ ストリート（黒×蛍光）<small>スケボー・アーバンスポーツらしさ／小学生・若い親世代</small></div>
+</section>
+
+<section class="page s7">
+  <div class="photo"><img src="../img/studio.jpg" alt=""></div>
+  <div class="mast"><span>JSF URBAN SPORTS</span><span>VOL.01</span></div>
+  <div class="box">
+    <h1>バランスアスレチック</h1>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+    <div class="mv">登る ／ 渡る ／ 跳ぶ ／ くぐる ／ バランスをとる</div>
+  </div>
+  <div class="label">⑦ 雑誌・写真主役（エディトリアル）<small>大きな写真＋明朝体／ブランド感</small></div>
+</section>
+
+<section class="page s8">
+  <svg class="bg" viewBox="0 0 210 297" preserveAspectRatio="none">
+    <defs><filter id="ps"><feDropShadow dx="0" dy="1.2" stdDeviation="1.2" flood-opacity=".28"/></filter></defs>
+    <circle cx="170" cy="40" r="18" fill="#ffd166" filter="url(#ps)"/>
+    <path d="M0 175 Q50 150 105 170 T210 160 V297 H0Z" fill="#8fcf8a" filter="url(#ps)"/>
+    <path d="M0 205 Q60 185 120 200 T210 195 V297 H0Z" fill="#5fb36a" filter="url(#ps)"/>
+    <g filter="url(#ps)"><ellipse cx="45" cy="196" rx="9" ry="3.5" fill="#a0673d"/><ellipse cx="68" cy="190" rx="9" ry="3.5" fill="#a0673d"/><ellipse cx="92" cy="194" rx="9" ry="3.5" fill="#a0673d"/></g>
+    <g filter="url(#ps)" fill="#2c6e8f"><circle cx="68" cy="160" r="5"/><path d="M68 165 l-1 14 M68 168 l-9 -4 M68 168 l9 -6 M67 179 l-5 9 M67 179 l6 8" stroke="#2c6e8f" stroke-width="3" stroke-linecap="round"/></g>
+    <g filter="url(#ps)"><path d="M150 205 V150 l12 -10 l12 10 V205Z" fill="#c2532e"/><circle cx="156" cy="165" r="2.4" fill="#ffd166"/><circle cx="166" cy="176" r="2.4" fill="#9cdcf5"/><circle cx="158" cy="188" r="2.4" fill="#fff"/></g>
+    <path d="M20 70 q8 -8 16 0 q8 -8 16 0" stroke="#fff" stroke-width="2" fill="none"/>
+  </svg>
+  <div class="in">
+    <span class="kick">あそびが、みらいのチカラになる</span>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+  </div>
+  <div class="mv"><span>登る</span><span>渡る</span><span>跳ぶ</span><span>くぐる</span><span>バランス</span></div>
+  <div class="copy">遊びが、未来のチカラになる。</div>
+  <div class="label">⑧ 切り絵・ペーパークラフト<small>色紙の重なりと影／写真なしでも成立</small></div>
+</section>
+
+<section class="page s9">
+  <div class="top"><div class="kick">BALANCE ATHLETIC</div><h1>バランスアスレチック</h1><div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div></div>
+  <div class="grid">
+    <div class="ic"><div><svg width="50" height="50" viewBox="0 0 32 32"><path d="M8 28V4M24 28V4M8 10h16M8 18h16M8 26h16" stroke="#0e9f6e" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div><b>登る</b></div>
+    <div class="ic"><div><svg width="50" height="50" viewBox="0 0 32 32"><ellipse cx="6" cy="18" rx="4" ry="2.5" fill="#0e9f6e"/><ellipse cx="16" cy="14" rx="4" ry="2.5" fill="#0e9f6e"/><ellipse cx="26" cy="18" rx="4" ry="2.5" fill="#0e9f6e"/><path d="M2 26c5-3 9 3 14 0s9 3 14 0" stroke="#5aa0e6" stroke-width="2" fill="none"/></svg></div><b>渡る</b></div>
+    <div class="ic"><div><svg width="50" height="50" viewBox="0 0 32 32"><path d="M4 26C10 4 22 4 28 26" stroke="#0e9f6e" stroke-width="2.5" fill="none" stroke-dasharray="3 3"/><circle cx="16" cy="9" r="3" fill="#0e9f6e"/></svg></div><b>跳ぶ</b></div>
+    <div class="ic"><div><svg width="50" height="50" viewBox="0 0 32 32"><path d="M3 28V14a13 13 0 0 1 26 0v14" stroke="#0e9f6e" stroke-width="2.5" fill="none"/><circle cx="16" cy="22" r="3" fill="#0e9f6e"/></svg></div><b>くぐる</b></div>
+    <div class="ic"><div><svg width="50" height="50" viewBox="0 0 32 32"><path d="M2 24h28" stroke="#0e9f6e" stroke-width="2.5"/><circle cx="16" cy="7" r="3" fill="#0e9f6e"/><path d="M16 11v8M7 13l9 2 9-2M16 19l-3 5M16 19l3 5" stroke="#0e9f6e" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></div><b>バランス</b></div>
+  </div>
+  <div class="row">
+    <div class="st"><div class="n">60分</div><p>幼児に勧められる<br>毎日の運動時間</p></div>
+    <div class="st"><div class="n">4つ</div><p>育まれる力<br>運動・認知・感覚・非認知</p></div>
+    <div class="st"><div class="n">7つ</div><p>コーディネーション<br>能力</p></div>
+  </div>
+  <div class="flow"><span>感じる</span><i>→</i><span>考える</span><i>→</i><span>動く</span><i>→</i><span>できた！</span></div>
+  <div class="copy">遊びが、未来のチカラになる。</div>
+  <div class="label">⑨ インフォグラフィック（図解・アイコン）<small>数字とアイコンで一目でわかる／説明重視</small></div>
+</section>
+
+</body>
+</html>
