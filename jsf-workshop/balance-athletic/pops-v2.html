@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>バランスアスレチックPOP v2</title>
+<link rel="stylesheet" href="fonts2/fonts.css">
+<style>
+:root{
+  --ai:#18264a;      /* 藍・ベースネイビー */
+  --ai2:#2c3d6b;
+  --tint:#eef1f7;
+  --tint2:#d5dcea;
+  --ink:#1b2236;
+  --gray:#6b7385;
+  --line:#cfd6e4;
+  --acc:#d9a521;     /* アクセント（最小限） */
+}
+*{box-sizing:border-box}
+body{margin:0;background:#3a3f4a;font-family:"Zen Kaku Gothic New",sans-serif;color:var(--ink)}
+.page{width:210mm;height:297mm;margin:16px auto;background:#fff;position:relative;overflow:hidden;padding:12mm 13mm 0;display:flex;flex-direction:column}
+.en{font-family:Montserrat,sans-serif}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* header / footer */
+.hdr{display:flex;justify-content:space-between;align-items:baseline;font-family:Montserrat;font-size:8pt;letter-spacing:.32em;color:var(--gray);padding-bottom:3mm;border-bottom:.3mm solid var(--ai)}
+.hdr b{color:var(--ai);font-weight:700}
+.ftr{margin-top:auto;display:flex;justify-content:space-between;align-items:center;border-top:.3mm solid var(--line);padding:3mm 0 9mm;font-size:7.3pt;color:var(--gray)}
+.ftr b{color:var(--ai);font-weight:700;letter-spacing:.05em}
+
+.kicker{font-family:Montserrat;font-weight:500;font-size:8.5pt;letter-spacing:.3em;color:var(--acc);margin-top:7mm}
+h1{font-weight:700;font-size:28pt;line-height:1.3;letter-spacing:.04em;margin:2mm 0 3mm;color:var(--ai)}
+.lead{font-size:10.5pt;line-height:1.85;color:var(--gray);margin:0}
+.sec{display:flex;align-items:center;gap:3mm;margin:6.5mm 0 3mm;font-weight:700;font-size:12pt;color:var(--ai);letter-spacing:.06em}
+.sec .n{font-family:Montserrat;font-weight:300;font-size:9pt;color:var(--gray);letter-spacing:.2em}
+.sec::after{content:"";flex:1;height:.25mm;background:var(--line)}
+.note{font-size:7.3pt;color:var(--gray)}
+.src{font-size:7pt;color:#97a0b3;margin-top:1mm;letter-spacing:.02em}
+.ic{width:15mm;height:15mm;border-radius:50%;border:.35mm solid var(--ai);display:grid;place-items:center;flex:none}
+.ic svg{width:8mm;height:8mm}
+.ic.fill{background:var(--ai);border-color:var(--ai)}
+.motto{background:var(--ai);color:#fff;padding:5mm 7mm;font-size:13pt;font-weight:500;letter-spacing:.08em;line-height:1.7;text-align:center}
+.motto em{font-style:normal;color:var(--acc);font-weight:700}
+
+/* P1 */
+.cover{background:var(--ai);color:#fff;margin:0 -1mm;padding:13mm 11mm 10mm;position:relative}
+.cover .k{font-family:Montserrat;font-size:8.5pt;letter-spacing:.35em;color:#aab6d3}
+.cover h1{color:#fff;font-size:42pt;font-weight:700;line-height:1.18;margin:7mm 0 4mm;letter-spacing:.06em}
+.cover .bar{width:16mm;height:.8mm;background:var(--acc);margin:0 0 4mm}
+.cover .sub{font-size:12pt;letter-spacing:.1em;color:#dfe5f2}
+.cover .copy{margin-top:11mm;font-size:17pt;font-weight:500;letter-spacing:.14em}
+.cover .org{position:absolute;right:11mm;top:13mm;font-size:7.5pt;color:#aab6d3;text-align:right;line-height:1.6}
+.strip{height:48mm;margin:0 -1mm}
+.moves{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm;margin-top:7mm}
+.mv{text-align:center}
+.mv .ic{margin:0 auto 2mm}
+.mv b{font-size:10.5pt;font-weight:700;color:var(--ai)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:7mm;border-top:.3mm solid var(--ai);border-bottom:.3mm solid var(--line)}
+.three div{padding:4mm 3mm 4mm 0}
+.three div+div{padding-left:4mm;border-left:.25mm solid var(--line)}
+.three .n{font-family:Montserrat;font-weight:300;font-size:20pt;color:var(--ai);line-height:1}
+.three b{display:block;font-size:11pt;margin:1.5mm 0 .5mm;color:var(--ai)}
+.three span{font-size:8.5pt;color:var(--gray);line-height:1.6}
+
+/* P2 */
+.flow{display:grid;grid-template-columns:1fr 6mm 1fr 6mm 1fr;align-items:stretch;margin-top:7mm}
+.flow .st{border:.3mm solid var(--line);padding:4mm}
+.flow .st.on{background:var(--ai);border-color:var(--ai);color:#fff}
+.flow .st .t{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:var(--gray)}
+.flow .st.on .t{color:#aab6d3}
+.flow .st b{display:block;font-size:12pt;margin:1.5mm 0 1.5mm;letter-spacing:.03em}
+.flow .st p{margin:0;font-size:8.6pt;line-height:1.65;color:var(--gray)}
+.flow .st.on p{color:#dfe5f2}
+.flow .ar{display:grid;place-items:center;color:var(--ai)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:.3mm solid var(--ai);border-bottom:.3mm solid var(--line)}
+.stats div{padding:4mm 4mm 3.5mm 0}
+.stats div+div{padding-left:4mm;border-left:.25mm solid var(--line)}
+.big{font-family:Montserrat;font-weight:300;font-size:27pt;line-height:1;color:var(--ai);letter-spacing:-.01em}
+.big small{font-family:"Zen Kaku Gothic New";font-size:10pt;font-weight:500;margin-left:.5mm}
+.stats b{display:block;font-size:9.5pt;margin:2mm 0 1mm;color:var(--ai);line-height:1.45}
+.stats p{margin:0;font-size:8pt;color:var(--gray);line-height:1.55}
+.map{display:grid;grid-template-columns:1fr 9mm 1fr}
+.map .h{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:var(--gray);padding-bottom:2mm}
+.map .a,.map .b{padding:2.4mm 0;border-bottom:.25mm solid var(--line);font-size:10pt}
+.map .a{color:var(--gray)}
+.map .b{font-weight:700;color:var(--ai)}
+.map .ar{border-bottom:.25mm solid var(--line);display:grid;place-items:center;color:var(--acc);font-family:Montserrat;font-size:10pt}
+
+/* P3 */
+.pw{display:grid;grid-template-columns:1fr 1fr;border-top:.3mm solid var(--ai)}
+.pw>div{padding:3.5mm 4mm 3.5mm 0;border-bottom:.25mm solid var(--line);display:flex;gap:4mm}
+.pw>div:nth-child(even){padding-left:4mm;border-left:.25mm solid var(--line)}
+.pw .e{font-family:Montserrat;font-size:7pt;letter-spacing:.25em;color:var(--gray)}
+.pw h3{margin:.5mm 0 1.5mm;font-size:13pt;color:var(--ai);letter-spacing:.05em}
+.pw ul{margin:0;padding:0;list-style:none;font-size:9pt;line-height:1.65}
+.pw li::before{content:"";display:inline-block;width:1.4mm;height:1.4mm;background:var(--ai);border-radius:50%;margin:0 2mm .5mm 0;vertical-align:middle}
+.co{display:grid;grid-template-columns:repeat(7,1fr);gap:1.5mm}
+.co div{border:.3mm solid var(--ai);padding:3mm 1mm 2.5mm;text-align:center}
+.co .n{font-family:Montserrat;font-weight:300;font-size:15pt;color:var(--ai);line-height:1}
+.co b{display:block;font-size:10pt;color:var(--ai);margin:1.5mm 0 1mm}
+.co span{font-size:7pt;color:var(--gray);line-height:1.4;display:block}
+.tbl{width:100%;border-collapse:collapse;margin-top:3mm;font-size:9pt}
+.tbl td{padding:1.8mm 0;border-bottom:.25mm solid var(--line)}
+.tbl td:first-child{font-weight:700;color:var(--ai);width:42mm}
+.chip{display:inline-block;border:.3mm solid var(--ai);color:var(--ai);font-size:7.8pt;font-weight:700;padding:.3mm 2.5mm;margin:0 1mm .5mm 0}
+.chip.on{background:var(--ai);color:#fff}
+
+/* P4 */
+.loop{display:grid;grid-template-columns:1fr 10mm 1fr 10mm 1fr;align-items:start;margin-top:7mm;padding:5mm 0 4mm;border-top:.3mm solid var(--ai);border-bottom:.25mm solid var(--line)}
+.loop .nd{text-align:center}
+.loop .ic{width:19mm;height:19mm;margin:0 auto 2.5mm}
+.loop .ic svg{width:10mm;height:10mm}
+.loop .nd .t{font-family:Montserrat;font-size:7pt;letter-spacing:.25em;color:var(--gray)}
+.loop .nd b{display:block;font-size:12pt;color:var(--ai);margin:.5mm 0 1mm}
+.loop .nd p{margin:0;font-size:8.3pt;color:var(--gray);line-height:1.55}
+.loop .ar{display:grid;place-items:center;height:19mm;color:var(--acc)}
+.loop .back{grid-column:1/-1;text-align:center;font-size:8.8pt;color:var(--ai);margin-top:3.5mm;letter-spacing:.04em}
+.facts{display:flex;flex-direction:column}
+.fact{display:grid;grid-template-columns:30mm 1fr;gap:5mm;padding:4mm 0;border-bottom:.25mm solid var(--line);align-items:center}
+.fact .big{font-size:24pt}
+.fact .lb{font-size:8pt;color:var(--gray);margin-top:1mm}
+.fact h3{margin:0 0 1.2mm;font-size:11.5pt;color:var(--ai);line-height:1.45}
+.fact p{margin:0;font-size:8.8pt;line-height:1.7}
+
+/* P5 */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:5mm}
+.pl{border-top:.8mm solid var(--ai);padding-top:3.5mm}
+.pl .t{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:var(--acc);font-weight:500}
+.pl h3{margin:1mm 0 2mm;font-size:13pt;color:var(--ai)}
+.pl p{margin:0;font-size:8.8pt;line-height:1.7;color:var(--ink)}
+.pl .ph{height:22mm;margin-top:2.5mm}
+.ways{display:grid;grid-template-columns:1fr 1fr;column-gap:4mm;margin-top:2mm;font-size:8.6pt}
+.ways div{padding:1.3mm 0;border-bottom:.25mm solid var(--line);display:flex;justify-content:space-between}
+.ways b{color:var(--ai)}
+.ways span{color:var(--gray);font-size:7.8pt}
+.lv{display:grid;grid-template-columns:repeat(3,1fr);margin-top:3mm;font-size:8pt;text-align:center}
+.lv div{padding:2mm 0;border:.3mm solid var(--ai)}
+.lv div+div{border-left:0}
+.lv div:nth-child(2){background:var(--tint2)}
+.lv div:nth-child(3){background:var(--ai);color:#fff}
+.lv b{display:block;font-size:10pt}
+.str{display:grid;grid-template-columns:repeat(3,1fr);border-top:.3mm solid var(--ai)}
+.str div{padding:2.5mm 3mm 2.5mm 0;border-bottom:.25mm solid var(--line)}
+.str div:not(:nth-child(3n+1)){padding-left:3mm;border-left:.25mm solid var(--line)}
+.str b{display:block;font-size:9.8pt;color:var(--ai);margin-bottom:.6mm}
+.str b::before{content:"✓";color:var(--acc);margin-right:1.5mm}
+.str span{font-size:8pt;color:var(--gray);line-height:1.5}
+.scenes{display:flex;flex-wrap:wrap;gap:1.5mm}
+.scenes span{border:.3mm solid var(--ai);color:var(--ai);font-size:8.8pt;padding:1mm 3.5mm}
+.cta{display:grid;grid-template-columns:1fr 26mm;gap:5mm;align-items:center;background:var(--ai);color:#fff;padding:4mm 6mm;margin-top:4.5mm}
+.cta .t{font-family:Montserrat;font-size:7.5pt;letter-spacing:.25em;color:#aab6d3}
+.cta h3{margin:1mm 0 1.5mm;font-size:13pt;font-weight:700}
+.cta p{margin:0;font-size:8.8pt;line-height:1.7;color:#dfe5f2}
+.qr{width:26mm;height:26mm;background:#fff;color:#9aa3b5;display:grid;place-items:center;font-size:7.5pt;text-align:center;line-height:1.4}
+.blank{display:inline-block;min-width:34mm;border-bottom:.3mm solid #8d98b3}
+
+@media print{
+  @page{size:A4;margin:0}
+  body{background:none}
+  .page{margin:0;break-after:page}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<!-- 共通アイコン -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="i-climb" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V3M18 21V3M6 7h12M6 12h12M6 17h12"/></g>
+    <g id="i-cross" fill="none" stroke-width="1.6" stroke-linecap="round"><ellipse cx="5" cy="14" rx="3" ry="1.6"/><ellipse cx="12" cy="11" rx="3" ry="1.6"/><ellipse cx="19" cy="14" rx="3" ry="1.6"/><path d="M2 19c3.3-2 6.7 2 10 0s6.7 2 10 0"/></g>
+    <g id="i-jump" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M3 20C7 5 17 5 21 20" stroke-dasharray="2 2.4"/><circle cx="12" cy="7" r="2"/></g>
+    <g id="i-under" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M3 21V11a9 9 0 0 1 18 0v10"/><circle cx="12" cy="16" r="2"/></g>
+    <g id="i-bal" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19h20"/><circle cx="12" cy="5" r="2"/><path d="M12 8v6M5 10l7 1.5 7-1.5M12 14l-2.5 5M12 14l2.5 5"/></g>
+    <g id="i-foot" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M9 3c3 0 5 4 5 9 0 4-1 6-1 9 0 1.5-1 2-2.5 2S8 22 8 20c0-4 1-6 0-10S6 3 9 3z"/><circle cx="17" cy="4" r="1.2"/><circle cx="19" cy="7.5" r="1"/><circle cx="20" cy="11" r=".9"/></g>
+    <g id="i-brain" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-2-2-6-1-6 2-2 .5-3 3-2 5-1.5 1.5-1 4.5 1.5 5 .5 2.5 3.5 3.5 6.5 2V4zM12 4c2-2 6-1 6 2 2 .5 3 3 2 5 1.5 1.5 1 4.5-1.5 5-.5 2.5-3.5 3.5-6.5 2"/></g>
+    <g id="i-run" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4" r="2"/><path d="M13 7l-3 5 3.5 2-1.5 6M13 7l3.5 4 3.5-1M10 12l-4 1.5M13.5 14l4.5 4.5"/></g>
+    <g id="i-heart" fill="none" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20s-8-4.6-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.4-8 10-8 10z"/></g>
+    <g id="i-eye" fill="none" stroke-width="1.6"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></g>
+    <g id="i-arrow" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M14 7l5 5-5 5"/></g>
+  </defs>
+</svg>
+
+<!-- ============ POP 1 ============ -->
+<section class="page">
+  <div class="hdr"><span><b>BALANCE ATHLETIC</b>　感覚の貯金プログラム</span><span>01 / 05</span></div>
+  <div class="cover" style="margin-top:6mm">
+    <div class="k">BALANCE ATHLETIC</div>
+    <div class="org">一般社団法人<br>日本スケートボーディング連盟</div>
+    <h1>バランス<br>アスレチック</h1>
+    <div class="bar"></div>
+    <div class="sub">自然遊びに代わる「感覚の貯金」プログラム</div>
+    <div class="copy">遊びが、未来のチカラになる。</div>
+  </div>
+  <div class="strip"><img src="../img/studio.jpg" alt="バランスアスレチックの設置例"></div>
+  <p class="lead" style="margin-top:6mm;color:var(--ink);font-size:10.5pt">自然の中での遊びにある多様な動きを、<b style="color:var(--ai)">屋内・屋外のどちらでも安全に、楽しく</b>体験できるようにデザインされた運動プログラムです。幼児期に必要な「さまざまな感覚への刺激」を遊びの中に詰め込み、子どもたちの生きる力の土台を育てます。</p>
+  <div class="moves">
+    <div class="mv"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-climb"/></svg></div><b>登る</b></div>
+    <div class="mv"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-cross"/></svg></div><b>渡る</b></div>
+    <div class="mv"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-jump"/></svg></div><b>跳ぶ</b></div>
+    <div class="mv"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-under"/></svg></div><b>くぐる</b></div>
+    <div class="mv"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-bal"/></svg></div><b>バランス</b></div>
+  </div>
+  <div class="three">
+    <div><div class="n">01</div><b>楽しい遊び</b><span>「やってみたい」が原動力</span></div>
+    <div><div class="n">02</div><b>多様な動き</b><span>一つのコースで何通りも</span></div>
+    <div><div class="n">03</div><b>未来のチカラ</b><span>心・体・脳の土台づくり</span></div>
+  </div>
+  <div class="ftr"><span>体験は当ブースで実施中です。お気軽にスタッフへお声がけください。</span><b>JSF｜BALANCE ATHLETIC</b></div>
+</section>
+
+<!-- ============ POP 2 ============ -->
+<section class="page">
+  <div class="hdr"><span><b>BALANCE ATHLETIC</b>　なぜ、いま必要なのか</span><span>02 / 05</span></div>
+  <div class="kicker">WHY NOW</div>
+  <h1>自然遊びが減った今、<br>その動きを都市で取り戻す。</h1>
+  <p class="lead">自然の中の遊びには、子どもの体と神経を育てる動きがたくさんあります。<br>バランスアスレチックは、その動きを安全な環境でそのまま再現します。</p>
+  <div class="flow">
+    <div class="st"><div class="t">01 NOW</div><b>自然遊びが減った</b><p>近くに自然がない。あっても危険が伴う。外遊びの時間も減っている。</p></div>
+    <div class="ar"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#18264a"><use href="#i-arrow"/></svg></div>
+    <div class="st"><div class="t">02 BUT</div><b>自然の動きは大切</b><p>でこぼこを歩く、登る、渡る。多様な動きが体と神経の土台になる。</p></div>
+    <div class="ar"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#18264a"><use href="#i-arrow"/></svg></div>
+    <div class="st on"><div class="t">03 SO</div><b>都市で、安全に再現</b><p>天候や場所を選ばず、大人の目が届く範囲で同じ動きを経験できる。</p></div>
+  </div>
+  <div class="sec"><span class="n">DATA</span>数字で見る背景</div>
+  <div class="stats">
+    <div><div class="big">1985</div><b>子どもの体力は、このころがピーク</b><p>走る・投げる・握る力は、その後長期的に低下。</p><div class="src">文部科学省・スポーツ庁「体力・運動能力調査」</div></div>
+    <div><div class="big">60<small>分</small></div><b>幼児は毎日60分以上、体を動かそう</b><p>いろいろな遊びで多様な動きを経験することが大切。</p><div class="src">文部科学省「幼児期運動指針」2012年</div></div>
+    <div><div class="big">90<small>%</small></div><b>脳は6歳ごろまでに大人の約9割の大きさに</b><p>幼児期の経験がとても大切な時期。</p><div class="src">Giedd ら 1999／Lenroot & Giedd 2006</div></div>
+  </div>
+  <div class="sec"><span class="n">MAP</span>自然遊びの動きを、そのまま再現</div>
+  <div class="map">
+    <div class="h">NATURE　自然の中の遊び</div><div></div><div class="h">BALANCE ATHLETIC</div>
+    <div class="a">でこぼこの地面を歩く</div><div class="ar">→</div><div class="b">切り株・三角ブロック・人工芝</div>
+    <div class="a">木に登る</div><div class="ar">→</div><div class="b">クライミングウォール</div>
+    <div class="a">川の石を渡る・跳ぶ</div><div class="ar">→</div><div class="b">切り株を飛び石のように渡る</div>
+    <div class="a">倒木の上でバランスをとる</div><div class="ar">→</div><div class="b">スラックライン・平均台</div>
+    <div class="a">枝の下をくぐる・しゃがむ</div><div class="ar">→</div><div class="b">バーやトンネルをくぐる</div>
+    <div class="a">野原を走る・跳ぶ</div><div class="ar">→</div><div class="b">コースをつないで走る・跳ぶ</div>
+  </div>
+  <div class="ftr"><span>※研究・調査に基づく一般的な説明であり、効果を保証するものではありません。</span><b>JSF｜BALANCE ATHLETIC</b></div>
+</section>
+
+<!-- ============ POP 3 ============ -->
+<section class="page">
+  <div class="hdr"><span><b>BALANCE ATHLETIC</b>　どんな力が育つのか</span><span>03 / 05</span></div>
+  <div class="kicker">BENEFITS</div>
+  <h1>遊びながら育つ、<br>4つの力と7つの能力。</h1>
+  <p class="lead">一つのスポーツに特化する前に、多様な動きを経験する。<br>好きなことが見つかったとき、自由に力を引き出せる身体の土台をつくります。</p>
+  <div class="sec"><span class="n">4 POWERS</span>育まれる4つの力</div>
+  <div class="pw">
+    <div><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-run"/></svg></div><div><div class="e">MOTOR</div><h3>運動能力</h3><ul><li>バランス感覚</li><li>体幹・姿勢</li><li>ジャンプ力</li><li>敏捷性・協調性</li></ul></div></div>
+    <div><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-brain"/></svg></div><div><div class="e">COGNITIVE</div><h3>認知機能</h3><ul><li>集中力・判断力</li><li>空間認識力</li><li>記憶力</li><li>次の一歩を考える力</li></ul></div></div>
+    <div><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-foot"/></svg></div><div><div class="e">SENSORY</div><h3>感覚機能</h3><ul><li>足裏の刺激</li><li>触覚・前庭覚（傾き・揺れ）</li><li>身体のコントロール</li><li>自己認識</li></ul></div></div>
+    <div><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-heart"/></svg></div><div><div class="e">NON-COGNITIVE</div><h3>非認知能力</h3><ul><li>挑戦する力</li><li>やり抜く力</li><li>自己肯定感</li><li>社会性</li></ul></div></div>
+  </div>
+  <div class="sec"><span class="n">7 ABILITIES</span>土台になる7つのコーディネーション能力</div>
+  <div class="co">
+    <div><span class="n">1</span><b>リズム</b><span>動くタイミングをつかむ</span></div>
+    <div><span class="n">2</span><b>バランス</b><span>崩れた姿勢を立て直す</span></div>
+    <div><span class="n">3</span><b>変換</b><span>動きを素早く切り替える</span></div>
+    <div><span class="n">4</span><b>反応</b><span>合図にすぐ反応する</span></div>
+    <div><span class="n">5</span><b>連結</b><span>体全体をなめらかに</span></div>
+    <div><span class="n">6</span><b>定位</b><span>自分と物の位置をつかむ</span></div>
+    <div><span class="n">7</span><b>識別</b><span>道具を上手に操る</span></div>
+  </div>
+  <table class="tbl">
+    <tr><td>バランスアスレチック</td><td><span class="chip on">バランス</span><span class="chip on">定位</span><span class="chip on">変換</span><span class="chip on">リズム</span></td></tr>
+    <tr><td>スケートボード</td><td><span class="chip">バランス</span><span class="chip">変換</span></td></tr>
+    <tr><td>バスケットボール・ダンス</td><td><span class="chip">識別</span><span class="chip">反応</span><span class="chip">リズム</span><span class="chip">連結</span></td></tr>
+  </table>
+  <div class="motto" style="margin-top:5mm">いろいろな動きを、少しずつ、たくさん。それが<em>「感覚の貯金」</em>です。</div>
+  <div class="ftr"><span>※7つのコーディネーション能力：旧東ドイツのスポーツ科学（Blume）による分類。効果を保証するものではありません。</span><b>JSF｜BALANCE ATHLETIC</b></div>
+</section>
+
+<!-- ============ POP 4 ============ -->
+<section class="page">
+  <div class="hdr"><span><b>BALANCE ATHLETIC</b>　なぜ幼児期に、なぜ足の裏から</span><span>04 / 05</span></div>
+  <div class="kicker">SCIENCE</div>
+  <h1>足の裏は、<br>からだのセンサー。</h1>
+  <p class="lead">でこぼこの上を歩くとき、子どもの足の裏と脳は大忙し。<br>感じて、考えて、動く。そのくり返しが「感覚の貯金」になります。</p>
+  <div class="loop">
+    <div class="nd"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-foot"/></svg></div><div class="t">SENSE</div><b>感じる</b><p>足の裏が、地面の<br>硬さ・傾き・重心を感じとる</p></div>
+    <div class="ar"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#d9a521"><use href="#i-arrow"/></svg></div>
+    <div class="nd"><div class="ic"><svg viewBox="0 0 24 24" stroke="#18264a"><use href="#i-brain"/></svg></div><div class="t">THINK</div><b>考える</b><p>脳が、目や耳の奥の感覚と<br>合わせて姿勢を判断する</p></div>
+    <div class="ar"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#d9a521"><use href="#i-arrow"/></svg></div>
+    <div class="nd"><div class="ic fill"><svg viewBox="0 0 24 24" stroke="#ffffff"><use href="#i-run"/></svg></div><div class="t">MOVE</div><b>動く</b><p>体幹や足首をこまかく<br>調整して、バランスをとる</p></div>
+    <div class="back">この「感じる → 考える → 動く」を、遊びの中で何百回もくり返します。</div>
+  </div>
+  <div class="facts">
+    <div class="fact"><div><div class="big" style="font-size:19pt;font-family:'Zen Kaku Gothic New';font-weight:700">足の裏</div><div class="lb">バランスの「力の地図」</div></div><div><h3>足の裏の感覚で、脳は体の傾きを立て直している</h3><p>足の裏には圧力や振動を感じる受容器がたくさんあります。足裏の一部を刺激すると、体がその反対方向へ傾くことも実験で確かめられています。</p><div class="src">Kavounoudias A, Roll R, Roll JP. NeuroReport, 1998</div></div></div>
+    <div class="fact"><div><div class="big">90<small>%</small></div><div class="lb">6歳ごろの脳の大きさ（大人比）</div></div><div><h3>幼児期は、脳がもっとも急速に育つ時期</h3><p>このころにいろいろな動きと感覚を経験しておくことが大切だと考えられています。もちろん、小学生以降も力は伸び続けます。</p><div class="src">MRI研究：Giedd JN ら 1999／Lenroot RK & Giedd JN 2006</div></div></div>
+    <div class="fact"><div><div class="big">23<small>研究</small></div><div class="lb">2,857人のメタ分析</div></div><div><h3>考えながら動く運動は、集中力や記憶にも</h3><p>「この色にタッチ」「この順番で渡る」のように頭を使いながら体を動かす運動は、我慢する力や覚えておく力（実行機能）を高めると報告されています。</p><div class="src">子ども〜思春期を対象としたメタ分析（Frontiers in Psychology, 2024）</div></div></div>
+    <div class="fact"><div><div class="big">21<small>研究</small></div><div class="lb">システマティックレビュー</div></div><div><h3>少しスリルのある遊びも、子どもの育ちに</h3><p>登る・渡るなど適度なスリルのある外遊びは、運動量や社会性、立ち直る力によい影響があると報告されています。安全な環境だから、思いきり挑戦できます。</p><div class="src">Brussoni M ら, 2015</div></div></div>
+  </div>
+  <div class="ftr"><span>※研究に基づく一般的な説明であり、効果を保証するものではありません。</span><b>JSF｜BALANCE ATHLETIC</b></div>
+</section>
+
+<!-- ============ POP 5 ============ -->
+<section class="page">
+  <div class="hdr"><span><b>BALANCE ATHLETIC</b>　施設・園・企業のみなさまへ</span><span>05 / 05</span></div>
+  <div class="kicker">SERVICE</div>
+  <h1>導入できる、<br>バランスアスレチック。</h1>
+  <p class="lead">アスレチックの「現物」と、1つのコースを何通りにも使える「使い方マニュアル」。<br>2つをセットにして、運動プログラムとしてお届けします。</p>
+  <div class="two">
+    <div class="pl"><div class="t">01 EQUIPMENT</div><h3>組み替えられる遊具セット</h3><p>スラックライン／切り株・丸太／平均台／クライミングホールド／三角ブロック／人工芝 など。屋内・屋外どちらにも設置できます。</p><div class="ph"><img src="../img/studio.jpg" alt=""></div></div>
+    <div class="pl"><div class="t">02 MANUAL</div><h3>1つのコースで、何通りも</h3><p>ルールを変えるだけで、育つ力が変わります。</p>
+      <div class="ways">
+        <div><b>ふつうに一周</b><span>バランス</span></div><div><b>リズム渡り</b><span>リズム</span></div>
+        <div><b>いろタッチ</b><span>反応</span></div><div><b>うしろ向き</b><span>定位</span></div>
+        <div><b>おもちゃ運び</b><span>識別</span></div><div><b>じゃんけん</b><span>社会性</span></div>
+        <div><b>おぼえてコース</b><span>記憶</span></div><div><b>タイム挑戦</b><span>挑戦</span></div>
+      </div>
+      <div class="lv"><div><b>やさしい</b>2〜3歳</div><div><b>ふつう</b>4〜5歳</div><div><b>むずかしい</b>6歳〜</div></div>
+    </div>
+  </div>
+  <div class="sec"><span class="n">MERIT</span>都市でできるから、続けられる</div>
+  <div class="str">
+    <div><b>天候に左右されにくい</b><span>屋内にも設置。雨の日も暑い日も。</span></div>
+    <div><b>場所を選ばない</b><span>商業施設・園庭・体育館・オフィスにも。</span></div>
+    <div><b>目の届く範囲で安全</b><span>高さや難しさを調整して見守れる。</span></div>
+    <div><b>配置でカスタム</b><span>年齢・能力に合わせて難易度を変更。</span></div>
+    <div><b>飽きずに続く</b><span>遊び方が変わり、運動習慣につながる。</span></div>
+    <div><b>先生だけでも運営</b><span>マニュアル付きで、すぐに始められる。</span></div>
+  </div>
+  <div class="sec"><span class="n">SCENE</span>活用シーン</div>
+  <div class="scenes"><span>商業施設のイベント</span><span>自治体のスポーツイベント</span><span>幼稚園・保育園の運動プログラム</span><span>学校・企業の健康施策</span><span>常設スタジオ（晴海 CHILL GYM）</span></div>
+  <div class="cta">
+    <div><div class="t">CONTACT</div><h3>導入・レンタル・体験のご相談</h3><p>担当：<span class="blank"></span><br>連絡先：<span class="blank" style="min-width:60mm"></span><br>一般社団法人 日本スケートボーディング連盟（JSF）</p></div>
+    <div class="qr">QRコード<br>貼付欄</div>
+  </div>
+  <div class="ftr"><span>晴海アーバンスポーツ教室 CHILL GYM｜毎週水曜日｜FitLAnd TOKYO DOME 晴海（ららテラス HARUMI FLAG 3階）</span><b>JSF｜BALANCE ATHLETIC</b></div>
+</section>
+
+</body>
+</html>
