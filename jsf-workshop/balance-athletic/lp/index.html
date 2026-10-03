@@ -262,6 +262,13 @@ p{margin:0}
 .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid #0b1430;padding-top:22px}
 .row .lab{font-family:var(--f-en);font-size:13px;color:#5b6479;letter-spacing:.2em;text-transform:uppercase}
 .row .val{font-family:var(--f-en);font-size:34px;font-weight:600;letter-spacing:.03em;user-select:all;color:#0b1430;line-height:1.1;margin-top:4px}
+.row .val.mail{font-size:24px;text-decoration:none;display:block;word-break:break-all}
+.row .val.mail:hover{text-decoration:underline}
+.mailbtn{width:100%;padding:16px 26px;font-size:16px}
+.row.sub{border-top:1px solid #e1e5ee;padding-top:16px}
+.row .val.tel{font-size:20px}
+.copy.ghost{background:transparent;box-shadow:inset 0 0 0 1.5px #0b1430;clip-path:none}
+@media (max-width:420px){ .row .val.mail{font-size:19px} }
 .copy{font:inherit;font-size:13px;font-weight:700;border:0;background:#e4ff1a;color:#0b1430;padding:12px 20px;cursor:pointer;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
 .card .hint{font-size:12.5px;color:#5b6479;line-height:1.8}
 @media (min-width:880px){ .contact .wrap{grid-template-columns:1fr 1fr;align-items:center;gap:72px} }
@@ -311,7 +318,7 @@ footer{padding-block:40px 56px;font-size:12.5px;color:var(--muted);display:grid;
       <div class="mark"><svg viewBox="0 0 64 64"><use href="#p-bal"/></svg></div>
       <div class="name">Balance Athletic<small>日本スケートボーディング連盟（JSF）</small></div>
     </div>
-    <a class="btn accent" href="#contact">担当者に相談</a>
+    <a class="btn accent" href="#contact">メールで相談</a>
   </div>
 </div>
 
@@ -322,7 +329,7 @@ footer{padding-block:40px 56px;font-size:12.5px;color:var(--muted);display:grid;
       <div class="eyebrow">法人・施設・園のみなさまへ</div>
       <h1>自然遊びに代わる、<br><span class="hl">「感覚の貯金」</span><br>プログラム。</h1>
       <p class="lead">登る・渡る・跳ぶ・くぐる・バランスをとる。自然の中にしかなかった動きを、都市の屋内外で安全に再現する運動プログラムです。アスレチックの現物と、動画つきのカリキュラムをセットで販売しています。</p>
-      <div class="ctas"><a class="btn primary" href="#service">サービス内容を見る <span class="arr">→</span></a><a class="btn" href="#contact">お問い合わせ</a></div>
+      <div class="ctas"><a class="btn primary" href="#service">サービス内容を見る <span class="arr">→</span></a><a class="btn" href="#contact">メールでお問い合わせ</a></div>
     </div>
     <div class="hero-visual">
       <div class="photo"><img src="img/studio.jpg" alt="人工芝の上にスラックライン、切り株、クライミングウォールを設置したバランスアスレチックのコース"></div>
@@ -522,7 +529,7 @@ footer{padding-block:40px 56px;font-size:12.5px;color:var(--muted);display:grid;
       <p class="lead">まずは、設置したい場所と対象のお子さまの年齢を教えてください。内容と構成を一緒に決めていきます。</p>
     </div>
     <ol class="steps">
-      <li class="rv"><div><b>お問い合わせ</b><p>下の連絡先から担当者へ。「どこで」「誰に」「何のために」の3点があれば十分です。</p></div></li>
+      <li class="rv"><div><b>お問い合わせ</b><p>下のメールアドレスから担当者へ。「どこで」「誰に」「何のために」の3点があれば十分です。</p></div></li>
       <li class="rv"><div><b>ヒアリング</b><p>設置場所の広さ、屋内か屋外か、対象年齢、運営する人数を確認します。</p></div></li>
       <li class="rv"><div><b>ご提案・お見積り</b><p>遊具の構成とカリキュラムの内容をご提案します。イベント出展も、この段階でご相談ください。</p></div></li>
       <li class="rv"><div><b>納品・設置・レクチャー</b><p>設置とあわせて、安全ルールと渡り方のレクチャーを行います。</p></div></li>
@@ -539,13 +546,15 @@ footer{padding-block:40px 56px;font-size:12.5px;color:var(--muted);display:grid;
     <div class="rv">
       <div class="eyebrow">Contact</div>
       <h2>詳しくは、<br>担当者におつなぎします。</h2>
-      <p class="lead">導入のご相談、お見積り、イベントへの体験出展、資料のご請求は、担当の牛嶋までご連絡ください。園・施設の見学や、体験会の実施もご相談いただけます。</p>
+      <p class="lead">導入のご相談、お見積り、イベントへの体験出展、資料のご請求は、担当の牛嶋までメールでご連絡ください。園・施設の見学や、体験会の実施もご相談いただけます。</p>
     </div>
     <div class="card rv d1">
-      <div class="k">Person in charge</div>
+      <div class="k">Contact by mail</div>
       <div class="who">牛嶋 彪<small>うしじま ひょう｜一般社団法人 日本スケートボーディング連盟</small></div>
-      <div class="row"><div><div class="lab">Tel</div><div class="val" id="tel">080-1881-6093</div></div><button class="copy" type="button" data-copy="080-1881-6093">番号をコピー</button></div>
-      <p class="hint">お電話がつながらない場合は、お名前・ご所属・ご希望の連絡先を留守番電話にお残しください。折り返しご連絡します。</p>
+      <div class="row"><div style="min-width:0"><div class="lab">Mail</div><a class="val mail" id="mail" href="mailto:hyoushijima@gmail.com?subject=%E3%80%90%E3%83%90%E3%83%A9%E3%83%B3%E3%82%B9%E3%82%A2%E3%82%B9%E3%83%AC%E3%83%81%E3%83%83%E3%82%AF%E3%80%91%E5%B0%8E%E5%85%A5%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87&body=%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%E3%81%94%E6%89%80%E5%B1%9E%EF%BC%88%E4%BC%9A%E7%A4%BE%E3%83%BB%E6%96%BD%E8%A8%AD%E3%83%BB%E5%9C%92%E5%90%8D%EF%BC%89%EF%BC%9A%0A%E3%81%94%E9%80%A3%E7%B5%A1%E5%85%88%EF%BC%88%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%EF%BC%89%EF%BC%9A%0A%E3%81%94%E7%9B%B8%E8%AB%87%E5%86%85%E5%AE%B9%EF%BC%88%E8%A8%AD%E7%BD%AE%E5%A0%B4%E6%89%80%E3%83%BB%E5%AF%BE%E8%B1%A1%E5%B9%B4%E9%BD%A2%E3%83%BB%E3%81%94%E5%B8%8C%E6%9C%9B%E3%81%AE%E6%99%82%E6%9C%9F%E3%81%AA%E3%81%A9%EF%BC%89%EF%BC%9A%0A">hyoushijima@gmail.com</a></div><button class="copy" type="button" data-target="mail" data-copy="hyoushijima@gmail.com">アドレスをコピー</button></div>
+      <a class="btn primary mailbtn" href="mailto:hyoushijima@gmail.com?subject=%E3%80%90%E3%83%90%E3%83%A9%E3%83%B3%E3%82%B9%E3%82%A2%E3%82%B9%E3%83%AC%E3%83%81%E3%83%83%E3%82%AF%E3%80%91%E5%B0%8E%E5%85%A5%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87&body=%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%E3%81%94%E6%89%80%E5%B1%9E%EF%BC%88%E4%BC%9A%E7%A4%BE%E3%83%BB%E6%96%BD%E8%A8%AD%E3%83%BB%E5%9C%92%E5%90%8D%EF%BC%89%EF%BC%9A%0A%E3%81%94%E9%80%A3%E7%B5%A1%E5%85%88%EF%BC%88%E9%9B%BB%E8%A9%B1%E7%95%AA%E5%8F%B7%EF%BC%89%EF%BC%9A%0A%E3%81%94%E7%9B%B8%E8%AB%87%E5%86%85%E5%AE%B9%EF%BC%88%E8%A8%AD%E7%BD%AE%E5%A0%B4%E6%89%80%E3%83%BB%E5%AF%BE%E8%B1%A1%E5%B9%B4%E9%BD%A2%E3%83%BB%E3%81%94%E5%B8%8C%E6%9C%9B%E3%81%AE%E6%99%82%E6%9C%9F%E3%81%AA%E3%81%A9%EF%BC%89%EF%BC%9A%0A">メールで相談する <span class="arr">→</span></a>
+      <div class="row sub"><div><div class="lab">Tel</div><div class="val tel" id="tel">080-1881-6093</div></div><button class="copy ghost" type="button" data-target="tel" data-copy="080-1881-6093">番号をコピー</button></div>
+      <p class="hint">お問い合わせは、メールで受け付けています。お名前・ご所属・ご相談内容（設置場所・対象年齢など）をお知らせください。担当者より折り返しご連絡します。</p>
     </div>
   </div>
 </section>
@@ -597,7 +606,7 @@ footer{padding-block:40px 56px;font-size:12.5px;color:var(--muted);display:grid;
     btn.addEventListener('click',function(){
       var v=btn.getAttribute('data-copy'), old=btn.textContent;
       function done(ok){ btn.textContent= ok?'コピーしました':'長押しで選択してください'; setTimeout(function(){btn.textContent=old;},1800); }
-      function sel(){ var t=document.getElementById('tel'); if(t&&window.getSelection){ var r=document.createRange(); r.selectNodeContents(t); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);} done(false); }
+      function sel(){ var t=document.getElementById(btn.getAttribute('data-target')||'tel'); if(t&&window.getSelection){ var r=document.createRange(); r.selectNodeContents(t); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);} done(false); }
       if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(function(){done(true)},sel); } else { sel(); }
     });
   });
