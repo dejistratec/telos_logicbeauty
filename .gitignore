@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# sales: Excel/Sheets 向け書き出し（原本は各クライアントの targets.csv）
+sales/clients/*/list/*.export.csv
+sales/clients/*/list/*.xlsx
+sales/clients/*/hearing/*.html
+sales/clients/*/list/preview.xlsx
+__pycache__/
