@@ -15,13 +15,13 @@ argument-hint: [案件文の貼り付け ／ スクリーンショット添付 �
 - 以降 `<C>` = `sales/clients/<slug>`、`T` = `node sales/scripts/targets.mjs`（既定以外なら `--client <slug>` を付ける）。
 
 ## 先に読むもの（毎回）
-`sales/README.md` の「守るべきルール」／ `<C>/offering.md` ／ `<C>/config.json` ／ `<C>/icp.md` ／ `<C>/outreach.md` ／ `sales/_shared/outreach_rules.md` ／ `sales/_shared/schema.md`
+`sales/README.md` の「守るべきルール」／ `T config`（このクライアントのタブ・独自項目・ステータス・使えるプラットフォーム）／ `<C>/offering.md` ／ `<C>/config.json` ／ `<C>/icp.md` ／ `<C>/outreach.md` ／ `sales/_shared/outreach_rules.md` ／ `sales/_shared/schema.md`
 
 ## 手順（案件ごとに繰り返す。複数件まとめて渡されたら 1 件ずつ分ける）
 
 ### 1. 原文を保存し、掲載情報を抜き出す
 - **テキスト**: そのまま。**スクリーンショット**: 見えている文字をすべて書き起こす（読めない箇所は `[判読不可]`）。同じ案件の複数枚は 1 件にまとめる。**URL**: WebFetch で本文を取得（ログインが必要で取れなければ、貼り付けかスクショを依頼する）。
-- プラットフォームを判定する（サイト名・URL・画面の見た目・文体）。Web 検索や SNS で見つけた企業なら `Web検索` / `SNS`。
+- プラットフォームを判定する（サイト名・URL・画面の見た目・文体）。Web 検索や SNS で見つけた企業なら `Web検索` / `SNS`。値は `T config` の「プラットフォーム」から選ぶ（クライアントが追加したサイトもここに出る）。
 - `id` を `T next-id` で取り、`sales/_templates/intake.md` の構成で `<C>/intake/<id>_<slug>.md` に保存する（slug は英数字とハイフン。分からなければ業種＋地域。例 `apparel-ec-tokyo`）。
 - 掲載情報の表（案件タイトル・依頼内容 200 字以内・予算・納期・依頼条件・掲載企業情報・手がかり）を埋める。**原文に無いことは書かない。**
 - 同じ掲載URL が既に登録されていれば（`T list` / 重複エラーで分かる）、新規登録せず既存行を更新する。
@@ -77,8 +77,10 @@ scratchpad に JSON を書き、`T add <file>`。例:
   "原文ファイル": "sales/clients/<slug>/intake/T-0001_xxx.md", "備考": ""
 }
 ```
+- 独自項目（`T config` の「独自項目」）: `editable` でない項目は、掲載情報・調査から分かる範囲で埋める（選択肢があればその中から。分からなければ空）。`editable` の項目は人が記入するので空のまま。
 - `接触チャネル`: 問い合わせ先がフォーム → `問い合わせフォーム`、メール → `メール`、SNS のみ → `SNS DM`、どれも無ければ `プラットフォーム応募`（プラットフォーム案件）か `未定`。
 - `期限`: ランク A は 2 日後、B は 7 日後、C は空。
+- 登録結果の行に表示されるタブ名が意図と違う場合（分類の条件に当たる列が空など）は、該当する列を埋めて `T update` する。
 - 検証エラーはその場で直して入れ直す（`--force` は使わない）。
 - 終わったら intake ファイルの `状態` を `処理済` にする。
 

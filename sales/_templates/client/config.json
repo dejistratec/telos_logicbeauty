@@ -4,6 +4,7 @@
   "created": "{{TODAY}}",
   "services": [],
   "industries": [],
+  "sheet": {},
   "spreadsheet": {
     "auto_publish": true,
     "folder_id": "",
@@ -11,5 +12,9 @@
     "current_url": "",
     "previous_ids": []
   },
-  "_comment": "services: 提案する商材 [{\"id\":\"英小文字id\",\"label\":\"表示名\"}]。推奨サービス列はこの id だけを許可。industries: 営業先の業種の許可値（空なら自由入力）。spreadsheet: /sales-list が出力先を記録（手で編集しない）。"
+  "_comment": "services: 提案する商材 [{\"id\":\"英小文字id\",\"label\":\"表示名\"}]。推奨サービス列はこの id だけを許可。industries: 営業先の業種の許可値（空なら自由入力）。sheet: 分類（タブ・独自項目・ステータス）。空なら標準。/sales-hearing が設定（書き方は sales/_shared/schema.md）。spreadsheet / hearing: 出力先とヒアリングシートの記録（手で編集しない）。",
+  "hearing": {
+    "doc_id": "",
+    "doc_url": ""
+  }
 }

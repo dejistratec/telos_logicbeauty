@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // sales/scripts/targets.mjs — 営業代行クライアントごとの営業先リスト操作ツール（依存パッケージなし）
 //   原本: sales/clients/<slug>/list/targets.csv
+//   分類（タブ・独自項目・ステータス）: sales/clients/<slug>/config.json の "sheet"
 //   出力: タブ分けしたスプレッドシート (xlsx) / Excel 用 CSV
 //
 //   node sales/scripts/targets.mjs --help
@@ -17,7 +18,7 @@ const CLIENTS_DIR = path.join(SALES_DIR, 'clients');
 const ACTIVE_FILE = path.join(CLIENTS_DIR, 'ACTIVE');
 const CLIENT_TEMPLATE_DIR = path.join(SALES_DIR, '_templates', 'client');
 
-// ---------- 列定義（CSV とスプレッドシートの列順は同じ） ----------
+// ---------- 標準の列（CSV とスプレッドシートの列順は同じ。独自項目は「記録」の前に入る） ----------
 const CAND_FIELDS = ['企業名', '確度', 'URL', '根拠'];
 const CAND_COLS = [1, 2, 3].flatMap((n) => CAND_FIELDS.map((f) => `候補${n}_${f}`));
 const GROUPS = [
@@ -29,12 +30,15 @@ const GROUPS = [
   { key: '企業・評価', color: '9334E6', cols: ['業種', '所在地', '規模', 'ニーズ要約', '推奨サービス', '属性タグ'] },
   { key: '記録', color: '80868B', cols: ['反応メモ', '備考', '登録日', 'プラットフォーム', '調査メモ', '提案文ファイル', '原文ファイル'] },
 ];
-const COLUMNS = GROUPS.flatMap((g) => g.cols);
-const GROUP_OF = Object.fromEntries(GROUPS.flatMap((g) => g.cols.map((c) => [c, g])));
-// 人がスプレッドシートで編集してよい列（再出力の前に取り込む）
-const HUMAN_COLS = ['ステータス', '次アクション', '期限', '担当者', '送付日', '接触チャネル', '企業名', '反応メモ', '備考'];
+const CUSTOM_GROUP = { key: '独自項目', color: '00897B' };
+const CUSTOM_EDIT_GROUP = { key: '独自項目（人が編集）', color: 'F9AB00', dark: true };
+const BEFORE_RECORD = GROUPS.slice(0, -1).flatMap((g) => g.cols);
+const RECORD_COLS = GROUPS[GROUPS.length - 1].cols;
+const COLUMNS = [...BEFORE_RECORD, ...RECORD_COLS];
+const BASE_GROUP_OF = Object.fromEntries(GROUPS.flatMap((g) => g.cols.map((c) => [c, g])));
+const BASE_HUMAN_COLS = ['ステータス', '次アクション', '期限', '担当者', '送付日', '接触チャネル', '企業名', '反応メモ', '備考'];
 const REQUIRED = ['プラットフォーム', '企業名', 'ニーズ要約', '推奨サービス', '接触チャネル', 'ステータス'];
-const MULTI = { '推奨サービス': '|', '属性タグ': '|', 'SNS': '|' };
+const BASE_MULTI = { '推奨サービス': '|', '属性タグ': '|', 'SNS': '|' };
 const COMMON_ALLOWED = {
   'プラットフォーム': ['ランサーズ', 'クラウドワークス', '発注ナビ', 'その他マッチング', 'Web検索', 'SNS', '紹介', '展示会・イベント', 'その他'],
   'ランク': ['A', 'B', 'C', '除外', ''],
@@ -42,20 +46,26 @@ const COMMON_ALLOWED = {
   '接触チャネル': ['プラットフォーム応募', '問い合わせフォーム', 'メール', 'SNS DM', 'LINE', '電話', '紹介', '未定'],
   'ステータス': ['未着手', '調査中', '提案作成済', '送付済', '返信あり', '商談中', '受注', '失注', '保留', '除外'],
 };
+const CLOSED_STATUSES = ['受注', '失注', '除外'];
+// エージェントが自動で設定するステータス（クライアント独自のステータス一覧にも必ず含める）
+const SYSTEM_STATUSES = ['未着手', '調査中', '提案作成済', '送付済', '除外'];
 const DATE_COLS = ['登録日', '期限', '送付日'];
 const FILE_COLS = ['調査メモ', '提案文ファイル', '原文ファイル'];
-
-// スプレッドシートのタブ（プラットフォーム → タブ）
-const TABS = [
-  { name: 'ランサーズ', kind: 'platform', color: '1A73E8', match: ['ランサーズ'] },
-  { name: 'クラウドワークス', kind: 'platform', color: '12B5CB', match: ['クラウドワークス'] },
-  { name: '発注ナビ', kind: 'platform', color: 'E8710A', match: ['発注ナビ'] },
-  { name: 'Web検索', kind: 'direct', color: '188038', match: ['Web検索'] },
-  { name: 'SNS', kind: 'direct', color: 'D01884', match: ['SNS'] },
-  { name: 'その他', kind: 'platform', color: '80868B', match: ['その他マッチング', '紹介', '展示会・イベント', 'その他'] },
-];
 const PLATFORM_ONLY_COLS = new Set([...CAND_COLS, '提案文_プラットフォーム', '案件タイトル', '依頼内容', '予算', '納期・期間', '依頼条件', '掲載企業情報']);
+const DIRECT_PLATFORMS = ['Web検索', 'SNS'];
 const SUMMARY_COLS = ['id', 'プラットフォーム', 'ランク', 'ICPスコア', 'ステータス', '次アクション', '期限', '担当者', '送付日', '接触チャネル', '企業名', '候補1_確度', '推奨サービス', 'ニーズ要約', '問い合わせ先'];
+
+// 標準の分類（config.json の sheet.tabs が無い時）
+const DEFAULT_TABS = [
+  { name: 'ランサーズ', match: { 'プラットフォーム': ['ランサーズ'] } },
+  { name: 'クラウドワークス', match: { 'プラットフォーム': ['クラウドワークス'] } },
+  { name: '発注ナビ', match: { 'プラットフォーム': ['発注ナビ'] } },
+  { name: 'Web検索', match: { 'プラットフォーム': ['Web検索'] } },
+  { name: 'SNS', match: { 'プラットフォーム': ['SNS'] } },
+];
+const DEFAULT_FALLBACK = 'その他';
+const TAB_COLORS = ['1A73E8', '12B5CB', 'E8710A', '188038', 'D01884', '9334E6', 'B31412', '137333', 'F9AB00', '5F6368'];
+const RESERVED_TABS = ['一覧', '凡例'];
 
 // 旧形式の CSV を読み込んだ時の変換
 const LEGACY_RENAME = { 'ソースURL': '掲載URL', '提案文': '提案文ファイル' };
@@ -100,27 +110,64 @@ function toCSV(header, records, eol = '\n') {
 
 // ---------- 共通 ----------
 function fail(msg) { console.error(`エラー: ${msg}`); process.exit(1); }
-function today(offsetDays = 0) {
-  const d = new Date(Date.now() + offsetDays * 86400000);
-  return d.toISOString().slice(0, 10);
-}
+function today(offsetDays = 0) { return new Date(Date.now() + offsetDays * 86400000).toISOString().slice(0, 10); }
+function jstStamp() { return new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 16).replace('T', ' '); }
 function rel(p) { return path.relative(process.cwd(), p) || '.'; }
 function splitMulti(v, sep = '|') { return String(v ?? '').split(sep).map((s) => s.trim()).filter(Boolean); }
+function asList(v) { return (Array.isArray(v) ? v : [v]).map((x) => String(x ?? '')); }
 
-// ---------- クライアント ----------
+// ---------- クライアントと分類設定 ----------
 function listClientSlugs() {
   if (!fs.existsSync(CLIENTS_DIR)) return [];
   return fs.readdirSync(CLIENTS_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory() && !d.name.startsWith('_') && !d.name.startsWith('.'))
     .map((d) => d.name).sort();
 }
-function activeSlug() {
-  return fs.existsSync(ACTIVE_FILE) ? fs.readFileSync(ACTIVE_FILE, 'utf8').trim() : '';
-}
+function activeSlug() { return fs.existsSync(ACTIVE_FILE) ? fs.readFileSync(ACTIVE_FILE, 'utf8').trim() : ''; }
 function readConfig(dir) {
   const p = path.join(dir, 'config.json');
   if (!fs.existsSync(p)) return { name: path.basename(dir), services: [], industries: [] };
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { fail(`${rel(p)} を読めません: ${e.message}`); }
+}
+function serviceIds(config) {
+  return (config.services ?? []).map((s) => (typeof s === 'string' ? s : s.id)).filter(Boolean);
+}
+// config.json → このクライアントの列・許可値・タブ
+function profileOf(config) {
+  const sheet = config.sheet ?? {};
+  const custom = (sheet.custom_columns ?? [])
+    .map((c) => (typeof c === 'string' ? { name: c } : c))
+    .filter((c) => c && typeof c.name === 'string' && c.name.trim())
+    .map((c) => ({ ...c, name: c.name.trim() }));
+  const customNames = custom.map((c) => c.name);
+  const columns = [...BEFORE_RECORD, ...customNames.filter((n) => !COLUMNS.includes(n)), ...RECORD_COLS];
+  const human = [...BASE_HUMAN_COLS, ...custom.filter((c) => c.editable).map((c) => c.name)];
+  const multi = { ...BASE_MULTI, ...Object.fromEntries(custom.filter((c) => c.multi).map((c) => [c.name, '|'])) };
+  const allowed = {
+    ...COMMON_ALLOWED,
+    'プラットフォーム': [...COMMON_ALLOWED['プラットフォーム'], ...(sheet.platforms_extra ?? [])],
+    '接触チャネル': [...COMMON_ALLOWED['接触チャネル'], ...(sheet.channels_extra ?? [])],
+    '推奨サービス': serviceIds(config),
+  };
+  if (Array.isArray(sheet.statuses) && sheet.statuses.length) allowed['ステータス'] = sheet.statuses.map(String);
+  if ((config.industries ?? []).length) allowed['業種'] = [...config.industries, ''];
+  for (const c of custom) if (Array.isArray(c.values) && c.values.length) allowed[c.name] = [...c.values.map(String), ''];
+  const groupOf = (c) => BASE_GROUP_OF[c] ?? (custom.find((x) => x.name === c)?.editable ? CUSTOM_EDIT_GROUP : CUSTOM_GROUP);
+  const rawTabs = Array.isArray(sheet.tabs) && sheet.tabs.length ? sheet.tabs : DEFAULT_TABS;
+  const tabs = rawTabs.map((t, i) => ({ ...t, name: String(t.name ?? '').trim(), match: t.match ?? {}, color: t.color ?? TAB_COLORS[i % TAB_COLORS.length], isFallback: false }));
+  const fallbackName = sheet.fallback_tab === null ? null : String(sheet.fallback_tab ?? DEFAULT_FALLBACK);
+  if (fallbackName) {
+    const existing = tabs.find((t) => t.name === fallbackName);
+    if (existing) existing.isFallback = true;
+    else tabs.push({ name: fallbackName, match: {}, color: '80868B', isFallback: true });
+  }
+  return {
+    columns, custom, human, multi, allowed, tabs, groupOf,
+    overlap: !!sheet.overlap,
+    hide: new Set(sheet.hide_columns ?? []),
+    summaryCols: (sheet.summary_columns ?? SUMMARY_COLS).filter((c) => columns.includes(c)),
+    closed: (sheet.closed_statuses ?? CLOSED_STATUSES).map(String),
+  };
 }
 function resolveClient(explicit) {
   const slug = explicit || process.env.SALES_CLIENT || activeSlug();
@@ -128,27 +175,93 @@ function resolveClient(explicit) {
   if (!slug) fail(`対象クライアントが未指定です。--client <slug> を付けるか、use <slug> で既定を設定してください。登録済み: ${available.join(', ') || '（なし。init <slug> --name "名称" で作成）'}`);
   const dir = path.join(CLIENTS_DIR, slug);
   if (!fs.existsSync(dir)) fail(`クライアント「${slug}」がありません。登録済み: ${available.join(', ') || '（なし）'}`);
+  const config = readConfig(dir);
   return {
-    slug, dir, config: readConfig(dir),
+    slug, dir, config, prof: profileOf(config),
     csvPath: path.join(dir, 'list', 'targets.csv'),
     exportPath: path.join(dir, 'list', 'targets.export.csv'),
     xlsxPath: path.join(dir, 'list', 'targets.xlsx'),
+    previewPath: path.join(dir, 'list', 'preview.xlsx'),
   };
 }
-function serviceIds(client) {
-  return (client.config.services ?? []).map((s) => (typeof s === 'string' ? s : s.id)).filter(Boolean);
+
+// 分類: 行 → タブ
+function tabKind(t) {
+  if (t.columns === 'all' || t.columns === 'direct') return t.columns;
+  const keys = Object.keys(t.match ?? {});
+  if (!t.isFallback && keys.length === 1 && keys[0] === 'プラットフォーム' && asList(t.match['プラットフォーム']).every((v) => DIRECT_PLATFORMS.includes(v))) return 'direct';
+  return 'all';
 }
-function allowedFor(client) {
-  const a = { ...COMMON_ALLOWED, '推奨サービス': serviceIds(client) };
-  const industries = client.config.industries ?? [];
-  if (industries.length) a['業種'] = [...industries, ''];
-  return a;
+function matches(r, match, prof) {
+  return Object.entries(match).every(([k, vals]) => {
+    const rv = prof.multi[k] ? splitMulti(r[k], prof.multi[k]) : [String(r[k] ?? '').trim()];
+    if (!rv.length) rv.push('');
+    return asList(vals).some((v) => rv.includes(v));
+  });
+}
+function tabsOfRecord(r, prof) {
+  const hits = prof.tabs.filter((t) => !t.isFallback && matches(r, t.match, prof));
+  if (hits.length) return prof.overlap ? hits : [hits[0]];
+  return prof.tabs.filter((t) => t.isFallback);
+}
+function tabColumns(t, prof) {
+  let cols = prof.columns.filter((c) => !prof.hide.has(c) || c === 'id');
+  if (tabKind(t) === 'direct') cols = cols.filter((c) => !PLATFORM_ONLY_COLS.has(c));
+  return cols;
+}
+function describeTab(t) {
+  if (t.isFallback) return 'どのタブの条件にも当てはまらない行';
+  const conds = Object.entries(t.match).map(([k, v]) => `${k} が ${asList(v).map((x) => x || '（空）').join('・')}`);
+  return conds.length ? conds.join(' かつ ') : '全件';
+}
+const LIST_VALIDATIONS = ['ステータス', '接触チャネル', 'ランク'];
+function validationColumns(prof) {
+  return [...LIST_VALIDATIONS, ...prof.custom.filter((c) => Array.isArray(c.values) && c.values.length && !c.multi).map((c) => c.name)];
+}
+function dvFormula(prof, c) { return `"${(prof.allowed[c] ?? []).filter(Boolean).join(',')}"`; }
+
+function checkConfig(prof) {
+  const errs = [], warns = [];
+  const names = new Set();
+  if (!prof.tabs.length) errs.push('タブが 1 つもありません');
+  for (const t of prof.tabs) {
+    if (!t.name) { errs.push('名前が空のタブがあります'); continue; }
+    if ([...t.name].length > 31) errs.push(`タブ名「${t.name}」は 31 文字以内にしてください`);
+    if (/[\[\]:*?\/\\]/.test(t.name)) errs.push(`タブ名「${t.name}」に使えない文字があります（[ ] : * ? / \\）`);
+    if (RESERVED_TABS.includes(t.name)) errs.push(`タブ名「${t.name}」は予約済みです（一覧・凡例）`);
+    if (names.has(t.name)) errs.push(`タブ名「${t.name}」が重複しています`);
+    names.add(t.name);
+    if (t.isFallback) continue;
+    if (typeof t.match !== 'object' || Array.isArray(t.match)) { errs.push(`タブ「${t.name}」の match は {"列名": ["値", ...]} の形にしてください`); continue; }
+    for (const [k, vals] of Object.entries(t.match)) {
+      if (!prof.columns.includes(k)) { errs.push(`タブ「${t.name}」の条件の列「${k}」は存在しません`); continue; }
+      const list = prof.allowed[k];
+      if (list && list.length) for (const v of asList(vals)) if (!list.includes(v)) warns.push(`タブ「${t.name}」の条件「${k}=${v}」は許可値にありません（この条件に当たる行は登録できません）`);
+    }
+  }
+  const seen = new Set();
+  for (const c of prof.custom) {
+    if (COLUMNS.includes(c.name)) errs.push(`独自項目「${c.name}」は標準の列と同じ名前です`);
+    if (/[,"\r\n]/.test(c.name)) errs.push(`独自項目「${c.name}」に , " 改行は使えません`);
+    if (seen.has(c.name)) errs.push(`独自項目「${c.name}」が重複しています`);
+    seen.add(c.name);
+  }
+  for (const c of prof.hide) {
+    if (!prof.columns.includes(c)) warns.push(`非表示の列「${c}」は存在しません`);
+    else if (REQUIRED.includes(c)) warns.push(`必須列「${c}」を非表示にしています（入力は引き続き必要です）`);
+  }
+  if (!prof.allowed['ステータス'].length) errs.push('ステータスが空です');
+  for (const st of SYSTEM_STATUSES) if (!prof.allowed['ステータス'].includes(st)) errs.push(`ステータス一覧に「${st}」が必要です（エージェントが自動で設定するため）。独自の段階はこの間に追加してください`);
+  for (const c of prof.closed) if (!prof.allowed['ステータス'].includes(c)) warns.push(`完了扱いのステータス「${c}」がステータス一覧にありません`);
+  for (const c of validationColumns(prof)) if (dvFormula(prof, c).length > 255) warns.push(`「${c}」の選択肢が長すぎるため、スプレッドシートのプルダウンは付けません（255 文字まで）`);
+  if (!prof.allowed['推奨サービス'].length) warns.push('services（商材 id）が未設定です。/sales-setup で設定してください');
+  return { errs, warns };
 }
 
-// ---------- 読み書き（旧形式は自動変換） ----------
-function normalizeRecord(o, rawHeader) {
+// ---------- 読み書き（旧形式・設定変更は自動変換） ----------
+function normalizeRecord(o, rawHeader, prof) {
   const r = {};
-  for (const c of COLUMNS) r[c] = o[c] ?? '';
+  for (const c of prof.columns) r[c] = o[c] ?? '';
   for (const [oldK, newK] of Object.entries(LEGACY_RENAME)) if (!r[newK] && o[oldK]) r[newK] = o[oldK];
   if (!r['SNS']) {
     const parts = [];
@@ -158,7 +271,7 @@ function normalizeRecord(o, rawHeader) {
     r['SNS'] = parts.join(' | ');
   }
   for (const [k, map] of Object.entries(VALUE_MAP)) if (map[r[k]]) r[k] = map[r[k]];
-  const known = new Set([...COLUMNS, ...Object.keys(LEGACY_RENAME), ...Object.keys(LEGACY_SNS)]);
+  const known = new Set([...prof.columns, ...Object.keys(LEGACY_RENAME), ...Object.keys(LEGACY_SNS)]);
   const extra = rawHeader.filter((h) => h && !known.has(h) && String(o[h] ?? '').trim());
   if (extra.length) r['備考'] = [r['備考'], ...extra.map((h) => `${h}: ${o[h]}`)].filter(Boolean).join(' / ');
   return r;
@@ -169,32 +282,29 @@ function load(client) {
   const rawHeader = rows[0] ?? [];
   const records = rows.slice(1)
     .filter((r) => r.some((x) => x !== ''))
-    .map((r) => normalizeRecord(Object.fromEntries(rawHeader.map((h, i) => [h, r[i] ?? ''])), rawHeader));
-  const migrated = rawHeader.join(',') !== COLUMNS.join(',');
-  return { records, migrated };
+    .map((r) => normalizeRecord(Object.fromEntries(rawHeader.map((h, i) => [h, r[i] ?? ''])), rawHeader, client.prof));
+  const dropped = rawHeader.filter((h) => h && !client.prof.columns.includes(h) && !(h in LEGACY_RENAME) && !(h in LEGACY_SNS));
+  const migrated = rawHeader.join(',') !== client.prof.columns.join(',');
+  return { records, migrated, dropped };
 }
-function save(client, records) {
-  fs.writeFileSync(client.csvPath, toCSV(COLUMNS, records), 'utf8');
-}
+function save(client, records) { fs.writeFileSync(client.csvPath, toCSV(client.prof.columns, records), 'utf8'); }
+function blankRecord(prof) { return Object.fromEntries(prof.columns.map((c) => [c, ''])); }
 function nextId(records) {
   let max = 0;
-  for (const r of records) {
-    const m = /^T-(\d+)$/.exec(r.id ?? '');
-    if (m) max = Math.max(max, Number(m[1]));
-  }
+  for (const r of records) { const m = /^T-(\d+)$/.exec(r.id ?? ''); if (m) max = Math.max(max, Number(m[1])); }
   return `T-${String(max + 1).padStart(4, '0')}`;
 }
 
 // ---------- 検証 ----------
 function isIntIn(v, lo, hi) { return /^\d+$/.test(String(v)) && Number(v) >= lo && Number(v) <= hi; }
 function validateRecord(client, r, idx) {
+  const { prof } = client;
   const errs = [];
-  const allowed = allowedFor(client);
   const where = `${r.id || `行${idx + 2}`}（${r['企業名'] || '企業名なし'}）`;
   for (const k of REQUIRED) if (!String(r[k] ?? '').trim()) errs.push(`${where}: 必須列「${k}」が空`);
-  for (const [k, list] of Object.entries(allowed)) {
+  for (const [k, list] of Object.entries(prof.allowed)) {
     const raw = String(r[k] ?? '');
-    const values = MULTI[k] ? splitMulti(raw, MULTI[k]) : [raw.trim()];
+    const values = prof.multi[k] ? splitMulti(raw, prof.multi[k]) : [raw.trim()];
     if (k === '推奨サービス' && !list.length && values.length) {
       errs.push(`${where}: クライアント「${client.slug}」の config.json に services が未定義です。/sales-setup で設定してください`);
       continue;
@@ -207,7 +317,6 @@ function validateRecord(client, r, idx) {
     const v = String(r[k] ?? '').trim();
     if (v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) errs.push(`${where}: 「${k}」は YYYY-MM-DD 形式`);
   }
-  // 候補 1〜3
   let sum = 0, prev = Infinity, gap = false;
   for (const n of [1, 2, 3]) {
     const name = String(r[`候補${n}_企業名`] ?? '').trim();
@@ -250,7 +359,7 @@ function findDuplicates(records) {
       byUrl.set(url, r);
     }
     const src = normalizeUrl(r['掲載URL']);
-    if (src && r['プラットフォーム'] !== 'Web検索' && r['プラットフォーム'] !== 'SNS') {
+    if (src && !DIRECT_PLATFORMS.includes(r['プラットフォーム'])) {
       if (bySrc.has(src)) dups.push(`掲載URL 重複（同じ案件の二重登録）: ${src}（${bySrc.get(src).id} と ${r.id}）`);
       bySrc.set(src, r);
     }
@@ -258,7 +367,7 @@ function findDuplicates(records) {
   return dups;
 }
 
-// 値の読み込み: "@file:<path>" はファイルの中身（末尾の改行は除去）
+// 値の読み込み: "@file:<path>" はファイルの中身（末尾の空白は除去）
 function readValue(v) {
   if (typeof v === 'string' && v.startsWith('@file:')) {
     const p = v.slice('@file:'.length);
@@ -267,14 +376,14 @@ function readValue(v) {
   }
   return v;
 }
-function fromInput(item, base = {}) {
+function fromInput(item, base, prof) {
   const r = { ...base };
   const unknown = [];
   for (const [k, v0] of Object.entries(item)) {
     if (k === '候補') continue;
-    if (!COLUMNS.includes(k)) { unknown.push(k); continue; }
+    if (!prof.columns.includes(k)) { unknown.push(k); continue; }
     let v = readValue(v0);
-    if (Array.isArray(v)) v = v.join(k === 'SNS' ? ' | ' : (MULTI[k] ?? '|'));
+    if (Array.isArray(v)) v = v.join(k === 'SNS' ? ' | ' : (prof.multi[k] ?? '|'));
     if (typeof v === 'number') v = String(Math.round(v));
     r[k] = v == null ? '' : String(v);
   }
@@ -288,7 +397,7 @@ function fromInput(item, base = {}) {
     });
     if (item['候補'].length > 3) console.error('注意: 候補は上位 3 件のみ保存します');
   }
-  if (unknown.length) console.error(`注意: 未定義の列を無視しました: ${unknown.join(', ')}`);
+  if (unknown.length) console.error(`注意: 未定義の列を無視しました: ${unknown.join(', ')}（独自項目は config.json の sheet.custom_columns に追加）`);
   return r;
 }
 
@@ -310,7 +419,6 @@ function sortRecords(records) {
     || (Number(b['ICPスコア'] || 0) - Number(a['ICPスコア'] || 0))
     || String(a.id).localeCompare(String(b.id)));
 }
-function tabOf(r) { return TABS.find((t) => t.match.includes(r['プラットフォーム'])) ?? TABS[TABS.length - 1]; }
 
 // ---------- xlsx 書き出し（最小実装: sharedStrings / styles / freeze / filter / 入力規則） ----------
 function crc32(buf) {
@@ -415,25 +523,24 @@ const WIDTH = {
 for (const n of [1, 2, 3]) Object.assign(WIDTH, { [`候補${n}_企業名`]: 24, [`候補${n}_確度`]: 8, [`候補${n}_URL`]: 26, [`候補${n}_根拠`]: 40 });
 const WRAP_COLS = new Set(['提案文_直接', '提案文_プラットフォーム', '依頼内容', '依頼条件', '掲載企業情報', 'ニーズ要約', '反応メモ', '備考', '案件タイトル', '候補1_根拠', '候補2_根拠', '候補3_根拠']);
 const NUM_COLS = new Set(['ICPスコア', '候補1_確度', '候補2_確度', '候補3_確度']);
-const LIST_VALIDATIONS = ['ステータス', '接触チャネル', 'ランク'];
 const RANK_FILL = { A: 'CEEAD6', B: 'FEEFC3', C: 'E8EAED' };
 function confFill(v) { if (v === '' || v == null) return ''; const n = Number(v); return n >= 70 ? 'CEEAD6' : n >= 40 ? 'FEEFC3' : 'FAD2CF'; }
 const STATUS_FILL = { '送付済': 'D2E3FC', '返信あり': 'D2E3FC', '商談中': 'D2E3FC', '受注': 'CEEAD6', '失注': 'E8EAED', '除外': 'E8EAED' };
 
-function sheetXml(styles, sst, { cols, rows, tabColor, rowHeight, freezeCols = 2, header = true, validations = true, widths = WIDTH, wrapAll = false }) {
+function sheetXml(styles, sst, prof, { cols, rows, tabColor, rowHeight, freezeCols = 2, header = true, validations = true, widths, wrapAll = false }) {
   const lastCol = colName(cols.length - 1);
+  const W = widths ?? Object.fromEntries(cols.map((c) => [c, WIDTH[c] ?? prof.custom.find((x) => x.name === c)?.width ?? 18]));
   const parts = [];
   parts.push('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">');
   if (tabColor) parts.push(`<sheetPr><tabColor rgb="FF${tabColor}"/></sheetPr>`);
   parts.push(`<dimension ref="A1:${lastCol}${Math.max(1, rows.length + 1)}"/>`);
-  const topLeft = `${colName(freezeCols)}2`;
-  parts.push(`<sheetViews><sheetView workbookViewId="0"><pane${freezeCols ? ` xSplit="${freezeCols}"` : ''} ySplit="1" topLeftCell="${topLeft}" activePane="bottomRight" state="frozen"/></sheetView></sheetViews>`);
+  parts.push(`<sheetViews><sheetView workbookViewId="0"><pane${freezeCols ? ` xSplit="${freezeCols}"` : ''} ySplit="1" topLeftCell="${colName(freezeCols)}2" activePane="bottomRight" state="frozen"/></sheetView></sheetViews>`);
   parts.push('<sheetFormatPr defaultRowHeight="18"/>');
-  parts.push('<cols>' + cols.map((c, i) => `<col min="${i + 1}" max="${i + 1}" width="${widths[c] ?? 18}" customWidth="1"/>`).join('') + '</cols>');
+  parts.push('<cols>' + cols.map((c, i) => `<col min="${i + 1}" max="${i + 1}" width="${W[c] ?? 18}" customWidth="1"/>`).join('') + '</cols>');
   parts.push('<sheetData>');
   if (header) {
     parts.push('<row r="1" ht="30" customHeight="1">' + cols.map((c, i) => {
-      const g = GROUP_OF[c];
+      const g = prof.groupOf(c);
       const s = styles.get({ bold: true, color: g?.dark ? '202124' : 'FFFFFF', fill: g?.color ?? '3C4043', wrap: true });
       return `<c r="${colName(i)}1" s="${s}" t="s"><v>${sst.idx(c)}</v></c>`;
     }).join('') + '</row>');
@@ -457,10 +564,9 @@ function sheetXml(styles, sst, { cols, rows, tabColor, rowHeight, freezeCols = 2
   parts.push('</sheetData>');
   if (header) parts.push(`<autoFilter ref="A1:${lastCol}${Math.max(1, rows.length + 1)}"/>`);
   if (validations) {
-    const dv = LIST_VALIDATIONS.filter((c) => cols.includes(c)).map((c) => {
+    const dv = validationColumns(prof).filter((c) => cols.includes(c) && dvFormula(prof, c).length <= 255).map((c) => {
       const L = colName(cols.indexOf(c));
-      const values = COMMON_ALLOWED[c].filter(Boolean).join(',');
-      return `<dataValidation type="list" allowBlank="1" showErrorMessage="1" sqref="${L}2:${L}2000"><formula1>"${xmlEsc(values)}"</formula1></dataValidation>`;
+      return `<dataValidation type="list" allowBlank="1" showErrorMessage="1" sqref="${L}2:${L}2000"><formula1>${xmlEsc(dvFormula(prof, c))}</formula1></dataValidation>`;
     });
     if (dv.length) parts.push(`<dataValidations count="${dv.length}">${dv.join('')}</dataValidations>`);
   }
@@ -468,37 +574,44 @@ function sheetXml(styles, sst, { cols, rows, tabColor, rowHeight, freezeCols = 2
   parts.push('</worksheet>');
   return parts.join('');
 }
-function legendRows(client) {
-  const g = (k) => GROUPS.find((x) => x.key === k);
-  return [
+function legendRows(client, { demo = false } = {}) {
+  const { prof } = client;
+  const rows = [
     ['クライアント', `${client.config.name ?? client.slug}（${client.slug}）`],
-    ['出力日時', new Date(Date.now() + 9 * 3600000).toISOString().replace('T', ' ').slice(0, 16) + '（日本時間）'],
+    ['出力日時', `${jstStamp()}（日本時間）${demo ? '　※分類の確認用プレビュー。行はすべて例です' : ''}`],
     ['このファイルについて', 'エージェントが原本（sales/clients/<slug>/list/targets.csv）から出力したものです。Google Drive 経由の出力では再出力のたびに新しいファイルになり、古いファイルの名前の先頭に（旧）が付きます。必ず最新版で作業してください。'],
-    ['人が編集してよい列（オレンジの見出し）', `${HUMAN_COLS.join(' / ')}。再出力の前にエージェントがこれらの列を読み取り、原本に取り込みます。他の列は再出力で上書きされます。`],
-    ['見出しの色', GROUPS.map((x) => `${x.key}: ${x.cols.length > 6 ? x.cols.slice(0, 3).join('・') + '…' : x.cols.join('・')}`).join('\n')],
-    ['タブ', `一覧: 全件の進行管理 / ${TABS.map((t) => `${t.name}: ${t.match.join('・')}`).join(' / ')}`],
+    ['タブの分け方', [`一覧: 全件の進行管理`, ...prof.tabs.map((t) => `${t.name}: ${describeTab(t)}`)].join('\n') + (prof.overlap ? '\n（条件に複数当てはまる行は、当てはまるすべてのタブに表示）' : '\n（条件に複数当てはまる行は、上にあるタブに表示）')],
+    ['人が編集してよい列（オレンジの見出し）', `${prof.human.join(' / ')}。再出力の前にエージェントがこれらの列を読み取り、原本に取り込みます。他の列は再出力で上書きされます。`],
+  ];
+  if (prof.custom.length) rows.push(['独自項目（ティールの見出し）', prof.custom.map((c) => `${c.name}${Array.isArray(c.values) && c.values.length ? `: ${c.values.join(' / ')}` : ''}${c.editable ? '（人が編集）' : ''}${c.note ? ` … ${c.note}` : ''}`).join('\n')]);
+  rows.push(
+    ['見出しの色', [...GROUPS.map((x) => `${x.key}: ${x.cols.length > 6 ? x.cols.slice(0, 3).join('・') + '…' : x.cols.join('・')}`), ...(prof.custom.length ? [`${CUSTOM_GROUP.key}: ${prof.custom.map((c) => c.name).join('・')}`] : [])].join('\n')],
     ['候補1〜3_確度', '掲載情報から推定した「この企業が掲載者である」確率（%）。確度の高い順。合計は 100% 以下で、残りは「どれでもない」可能性。緑 70%以上 / 黄 40〜69% / 赤 40%未満。'],
     ['企業名', '送付先として確定した企業。既定は候補1。別の候補に送る場合は企業名を書き換え、エージェントに「T-0001 候補2で提案文を作り直して」と依頼してください。'],
     ['提案文_直接', '特定した企業へ直接送る文面（問い合わせフォーム・メール・SNS DM）。掲載情報にしか書かれていない内容（予算・締切・募集文の引用・プラットフォーム名）は含めていません。'],
     ['提案文_プラットフォーム', 'ランサーズ・クラウドワークス・発注ナビ等の応募欄に貼る文面。募集要件への回答を冒頭に置いています。'],
     ['ランク', 'A: 48時間以内に送付 / B: 1週間以内 / C: 保留 / 除外: 対象外（備考に理由）。ICPスコアはクライアントの選定基準（icp.md）による 100 点満点。'],
-    ['ステータス', '未着手 → 調査中 → 提案作成済 → 送付済 → 返信あり → 商談中 → 受注。途中で終わる場合は 失注 / 保留 / 除外。'],
+    ['ステータス', `${prof.allowed['ステータス'].filter((s) => !prof.closed.includes(s) && s !== '保留').join(' → ')}${prof.closed.length ? `。終わった案件は ${prof.allowed['ステータス'].filter((s) => prof.closed.includes(s) || s === '保留').join(' / ')}` : ''}`],
     ['送付時のコピー', '複数行のセルは、セルを選択してコピーすると前後に " が付くことがあります（Excel）。セル内をダブルクリック（または F2）→ 全選択 → コピーしてください。'],
     ['送付前の確認', '候補1_確度が低い（赤）行は、企業名と送付先が正しいかを必ず確認してください。メール・フォームは署名と法令表記のプレースホルダー（【】）を埋めてから送ってください。'],
-  ];
+  );
+  return rows;
 }
-function buildWorkbook(client, records) {
+function buildWorkbook(client, records, opts = {}) {
+  const { prof } = client;
   const styles = new StyleBook();
   const sst = new SharedStrings();
   const sorted = sortRecords(records);
   const sheets = [];
-  const add = (name, cols, rows, opt) => sheets.push({ name, cols, count: rows.length, xml: sheetXml(styles, sst, { cols, rows, ...opt }) });
-  add('一覧', SUMMARY_COLS, sorted, { tabColor: '3C4043', freezeCols: 2 });
-  for (const t of TABS) {
-    const cols = t.kind === 'platform' ? COLUMNS : COLUMNS.filter((c) => !PLATFORM_ONLY_COLS.has(c));
-    add(t.name, cols, sorted.filter((r) => tabOf(r) === t), { tabColor: t.color, rowHeight: 60, freezeCols: 2 });
+  const add = (name, cols, rows, opt) => sheets.push({ name, cols, count: rows.length, xml: sheetXml(styles, sst, prof, { cols, rows, ...opt }) });
+  add('一覧', prof.summaryCols, sorted, { tabColor: '3C4043', freezeCols: 2 });
+  const unplaced = [];
+  for (const t of prof.tabs) {
+    const rows = sorted.filter((r) => tabsOfRecord(r, prof).includes(t));
+    add(t.name, tabColumns(t, prof), rows, { tabColor: t.color, rowHeight: 60, freezeCols: 2 });
   }
-  const legend = legendRows(client).map(([k, v]) => ({ 項目: k, 説明: v }));
+  for (const r of sorted) if (!tabsOfRecord(r, prof).length) unplaced.push(r.id);
+  const legend = legendRows(client, opts).map(([k, v]) => ({ 項目: k, 説明: v }));
   add('凡例', ['項目', '説明'], legend, { tabColor: 'BDC1C6', freezeCols: 0, validations: false, wrapAll: true, widths: { '項目': 30, '説明': 110 } });
   const definedNames = sheets.map((s, i) =>
     `<definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${xmlEsc(s.name)}'!$A$1:$${colName(s.cols.length - 1)}$${Math.max(1, s.count + 1)}</definedName>`).join('');
@@ -519,7 +632,130 @@ function buildWorkbook(client, records) {
     { name: 'xl/styles.xml', data: styles.xml() },
     { name: 'xl/sharedStrings.xml', data: sst.xml() },
   ];
-  return { buffer: zip(files), sheets };
+  return { buffer: zip(files), sheets, unplaced };
+}
+// 分類の確認用: タブごとに例の行を 1 つ作る（原本には保存しない）
+function demoRecords(client) {
+  const { prof } = client;
+  const svc = prof.allowed['推奨サービス'];
+  const st = prof.allowed['ステータス'];
+  const keysUsed = [...new Set(prof.tabs.flatMap((t) => (t.isFallback ? [] : Object.keys(t.match))))];
+  const out = [];
+  prof.tabs.forEach((t, i) => {
+    const r = blankRecord(prof);
+    Object.assign(r, {
+      id: `例-${i + 1}`, ランク: ['A', 'B', 'C'][i % 3], ICPスコア: String(Math.max(40, 85 - i * 6)),
+      ステータス: st[Math.min(2, st.length - 1)] ?? '', 次アクション: '（例）送付', 期限: today(3),
+      企業名: `（例）${t.name}の企業`, 問い合わせ先: 'https://example.com/contact', WebサイトURL: 'https://example.com/',
+      件名: '（例）○○についてのご提案', 提案文_直接: '（例）直接連絡用の文面。公開情報から拾った観察 → 自己紹介 → 提案 → 根拠 → CTA。',
+      ニーズ要約: '（例）募集文や公開情報から読み取ったニーズ', 推奨サービス: svc[0] ?? 'service',
+      接触チャネル: '問い合わせフォーム', 登録日: today(),
+    });
+    for (const c of prof.custom) r[c.name] = Array.isArray(c.values) && c.values.length ? String(c.values[0]) : '（例）';
+    // このタブが条件にしていない列は、他のタブの条件に当たらない値にする（例の行が意図したタブにだけ入るように）
+    for (const k of keysUsed) {
+      if (!t.isFallback && k in t.match) continue;
+      const avoid = new Set(prof.tabs.flatMap((x) => (x.isFallback || !(k in x.match) ? [] : asList(x.match[k]))));
+      const pool = (prof.allowed[k] ?? []).filter((v) => v && !avoid.has(v));
+      if (pool.length) r[k] = pool[0];
+      else if (!avoid.has('') && !REQUIRED.includes(k)) r[k] = '';
+    }
+    if (t.isFallback) {
+      if (!keysUsed.includes('プラットフォーム')) r['プラットフォーム'] = 'その他';
+    } else {
+      for (const [k, vals] of Object.entries(t.match)) r[k] = asList(vals)[0];
+    }
+    if (!r['プラットフォーム']) r['プラットフォーム'] = tabKind(t) === 'direct' ? 'Web検索' : 'ランサーズ';
+    if (!DIRECT_PLATFORMS.includes(r['プラットフォーム'])) Object.assign(r, {
+      候補1_企業名: '（例）株式会社A', 候補1_確度: '60', 候補1_URL: 'https://a.example.com/', 候補1_根拠: '所在地・規模・設立年が一致',
+      候補2_企業名: '（例）株式会社B', 候補2_確度: '20', 候補2_URL: 'https://b.example.com/', 候補2_根拠: '業種と所在地のみ一致',
+      案件タイトル: '（例）案件タイトル', 依頼内容: '（例）依頼内容の要約', 予算: '（例）月 10 万円', 掲載企業情報: '（例）業種 / 所在地 / 従業員数',
+      提案文_プラットフォーム: '（例）応募欄用の文面。冒頭 5 行で募集要件に回答。',
+    });
+    out.push(r);
+  });
+  return out;
+}
+
+
+// ---------- ヒアリングシート（_templates/hearing.json → HTML / Markdown） ----------
+const HEARING_TEMPLATE = path.join(SALES_DIR, '_templates', 'hearing.json');
+function loadHearing() {
+  try { return JSON.parse(fs.readFileSync(HEARING_TEMPLATE, 'utf8')); } catch (e) { fail(`${rel(HEARING_TEMPLATE)} を読めません: ${e.message}`); }
+}
+function htmlEsc(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function checkedSet(q, v) {
+  const vals = Array.isArray(v) ? v : (v == null || v === '' ? [] : [v]);
+  return new Set(vals.map((x) => (typeof x === 'number' ? q.options[x] : String(x))));
+}
+function otherText(q, v) {
+  const vals = Array.isArray(v) ? v : (v == null || v === '' ? [] : [v]);
+  return vals.filter((x) => typeof x === 'string' && !q.options.includes(x)).join(' / ');
+}
+function renderHearing(client, values, { mode, format, meta = {} }) {
+  const H = loadHearing();
+  const label = mode === 'answers' ? '回答' : '現在の理解（違っていれば書き換えてください）';
+  const name = client.config.name ?? client.slug;
+  const metaLine = mode === 'answers'
+    ? `クライアント: ${name}　/　ヒアリング日: ${meta.date ?? '　'}　/　回答者: ${meta.respondent ?? '　'}　/　出典: ${meta.source ?? '　'}`
+    : `御社名: ${name}　/　作成日: ${today()}　/　ご記入者: 　　　　`;
+  if (format === 'md') {
+    const out = [`# ${H.title}${mode === 'answers' ? '（回答記録）' : ''}`, '', metaLine, ''];
+    if (mode !== 'answers') out.push(...H.intro.map((l) => `> ${l}`), '');
+    for (const sec of H.sections) {
+      out.push(`## ${sec.id}. ${sec.title}`, '', `_${sec.purpose}_`, '');
+      for (const q of sec.questions) {
+        const v = values[q.id];
+        out.push(`### ${q.id}. ${q.q}`);
+        if (q.hint) out.push('', `> ${q.hint}`);
+        out.push('');
+        if (q.type === 'choice') {
+          const set = checkedSet(q, v);
+          out.push(`${q.multi ? '（複数選択可）' : '（1 つ選択）'}`);
+          for (const o of q.options) out.push(`- [${set.has(o) ? 'x' : ' '}] ${o}`);
+          const other = otherText(q, v);
+          if (other || q.options.includes('その他')) out.push(`- その他の内容: ${other}`);
+        } else if (q.type === 'table') {
+          const rows = Array.isArray(v) && v.length ? v : Array.from({ length: q.rows ?? 3 }, () => q.columns.map(() => ''));
+          out.push(`| ${q.columns.join(' | ')} |`, `| ${q.columns.map(() => '---').join(' | ')} |`);
+          for (const r of rows) out.push(`| ${q.columns.map((_, i) => String((Array.isArray(r) ? r[i] : r?.[q.columns[i]]) ?? '').replace(/\|/g, '／').replace(/\n/g, '<br>')).join(' | ')} |`);
+        } else {
+          out.push(v ? `**${label}:** ${String(v).replace(/\n/g, '  \n')}` : `**${mode === 'answers' ? '回答' : 'ご記入欄'}:** `);
+        }
+        if (mode === 'answers') out.push('', `<sub>反映先: ${q.maps}</sub>`);
+        out.push('');
+      }
+    }
+    return out.join('\n');
+  }
+  // HTML（Google ドキュメントに変換して先方に送る用。インライン装飾は最小限）
+  const note = (t) => `<p><font color="#5f6368" size="2">${t}</font></p>`;
+  const TABLE = '<table border="1" cellpadding="6" cellspacing="0" width="100%">';
+  const out = ['<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + htmlEsc(H.title) + '</title></head><body>'];
+  out.push(`<h1>${htmlEsc(H.title)}</h1>`, `<p>${htmlEsc(metaLine)}</p>`);
+  if (mode !== 'answers') out.push(note(H.intro.map(htmlEsc).join('<br>')));
+  for (const sec of H.sections) {
+    out.push(`<h2>${htmlEsc(`${sec.id}. ${sec.title}`)}</h2>`, note(htmlEsc(sec.purpose)));
+    for (const q of sec.questions) {
+      const v = values[q.id];
+      out.push(`<h3>${htmlEsc(`${q.id}. ${q.q}`)}</h3>`);
+      if (q.hint) out.push(note(htmlEsc(q.hint)));
+      if (q.type === 'choice') {
+        const set = checkedSet(q, v);
+        const other = otherText(q, v);
+        out.push(note(q.multi ? '当てはまるものすべてに ☑（複数選択可）' : '1 つだけ ☑'));
+        out.push('<p>' + q.options.map((o) => `${set.has(o) ? '☑' : '☐'} ${htmlEsc(o)}`).join('<br>') + (q.options.includes('その他') || other ? `<br>その他の内容: ${htmlEsc(other) || '＿＿＿＿＿＿＿＿＿＿'}` : '') + '</p>');
+      } else if (q.type === 'table') {
+        const rows = Array.isArray(v) && v.length ? v : Array.from({ length: q.rows ?? 3 }, () => q.columns.map(() => ''));
+        out.push(TABLE + `<tr>${q.columns.map((c) => `<th bgcolor="#e8eaed">${htmlEsc(c)}</th>`).join('')}</tr>`
+          + rows.map((r) => `<tr>${q.columns.map((_, i) => `<td>${htmlEsc((Array.isArray(r) ? r[i] : r?.[q.columns[i]]) ?? '').replace(/\n/g, '<br>') || '&nbsp;'}</td>`).join('')}</tr>`).join('') + '</table>');
+      } else {
+        out.push(TABLE + `<tr><td height="48">${v ? `<font color="#5f6368" size="2">${htmlEsc(label)}:</font><br>${htmlEsc(v).replace(/\n/g, '<br>')}` : '&nbsp;'}</td></tr></table>`);
+      }
+    }
+  }
+  out.push('</body></html>');
+  return out.join('\n');
 }
 
 // ---------- クライアント管理コマンド ----------
@@ -538,10 +774,10 @@ const clientCmds = {
       const cfg = readConfig(dir);
       const csv = path.join(dir, 'list', 'targets.csv');
       const n = fs.existsSync(csv) ? Math.max(0, parseCSV(fs.readFileSync(csv, 'utf8')).filter((r) => r.some((x) => x !== '')).length - 1) : 0;
-      const services = (cfg.services ?? []).map((s) => (typeof s === 'string' ? s : s.id)).join('|') || '（未設定）';
-      return [slug === active ? '*' : '', slug, cfg.name ?? '', services, String(n), cfg.spreadsheet?.current_url ? 'あり' : '-'];
+      const prof = profileOf(cfg);
+      return [slug === active ? '*' : '', slug, cfg.name ?? '', serviceIds(cfg).join('|') || '（未設定）', prof.tabs.map((t) => t.name).join('/'), String(n), cfg.spreadsheet?.current_url ? 'あり' : '-'];
     });
-    printTable(['', 'slug', '名称', 'サービス id', '営業先数', 'シート'], rows);
+    printTable(['', 'slug', '名称', 'サービス id', 'タブ', '営業先数', 'シート'], rows);
     console.log(active ? `\n* = 既定（sales/clients/ACTIVE）` : '\n既定クライアントは未設定です。use <slug> で設定してください。');
   },
   use(args) {
@@ -563,19 +799,17 @@ const clientCmds = {
     for (const d of ['intake', 'research', 'proposals']) fs.writeFileSync(path.join(dir, d, '.gitkeep'), '');
     const vars = { CLIENT_NAME: name, CLIENT_SLUG: slug, TODAY: today() };
     for (const f of fs.readdirSync(CLIENT_TEMPLATE_DIR)) copyTemplate(path.join(CLIENT_TEMPLATE_DIR, f), path.join(dir, f), vars);
-    fs.writeFileSync(path.join(dir, 'list', 'targets.csv'), COLUMNS.join(',') + '\n', 'utf8');
+    fs.writeFileSync(path.join(dir, 'list', 'targets.csv'), profileOf(readConfig(dir)).columns.join(',') + '\n', 'utf8');
     console.log(`作成: ${rel(dir)}/`);
     for (const f of fs.readdirSync(dir)) console.log(`  - ${f}`);
     if (args.includes('--use') || !activeSlug()) { fs.writeFileSync(ACTIVE_FILE, slug + '\n', 'utf8'); console.log(`既定クライアントを「${slug}」にしました`); }
-    console.log(`\n次: /sales-setup ${slug} <クライアントのサイト URL や資料> で offering.md / icp.md / config.json / outreach.md を埋めてください。`);
+    console.log(`\n次: /sales-setup ${slug} <サイト URL や資料> で商材を整理し、/sales-hearing ${slug} で分類と運用をヒアリングしてください。`);
   },
 };
 
 // ---------- リスト操作コマンド ----------
 const cmds = {
-  'next-id'(client) {
-    console.log(nextId(load(client).records));
-  },
+  'next-id'(client) { console.log(nextId(load(client).records)); },
 
   add(client, args) {
     const force = args.includes('--force');
@@ -588,10 +822,10 @@ const cmds = {
     const { records } = load(client);
     const added = [];
     for (const item of items) {
-      const r = fromInput(item, Object.fromEntries(COLUMNS.map((c) => [c, ''])));
+      const r = fromInput(item, blankRecord(client.prof), client.prof);
       if (!r.id) r.id = nextId([...records, ...added]);
       if (!r['登録日']) r['登録日'] = today();
-      if (!r['ステータス']) r['ステータス'] = '未着手';
+      if (!r['ステータス']) r['ステータス'] = client.prof.allowed['ステータス'][0];
       if (!r['接触チャネル']) r['接触チャネル'] = '未定';
       if (!r['企業名'] && r['候補1_企業名']) r['企業名'] = r['候補1_企業名'];
       const errs = validateRecord(client, r, records.length + added.length);
@@ -601,7 +835,7 @@ const cmds = {
       added.push(r);
     }
     save(client, [...records, ...added]);
-    for (const r of added) console.log(`追加 [${client.slug}]: ${r.id}  ${r['企業名']}  [${r['プラットフォーム']} / ${r['推奨サービス']} / ${r['ランク'] || '-'} / 候補1確度 ${r['候補1_確度'] || '-'}]`);
+    for (const r of added) console.log(`追加 [${client.slug}]: ${r.id}  ${r['企業名']}  [${tabsOfRecord(r, client.prof).map((t) => t.name).join('/') || '一覧のみ'} / ${r['推奨サービス']} / ${r['ランク'] || '-'} / 候補1確度 ${r['候補1_確度'] || '-'}]`);
   },
 
   update(client, args) {
@@ -613,7 +847,7 @@ const cmds = {
       const eq = p.indexOf('=');
       if (eq < 0) fail(`形式が不正: ${p}（列名=値）`);
       const k = p.slice(0, eq);
-      if (!COLUMNS.includes(k)) fail(`未定義の列: ${k}`);
+      if (!client.prof.columns.includes(k)) fail(`未定義の列: ${k}`);
       item[k] = p.slice(eq + 1);
     }
     cmds.apply(client, [JSON.stringify([{ id, ...item }]), '--inline', ...(force ? ['--force'] : [])]);
@@ -633,8 +867,8 @@ const cmds = {
       const r = records.find((x) => x.id === item.id);
       if (!r) { errs.push(`id が見つかりません: ${item.id}（クライアント: ${client.slug}）`); continue; }
       const { id, ...rest } = item;
-      const next = fromInput(rest, r);
-      for (const c of COLUMNS) if ((next[c] ?? '') !== (r[c] ?? '')) diffs.push([id, c, r[c], next[c]]);
+      const next = fromInput(rest, r, client.prof);
+      for (const c of client.prof.columns) if ((next[c] ?? '') !== (r[c] ?? '')) diffs.push([id, c, r[c], next[c]]);
       Object.assign(r, next);
       errs.push(...validateRecord(client, r, records.indexOf(r)));
     }
@@ -655,30 +889,52 @@ const cmds = {
   list(client, args) {
     const { records } = load(client);
     const filters = args.filter((a) => a.includes('=')).map((a) => { const i = a.indexOf('='); return [a.slice(0, i), a.slice(i + 1)]; });
-    const rows = sortRecords(records).filter((r) => filters.every(([k, v]) => splitMulti(r[k]).includes(v) || r[k] === v));
-    const cols = ['id', 'ランク', 'ICPスコア', 'ステータス', 'プラットフォーム', '企業名', '候補1_確度', '推奨サービス', '次アクション', '期限'];
-    printTable(cols, rows.map((r) => cols.map((c) => r[c] ?? '')));
+    const rows = sortRecords(records).filter((r) => filters.every(([k, v]) => (k === 'タブ' ? tabsOfRecord(r, client.prof).some((t) => t.name === v) : (splitMulti(r[k]).includes(v) || r[k] === v))));
+    const cols = ['id', 'ランク', 'ICPスコア', 'ステータス', 'タブ', '企業名', '候補1_確度', '推奨サービス', '次アクション', '期限'];
+    printTable(cols, rows.map((r) => cols.map((c) => (c === 'タブ' ? tabsOfRecord(r, client.prof).map((t) => t.name).join('/') : r[c] ?? ''))));
     console.log(`${rows.length} 件（クライアント: ${client.slug}）`);
   },
 
+  config(client) {
+    const { prof } = client;
+    const { errs, warns } = checkConfig(prof);
+    console.log(`# ${client.config.name ?? client.slug} の分類設定（config.json の sheet${client.config.sheet?.tabs ? '' : '。未設定のため標準'}）\n`);
+    printTable(['タブ', '入る行', '列'], [['一覧', '全件', '要約列'], ...prof.tabs.map((t) => [t.name, describeTab(t), tabKind(t) === 'direct' ? '候補・掲載情報なし' : '全列'])]);
+    console.log(`\n重なり: ${prof.overlap ? '複数の条件に当てはまる行は、すべてのタブに表示' : '上にあるタブに 1 回だけ表示'}`);
+    console.log(`ステータス: ${prof.allowed['ステータス'].join(' / ')}（完了扱い: ${prof.closed.join(' / ')}）`);
+    console.log(`プラットフォーム: ${prof.allowed['プラットフォーム'].join(' / ')}`);
+    console.log(`接触チャネル: ${prof.allowed['接触チャネル'].join(' / ')}`);
+    console.log(`商材 id: ${prof.allowed['推奨サービス'].join(' / ') || '（未設定）'}`);
+    if ((client.config.industries ?? []).length) console.log(`業種: ${client.config.industries.join(' / ')}`);
+    if (prof.custom.length) { console.log('\n独自項目'); printTable(['項目', '選択肢', '複数', '人が編集'], prof.custom.map((c) => [c.name, (c.values ?? []).join(' / ') || '自由入力', c.multi ? '○' : '', c.editable ? '○' : ''])); }
+    if (prof.hide.size) console.log(`\n非表示の列: ${[...prof.hide].join(' / ')}`);
+    warns.forEach((w) => console.error(`注意: ${w}`));
+    if (errs.length) { errs.forEach((e) => console.error(`エラー: ${e}`)); process.exit(1); }
+  },
+
   validate(client) {
-    const { records, migrated } = load(client);
-    const errs = [];
-    if (migrated) console.error('注意: CSV の列構成が旧形式です。次の書き込み（add / update / apply / migrate）で新形式に変換されます');
-    if (!serviceIds(client).length) console.error(`注意: ${client.slug}/config.json に services が未設定です（/sales-setup で設定）`);
+    const { records, migrated, dropped } = load(client);
+    const { errs: cErrs, warns } = checkConfig(client.prof);
+    warns.forEach((w) => console.error(`注意: ${w}`));
+    if (migrated) console.error('注意: CSV の列構成が現在の設定と違います。次の書き込み（add / update / apply / migrate）で変換されます');
+    if (dropped.length) console.error(`注意: 設定に無い列（${dropped.join(', ')}）の値は、保存時に備考へ移されます`);
+    const errs = [...cErrs.map((e) => `分類設定: ${e}`)];
     records.forEach((r, i) => errs.push(...validateRecord(client, r, i)));
     errs.push(...findDuplicates(records));
+    const unplaced = records.filter((r) => !tabsOfRecord(r, client.prof).length).map((r) => r.id);
+    if (unplaced.length) console.error(`注意: どのタブにも入らない行（一覧にだけ表示）: ${unplaced.join(', ')}`);
     if (errs.length) { errs.forEach((e) => console.error(e)); fail(`${errs.length} 件の問題`); }
     console.log(`OK [${client.slug}]: ${records.length} 件、問題なし`);
   },
 
   migrate(client) {
-    const { records, migrated } = load(client);
+    const { records, migrated, dropped } = load(client);
     save(client, records);
-    console.log(migrated ? `変換しました [${client.slug}]: ${records.length} 件を新しい列構成で保存` : `変換不要 [${client.slug}]`);
+    console.log(migrated ? `変換しました [${client.slug}]: ${records.length} 件を現在の列構成で保存${dropped.length ? `（${dropped.join(', ')} の値は備考へ移動）` : ''}` : `変換不要 [${client.slug}]`);
   },
 
   stats(client) {
+    const { prof } = client;
     const { records } = load(client);
     console.log(`# ${client.config.name ?? client.slug} 営業先リスト 集計（${records.length} 件 / ${today()}）`);
     if (!records.length) { console.log('まだ 0 件です。/sales-intake か /sales-prospect で追加してください。'); return; }
@@ -686,28 +942,28 @@ const cmds = {
       const m = new Map();
       for (const r of records) {
         const raw = fn ? fn(r) : (String(r[key] ?? '').trim() || '（未設定）');
-        const vals = split ? splitMulti(raw, split) : [raw];
-        for (const v of vals) m.set(v, (m.get(v) ?? 0) + 1);
+        const vals = Array.isArray(raw) ? raw : split ? splitMulti(raw, split) : [raw];
+        for (const v of (vals.length ? vals : ['（未設定）'])) m.set(v, (m.get(v) ?? 0) + 1);
       }
       return [...m.entries()].sort((a, b) => b[1] - a[1]);
     };
     const section = (title, entries) => { console.log(`\n## ${title}`); printTable(['値', '件数'], entries.map(([k, v]) => [k, String(v)])); };
-    section('タブ（プラットフォーム分類）別', count(null, null, (r) => tabOf(r).name));
+    section('タブ別', count(null, null, (r) => tabsOfRecord(r, prof).map((t) => t.name)));
     section('推奨サービス別（複数カウント）', count('推奨サービス', '|'));
     section('ランク別', count('ランク'));
     section('ステータス別', count('ステータス'));
     section('企業特定の確度（候補1）', count(null, null, (r) => {
-      if (r['プラットフォーム'] === 'Web検索' || r['プラットフォーム'] === 'SNS') return '直接発見（特定不要）';
+      if (DIRECT_PLATFORMS.includes(r['プラットフォーム'])) return '直接発見（特定不要）';
       const c = r['候補1_確度']; if (c === '') return '未特定';
       return Number(c) >= 70 ? '高（70%以上）' : Number(c) >= 40 ? '中（40〜69%）' : '低（40%未満）';
     }));
     section('提案文の作成状況', count(null, null, (r) => [r['提案文_直接'] ? '直接' : '', r['提案文_プラットフォーム'] ? 'プラットフォーム' : ''].filter(Boolean).join('+') || '未作成'));
     section('業種別', count('業種'));
-    const configured = serviceIds(client);
-    const services = configured.length ? configured : count('推奨サービス', '|').map(([k]) => k);
+    for (const c of prof.custom) section(`${c.name}別`, count(c.name, c.multi ? '|' : null));
+    const services = prof.allowed['推奨サービス'].length ? prof.allowed['推奨サービス'] : count('推奨サービス', '|').map(([k]) => k);
     console.log('\n## タブ × 推奨サービス');
-    printTable(['タブ', ...services], TABS.map((t) => [t.name, ...services.map((s) => String(records.filter((r) => tabOf(r) === t && splitMulti(r['推奨サービス']).includes(s)).length))]));
-    const due = records.filter((r) => r['期限'] && r['期限'] <= today() && !['受注', '失注', '除外'].includes(r['ステータス']));
+    printTable(['タブ', ...services], prof.tabs.map((t) => [t.name, ...services.map((s) => String(records.filter((r) => tabsOfRecord(r, prof).includes(t) && splitMulti(r['推奨サービス']).includes(s)).length))]));
+    const due = records.filter((r) => r['期限'] && r['期限'] <= today() && !prof.closed.includes(r['ステータス']));
     if (due.length) {
       console.log('\n## 期限切れ・本日期限の次アクション');
       printTable(['id', '企業名', '次アクション', '期限'], due.map((r) => [r.id, r['企業名'], r['次アクション'], r['期限']]));
@@ -716,23 +972,56 @@ const cmds = {
 
   export(client) {
     const { records } = load(client);
-    fs.writeFileSync(client.exportPath, '﻿' + toCSV(COLUMNS, sortRecords(records), '\r\n'), 'utf8');
+    fs.writeFileSync(client.exportPath, '﻿' + toCSV(client.prof.columns, sortRecords(records), '\r\n'), 'utf8');
     console.log(`書き出し: ${rel(client.exportPath)}（UTF-8 BOM / CRLF、${records.length} 件）`);
   },
 
+  hearing(client, args) {
+    const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
+    const prefill = opt('--prefill'), answers = opt('--answers');
+    if (prefill && answers) fail('--prefill と --answers は同時に使えません');
+    const format = opt('--format') ?? (answers ? 'md' : 'both');
+    if (!['html', 'md', 'both'].includes(format)) fail('--format は html / md / both');
+    const readJson = (p) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { fail(`${p} を読めません: ${e.message}`); } };
+    const src = prefill ? readJson(prefill) : answers ? readJson(answers) : {};
+    const values = src.answers ?? src;
+    const meta = src.meta ?? {};
+    const H = loadHearing();
+    const ids = new Set(H.sections.flatMap((s) => s.questions.map((q) => q.id)));
+    const unknown = Object.keys(values).filter((k) => !ids.has(k) && k !== 'meta');
+    if (unknown.length) console.error(`注意: 質問に無い id を無視しました: ${unknown.join(', ')}`);
+    const mode = answers ? 'answers' : 'sheet';
+    const dir = path.join(client.dir, 'hearing');
+    fs.mkdirSync(dir, { recursive: true });
+    const base = mode === 'answers' ? 'answers' : 'sheet';
+    const formats = format === 'both' ? ['html', 'md'] : [format];
+    for (const f of formats) {
+      const out = opt('--out') && formats.length === 1 ? path.resolve(opt('--out')) : path.join(dir, `${base}.${f}`);
+      fs.writeFileSync(out, renderHearing(client, values, { mode, format: f, meta }), 'utf8');
+      console.log(`書き出し: ${rel(out)}`);
+    }
+    const total = ids.size, filled = [...ids].filter((id) => { const v = values[id]; return Array.isArray(v) ? v.length : v; }).length;
+    console.log(`  ${mode === 'answers' ? '回答済み' : '事前記入'}: ${filled}/${total} 問`);
+    if (mode === 'sheet') console.log(`  推奨タイトル: 営業代行ヒアリングシート_${client.config.name ?? client.slug}_${today()}`);
+  },
+
   sheet(client, args) {
+    const { errs, warns } = checkConfig(client.prof);
+    warns.forEach((w) => console.error(`注意: ${w}`));
+    if (errs.length) { errs.forEach((e) => console.error(`分類設定のエラー: ${e}`)); fail('config.json の sheet を直してください（config で確認できます）'); }
+    const demo = args.includes('--demo');
     const outIdx = args.indexOf('--out');
-    const out = outIdx >= 0 ? path.resolve(args[outIdx + 1]) : client.xlsxPath;
-    let { records } = load(client);
-    if (args.includes('--active-only')) records = records.filter((r) => !['失注', '除外'].includes(r['ステータス']));
-    const { buffer, sheets } = buildWorkbook(client, records);
+    const out = outIdx >= 0 ? path.resolve(args[outIdx + 1]) : (demo ? client.previewPath : client.xlsxPath);
+    let records = demo ? demoRecords(client) : load(client).records;
+    if (!demo && args.includes('--active-only')) records = records.filter((r) => !['失注', '除外'].includes(r['ステータス']));
+    const { buffer, sheets, unplaced } = buildWorkbook(client, records, { demo });
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, buffer);
-    const stamp = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 16).replace('T', ' ');
-    console.log(`書き出し: ${rel(out)}`);
+    console.log(`書き出し: ${rel(out)}${demo ? '（分類の確認用プレビュー。行はすべて例）' : ''}`);
     console.log(`  サイズ: ${buffer.length.toLocaleString()} bytes（base64 ${Math.ceil(buffer.length / 3) * 4} 文字）`);
     console.log(`  タブ: ${sheets.map((s) => `${s.name}(${s.count})`).join(' / ')}`);
-    console.log(`  推奨タイトル: 営業リスト_${client.config.name ?? client.slug}_${stamp}`);
+    console.log(`  推奨タイトル: ${demo ? '【分類プレビュー】' : ''}営業リスト_${client.config.name ?? client.slug}_${jstStamp()}`);
+    if (unplaced.length) console.error(`注意: どのタブにも入らない行（一覧にだけ表示）: ${unplaced.join(', ')}`);
     if (buffer.length > 300000) console.error('注意: 300KB を超えています。Google Drive へのアップロードは --active-only で絞るか、手動インポートを推奨');
   },
 };
@@ -747,6 +1036,15 @@ function help() {
   init <slug> --name "名称" [--use]  新しいクライアントを _templates/client から作成
   use <slug>                         既定クライアントを設定（sales/clients/ACTIVE）。環境変数 SALES_CLIENT でも可
 
+分類（タブ・独自項目・ステータス。config.json の "sheet"）
+  config                             現在の分類設定を表示し、設定の誤りを検査
+  sheet --demo                       分類の確認用プレビュー（タブごとに例の行。list/preview.xlsx）
+
+ヒアリング（質問: sales/_templates/hearing.json）
+  hearing [--prefill <json>]         先方に送るヒアリングシート（hearing/sheet.html と sheet.md）
+                                     --prefill はサイト等から分かった「現在の理解」を事前記入（{"A1": "…", "C1": ["業種別"], "A2": [["列1","列2",…]]}）
+  hearing --answers <json>           回答の記録（hearing/answers.md）。json は {"meta": {"date","respondent","source"}, "answers": {...}}
+
 営業先リスト（既定 or --client のクライアントが対象）
   next-id                            次の id（T-0001 形式）
   add <json | ->                     1 件または配列を追加。"候補": [{企業名,確度,URL,根拠}, ...] は候補1〜3 に展開
@@ -755,15 +1053,14 @@ function help() {
   apply <json | ->                   [{"id":"T-0001","ステータス":"送付済",...}] を一括反映し、差分を表示
                                      （スプレッドシートで人が編集した列の取り込みに使う）
   get <id>                           1 行を JSON で表示（空の列は省略）
-  list [列=値 ...]                   一覧（例: list ランク=A ステータス=未着手）
-  validate                           必須列・許可値・候補の確度・日付・重複・ファイル存在を検証
-  migrate                            旧形式の CSV を新しい列構成に変換して保存
-  stats                              タブ / サービス / ランク / ステータス / 特定確度 / 提案文 の集計と期限切れ
+  list [列=値 | タブ=名前 ...]       一覧（例: list ランク=A ステータス=未着手 / list タブ=発注ナビ）
+  validate                           分類設定・必須列・許可値・候補の確度・日付・重複・ファイル存在を検証
+  migrate                            CSV を現在の列構成（旧形式・独自項目の追加削除）に合わせて保存
+  stats                              タブ / サービス / ランク / ステータス / 特定確度 / 提案文 / 独自項目 の集計と期限切れ
   export                             Excel 向け BOM 付き CSV（list/targets.export.csv）
   sheet [--active-only] [--out パス] タブ分けしたスプレッドシート（list/targets.xlsx）
-                                     タブ: 一覧 / ${TABS.map((t) => t.name).join(' / ')} / 凡例
 
-列定義と許可値: sales/_shared/schema.md`);
+列定義・分類設定の書き方: sales/_shared/schema.md`);
 }
 
 // ---------- main ----------

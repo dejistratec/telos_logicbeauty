@@ -26,3 +26,5 @@ dist-ssr
 # sales: Excel/Sheets 向け書き出し（原本は各クライアントの targets.csv）
 sales/clients/*/list/*.export.csv
 sales/clients/*/list/*.xlsx
+sales/clients/*/hearing/*.html
+sales/clients/*/list/preview.xlsx
