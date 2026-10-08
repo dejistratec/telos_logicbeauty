@@ -22,8 +22,27 @@
   ],
   "industries": [],
   "_comment": "記入済みサンプル。このリポジトリのサイト（constants.tsx）から作成。新しいクライアントは init で作り、/sales-setup で埋める。",
+  "share": {
+    "platform": "google_sheets",
+    "update_timing": "manual",
+    "members": [],
+    "client_access": "none",
+    "client_contacts": [],
+    "notify": {
+      "channel": "none",
+      "target": "",
+      "frequency": "each_intake"
+    },
+    "notion": {
+      "parent_page_id": "",
+      "database_id": "",
+      "data_source_id": "",
+      "url": ""
+    },
+    "last_push": "",
+    "last_notify": ""
+  },
   "spreadsheet": {
-    "auto_publish": false,
     "folder_id": "",
     "current_id": "",
     "current_url": "",

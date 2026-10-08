@@ -80,6 +80,7 @@ CSV とスプレッドシートの列順は同じで、`node sales/scripts/targe
 |----|------|
 | 反応メモ / 備考 | 上記（人が編集してよい） |
 | 登録日 | 追加した日（自動） |
+| 更新日時 | 最後に変更した日時 `YYYY-MM-DD HH:MM`（日本時間・自動）。共有先への差分書き出しとチーム通知に使う |
 | プラットフォーム | 見つけた場所＝タブの振り分け先（**必須**）: `ランサーズ` / `クラウドワークス` / `発注ナビ` / `その他マッチング` / `Web検索` / `SNS` / `紹介` / `展示会・イベント` / `その他` |
 | 調査メモ / 提案文ファイル / 原文ファイル | リポジトリ内のファイルパス（`sales/clients/<slug>/research/T-0001_xxx.md` など） |
 
@@ -143,14 +144,47 @@ CSV とスプレッドシートの列順は同じで、`node sales/scripts/targe
 
 タブ名は 31 文字以内、`[ ] : * ? / \` は使えず、「一覧」「凡例」は予約済みです。独自項目を追加・削除したら `migrate` で原本を新しい列構成にします（削除した項目の値は備考に移ります）。
 
-## スプレッドシートの出力先（クライアントの `config.json` の `spreadsheet`）
+## 共有設定（クライアントの `config.json` の `share`）
+
+どこで・誰と・どう共有するかもクライアントごとに決めます。`/sales-hearing` の F 章の回答から組み立て、`node sales/scripts/targets.mjs share` で確認・検査します。
+
 ```json
-"spreadsheet": {
-  "auto_publish": true,
-  "folder_id": "",
-  "current_id": "",
-  "current_url": "",
-  "previous_ids": []
+"share": {
+  "platform": "notion",
+  "update_timing": "each_intake",
+  "members": [
+    { "name": "佐藤", "role": "送付", "access": "edit", "email": "sato@example.com" },
+    { "name": "鈴木", "role": "送付前の確認", "access": "comment", "email": "suzuki@example.com" }
+  ],
+  "client_access": "view",
+  "client_contacts": [ { "name": "山田様", "email": "yamada@client.example" } ],
+  "notify": { "channel": "slack", "target": "#sales-acme", "frequency": "daily" },
+  "notion": { "parent_page_id": "", "database_id": "", "data_source_id": "", "url": "" },
+  "last_push": "",
+  "last_notify": ""
 }
 ```
-`/sales-list` が出力のたびに更新します。手で編集する必要はありません。
+
+| キー | 値 |
+|------|----|
+| `platform` | `google_sheets`（タブで分類）／ `notion`（1 社 1 ページ、「分類」列で絞ったビュー）／ `excel`（xlsx を渡す。同時編集は不可）／ `csv`（kintone などへ取り込む） |
+| `update_timing` | `each_intake`（取り込みのたび）／ `daily` ／ `weekly` ／ `manual`（依頼時のみ） |
+| `members` | 使う人。`access` は `edit` / `comment` / `view` |
+| `client_access` / `client_contacts` | クライアント側の見え方（`none` / `view` / `comment` / `edit`）と見る人 |
+| `notify` | `channel` は `slack` / `chatwork` / `line_works` / `teams` / `email` / `none`。Slack はコネクタで投稿、それ以外は要約文を渡して人が貼る |
+| `notion` | Notion のデータベースの記録（`/sales-list` が書く） |
+| `last_push` / `last_notify` | 最後に書き出した・通知した日時（`targets.mjs pushed` が書く） |
+
+### 共有先ごとの違い
+| 共有先 | 分類の見せ方 | 人の編集の取り込み | 同時編集 |
+|--------|-------------|--------------------|----------|
+| Google スプレッドシート | タブ | シートを読んで `pull` | ○ |
+| Notion | 「分類」列で絞ったビュー。提案文・候補・掲載情報は各ページの本文 | データベースを読んで `pull` | ○ |
+| Excel | タブ | 編集済みファイルを `xlsx_rows.py` → `pull` | × |
+| CSV | 末尾の「分類」列 | 取り込み先から書き出した CSV を `pull` | ツールによる |
+
+- Notion ページの id は `list/share_map.json` に記録します（チームで共有するのでコミットする）。
+- 書き出し用のデータは `targets.mjs payload --format notion|google_sheets|rows`、Notion のプロパティ定義は `notion-schema` で出力します。
+
+## スプレッドシートの記録（クライアントの `config.json` の `spreadsheet`）
+`folder_id` / `current_id` / `current_url` / `previous_ids`。`/sales-list` が出力のたびに更新します。手で編集する必要はありません。

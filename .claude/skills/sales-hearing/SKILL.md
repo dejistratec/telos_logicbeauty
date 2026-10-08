@@ -1,6 +1,6 @@
 ---
 name: sales-hearing
-description: 営業代行のクライアント（営業する側の企業）にヒアリングし、その回答から営業先リストの分類（スプレッドシートのタブの分け方・追加項目・ステータス）と、商材プロファイル・営業先の選定基準・営業文の設定を組み立てる。ヒアリングシート（Google ドキュメント）の作成、チャットでの聞き取り、記入済みシートや打ち合わせメモの取り込み・反映に使う。「ヒアリングシートを作って」「クライアントにヒアリングしたい」「ヒアリング結果を反映して」「この議事録から分類を決めて」「タブを業種別にしたい」などで使う。
+description: 営業代行のクライアント（営業する側の企業）にヒアリングし、その回答から営業先リストの分類（タブ・ビューの分け方・追加項目・ステータス）、共有の方法（Google スプレッドシート／Notion／Excel／CSV・メンバー・クライアントの見え方・通知先）、商材プロファイル・営業先の選定基準・営業文の設定を組み立てる。ヒアリングシート（Google ドキュメント）の作成、チャットでの聞き取り、記入済みシートや打ち合わせメモの取り込み・反映に使う。「ヒアリングシートを作って」「クライアントにヒアリングしたい」「ヒアリング結果を反映して」「この議事録から分類を決めて」「タブを業種別にしたい」などで使う。
 argument-hint: [シート作成 ／ 対話 ／ 反映 <Google ドキュメントの URL・貼り付け・議事録>] [--client <slug>]
 ---
 
@@ -8,7 +8,7 @@ argument-hint: [シート作成 ／ 対話 ／ 反映 <Google ドキュメント
 
 入力: `$ARGUMENTS`
 
-質問は `sales/_templates/hearing.json`（28 問・5 章）。各質問の `maps` が反映先。
+質問は `sales/_templates/hearing.json`（33 問・6 章: 商材／営業先／リストの分け方／営業文／運用／共有と通知）。各質問の `maps` が反映先。
 `T` = `node sales/scripts/targets.mjs`（既定以外のクライアントは `--client <slug>`）、`<C>` = `sales/clients/<slug>`。
 
 ## クライアントの決め方
@@ -33,7 +33,7 @@ argument-hint: [シート作成 ／ 対話 ／ 反映 <Google ドキュメント
 3. Google Drive コネクタがあれば（ToolSearch で `google drive`）、先に `google-workspace` スキルを読み、`create_file` で `textContent` = sheet.html、`contentMimeType` = `text/html`、`title` = 出力された推奨タイトル → Google ドキュメントに変換される。`<C>/config.json` に `"hearing": {"doc_id": "…", "doc_url": "…"}` を記録。
    - コネクタが無ければ sheet.md（または `docx` スキルで Word）を `SendUserFile` で渡す。
 4. **先方への共有はしない**（共有・送信は外部への送付なので、ユーザーが明示的に頼んだ時だけ `share_file`。その時も宛先を確認してから）。
-5. 報告: ドキュメントのリンク、事前記入した問の数、先方に特に答えてほしい問（A2 価格・A3 実績・C1〜C5 分類・D1 名義・D6 直接連絡）。
+5. 報告: ドキュメントのリンク、事前記入した問の数、先方に特に答えてほしい問（A2 価格・A3 実績・C1〜C5 分類・D1 名義・D6 直接連絡・F1 共有先・F2 使う人）。
 
 ## 2. 対話（チャットで聞き取る）
 
@@ -79,17 +79,32 @@ argument-hint: [シート作成 ／ 対話 ／ 反映 <Google ドキュメント
 | A1〜A6 | `offering.md`（§0 出典に「ヒアリング YYYY-MM-DD」）・`config.json` の `services`（A2 の商材ごとに id を付ける）・`outreach.md` §2 署名 |
 | B1〜B5 | `icp.md` §1〜2（`【仮説】` を回答で置き換える）。B4 の取引先は `icp.md` §1 除外に列挙 |
 | D1〜D6 | `outreach.md` §1（名義・差出人・返信先）・§3 CTA・§5 チャネル・§6 NG。D6 は §5 に「直接連絡: 可 / 応募欄のみ / 要相談」として明記 |
-| E1〜E4 | `outreach.md` §1（確認者）・`config.json` の `spreadsheet`（E4 の共有先は記録だけ。共有はユーザーの指示があってから） |
+| E1〜E3 | `outreach.md` §1（送付前の確認者）・運用メモ（目標件数・報告の頻度は `outreach.md` 末尾に「運用」として記録） |
+| F1〜F6 | `config.json` の `share`（下の 3-3b） |
+
+### 3-3b. 共有の方法を組み立てる（F 章 → `config.json` の `share`）
+| 問 | 設定 |
+|----|------|
+| F1 共有する場所 | `platform`: Google スプレッドシート → `google_sheets`、Notion → `notion`、Excel → `excel`、kintone など → `csv`。「こだわらない」なら、編集する人が 2 人以上で 1 社ごとに提案文や調査を読み込むなら `notion`、それ以外は `google_sheets` を選び、理由を報告に書く |
+| F2 使う人 | `members`: `[{"name": "佐藤", "role": "送付", "access": "edit", "email": "…"}]`（`access` は edit / comment / view） |
+| F3 御社の見え方 | `client_access`: 見なくてよい → `none`、見るだけ → `view`、コメント → `comment`、編集 → `edit`。御社側で見る方は F2 の表から `client_contacts` に分ける |
+| F4・F5 通知 | `notify.channel`: Slack → `slack`、Chatwork → `chatwork`、LINE WORKS → `line_works`、Teams → `teams`、メール → `email`、不要 → `none`（複数なら主に使うもの）。`notify.target` に F5 |
+| F6 更新の頻度 | `update_timing`: 取り込むたび → `each_intake`、1 日 1 回 → `daily`、週 1 回 → `weekly`、依頼時 → `manual`。`notify.frequency` も同じにする |
+
+- `T share` で検査する。注意（Excel で複数人が編集する、など）は内容を報告に含め、代わりの方法を 1 行で添える。
+- 必要なコネクタ（Notion・Google Sheets・Slack）が未接続なら、`read_documentation`（topic `connectors.add`）でつなぎ方を確認してユーザーに伝える。
+- メンバーや先方への招待は、ここでは行わない（ユーザーが頼んだ時に `/sales-list` で行う）。
 
 既存の内容を書き換える時は、何をどう変えたかを報告に必ず書く。回答が無い項目は元の内容（`【要確認】` `【仮説】`）を残す。
 
 ### 3-4. 検証とプレビュー
 1. `T config` で分類設定を検査する（エラーは直す。注意は内容を確認する）。
 2. 既に営業先が登録されていれば `T validate` と `T migrate`（独自項目の追加・削除に合わせて CSV を変換。削除した項目の値は備考へ移る）。登録済みの行に独自項目の値を入れられる場合は `T apply` で埋める。
-3. `T sheet --demo` で分類の確認用プレビュー（タブごとに例の行）を作り、`/sales-list` の出力経路（Sheets / Drive / ローカル）で見せる。タイトルは `【分類プレビュー】…`。
+3. `T sheet --demo` で分類の確認用プレビュー（タブごとに例の行）を作り、共有先に合わせて見せる（Google スプレッドシート・Excel は xlsx、Notion は `T notion-schema` のプロパティとビューの一覧）。タイトルは `【分類プレビュー】…`。
 4. 報告:
    - 分類の表（タブ名・入る行・列）。`T config` の出力をそのまま使う
    - 追加した独自項目・ステータス・プラットフォーム
+   - 共有の方法（`T share` の出力）と、つなぐ必要のあるコネクタ
    - 各ファイルの変更点（1 行ずつ）
    - まだ埋まっていない重要な項目（価格・実績・名義・直接連絡の可否）
    - プレビューのリンク

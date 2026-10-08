@@ -28,3 +28,4 @@ sales/clients/*/list/*.export.csv
 sales/clients/*/list/*.xlsx
 sales/clients/*/hearing/*.html
 sales/clients/*/list/preview.xlsx
+__pycache__/

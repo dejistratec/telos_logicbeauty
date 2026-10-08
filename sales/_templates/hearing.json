@@ -310,12 +310,88 @@
             "その他"
           ],
           "maps": "運用"
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "title": "リストの共有と通知",
+      "purpose": "営業先リストをどこで、誰と、どのように共有するかを決めます。決めた内容に合わせて当方で仕組みを用意します。",
+      "questions": [
+        {
+          "id": "F1",
+          "q": "営業先リストを共有・管理する場所",
+          "type": "choice",
+          "multi": false,
+          "options": [
+            "Google スプレッドシート",
+            "Notion",
+            "Excel ファイル",
+            "kintone など社内のツール（CSV で取り込み）",
+            "特にこだわらない（おすすめに任せる）"
+          ],
+          "maps": "config.json share.platform"
         },
         {
-          "id": "E4",
-          "q": "スプレッドシートを共有する方のメールアドレス",
+          "id": "F2",
+          "q": "リストを使う方（御社・当方とも）",
+          "hint": "役割の例: 送付する、送る前に確認する、見るだけ",
+          "type": "table",
+          "columns": [
+            "お名前",
+            "役割",
+            "権限（編集・コメント・閲覧）",
+            "メールアドレス"
+          ],
+          "rows": 4,
+          "maps": "config.json share.members"
+        },
+        {
+          "id": "F3",
+          "q": "御社の方がリストを見るときの範囲",
+          "type": "choice",
+          "multi": false,
+          "options": [
+            "見なくてよい（報告だけでよい）",
+            "見るだけ",
+            "コメントできる",
+            "編集できる"
+          ],
+          "maps": "config.json share.client_access"
+        },
+        {
+          "id": "F4",
+          "q": "新しい営業先や期限を知らせる先",
+          "type": "choice",
+          "multi": true,
+          "options": [
+            "Slack",
+            "Chatwork",
+            "LINE WORKS",
+            "Microsoft Teams",
+            "メール",
+            "通知は不要"
+          ],
+          "maps": "config.json share.notify.channel"
+        },
+        {
+          "id": "F5",
+          "q": "通知先のチャンネル名・グループ名・メールアドレス",
           "type": "text",
-          "maps": "config.json spreadsheet / 共有"
+          "maps": "config.json share.notify.target"
+        },
+        {
+          "id": "F6",
+          "q": "リストを更新する頻度",
+          "type": "choice",
+          "multi": false,
+          "options": [
+            "営業先を取り込むたび",
+            "1 日 1 回",
+            "週 1 回",
+            "依頼したときだけ"
+          ],
+          "maps": "config.json share.update_timing / notify.frequency"
         }
       ]
     }

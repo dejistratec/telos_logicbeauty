@@ -28,7 +28,7 @@ const GROUPS = [
   { key: '送付', color: '188038', cols: ['問い合わせ先', 'WebサイトURL', 'SNS', '件名', '提案文_直接', '提案文_プラットフォーム'] },
   { key: '掲載情報', color: '5F6368', cols: ['掲載URL', '案件タイトル', '依頼内容', '予算', '納期・期間', '依頼条件', '掲載企業情報'] },
   { key: '企業・評価', color: '9334E6', cols: ['業種', '所在地', '規模', 'ニーズ要約', '推奨サービス', '属性タグ'] },
-  { key: '記録', color: '80868B', cols: ['反応メモ', '備考', '登録日', 'プラットフォーム', '調査メモ', '提案文ファイル', '原文ファイル'] },
+  { key: '記録', color: '80868B', cols: ['反応メモ', '備考', '登録日', '更新日時', 'プラットフォーム', '調査メモ', '提案文ファイル', '原文ファイル'] },
 ];
 const CUSTOM_GROUP = { key: '独自項目', color: '00897B' };
 const CUSTOM_EDIT_GROUP = { key: '独自項目（人が編集）', color: 'F9AB00', dark: true };
@@ -78,7 +78,7 @@ const VALUE_MAP = {
 
 // ---------- CSV ----------
 function parseCSV(text) {
-  text = text.replace(/^﻿/, '');
+  text = text.replace(/^\uFEFF/, '');
   const rows = [];
   let row = [], field = '', inQ = false;
   for (let i = 0; i < text.length; i++) {
@@ -289,9 +289,9 @@ function load(client) {
 }
 function save(client, records) { fs.writeFileSync(client.csvPath, toCSV(client.prof.columns, records), 'utf8'); }
 function blankRecord(prof) { return Object.fromEntries(prof.columns.map((c) => [c, ''])); }
-function nextId(records) {
+function nextId(records, extraIds = []) {
   let max = 0;
-  for (const r of records) { const m = /^T-(\d+)$/.exec(r.id ?? ''); if (m) max = Math.max(max, Number(m[1])); }
+  for (const id of [...records.map((r) => r.id), ...extraIds]) { const m = /^T-(\d+)$/.exec(id ?? ''); if (m) max = Math.max(max, Number(m[1])); }
   return `T-${String(max + 1).padStart(4, '0')}`;
 }
 
@@ -317,6 +317,8 @@ function validateRecord(client, r, idx) {
     const v = String(r[k] ?? '').trim();
     if (v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) errs.push(`${where}: 「${k}」は YYYY-MM-DD 形式`);
   }
+  const upd = String(r['更新日時'] ?? '').trim();
+  if (upd && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(upd)) errs.push(`${where}: 「更新日時」は YYYY-MM-DD HH:MM 形式（日本時間）`);
   let sum = 0, prev = Infinity, gap = false;
   for (const n of [1, 2, 3]) {
     const name = String(r[`候補${n}_企業名`] ?? '').trim();
@@ -518,7 +520,7 @@ const WIDTH = {
   '問い合わせ先': 32, 'WebサイトURL': 28, 'SNS': 24, '件名': 30, '提案文_直接': 64, '提案文_プラットフォーム': 64,
   '掲載URL': 26, '案件タイトル': 30, '依頼内容': 50, '予算': 16, '納期・期間': 16, '依頼条件': 36, '掲載企業情報': 36,
   '業種': 16, '所在地': 14, '規模': 14, 'ニーズ要約': 40, '推奨サービス': 18, '属性タグ': 26,
-  '反応メモ': 36, '備考': 32, '登録日': 11, 'プラットフォーム': 13, '調査メモ': 30, '提案文ファイル': 30, '原文ファイル': 30,
+  '反応メモ': 36, '備考': 32, '登録日': 11, '更新日時': 16, 'プラットフォーム': 13, '調査メモ': 30, '提案文ファイル': 30, '原文ファイル': 30,
 };
 for (const n of [1, 2, 3]) Object.assign(WIDTH, { [`候補${n}_企業名`]: 24, [`候補${n}_確度`]: 8, [`候補${n}_URL`]: 26, [`候補${n}_根拠`]: 40 });
 const WRAP_COLS = new Set(['提案文_直接', '提案文_プラットフォーム', '依頼内容', '依頼条件', '掲載企業情報', 'ニーズ要約', '反応メモ', '備考', '案件タイトル', '候補1_根拠', '候補2_根拠', '候補3_根拠']);
@@ -758,6 +760,162 @@ function renderHearing(client, values, { mode, format, meta = {} }) {
   return out.join('\n');
 }
 
+// ---------- 共有（クライアントごとの共有先・通知。config.json の "share"） ----------
+const SHARE_PLATFORMS = {
+  google_sheets: 'Google スプレッドシート', notion: 'Notion', excel: 'Excel ファイル', csv: 'CSV（kintone など他のツールへの取り込み用）',
+};
+const SHARE_ACCESS = ['none', 'view', 'comment', 'edit'];
+const NOTIFY_CHANNELS = ['none', 'slack', 'chatwork', 'line_works', 'email', 'teams'];
+const UPDATE_TIMINGS = ['each_intake', 'daily', 'weekly', 'manual'];
+function shareOf(config) {
+  const sh = config.share ?? {};
+  return {
+    platform: sh.platform ?? 'google_sheets',
+    update_timing: sh.update_timing ?? 'each_intake',
+    members: Array.isArray(sh.members) ? sh.members : [],
+    client_access: sh.client_access ?? 'none',
+    client_contacts: Array.isArray(sh.client_contacts) ? sh.client_contacts : [],
+    notify: { channel: 'none', target: '', frequency: 'each_intake', ...(sh.notify ?? {}) },
+    notion: { parent_page_id: '', database_id: '', data_source_id: '', url: '', ...(sh.notion ?? {}) },
+    last_push: sh.last_push ?? '',
+    last_notify: sh.last_notify ?? '',
+  };
+}
+function checkShare(config) {
+  const sh = shareOf(config);
+  const errs = [], warns = [];
+  if (!SHARE_PLATFORMS[sh.platform]) errs.push(`share.platform「${sh.platform}」は未対応（${Object.keys(SHARE_PLATFORMS).join(' / ')}）`);
+  if (!SHARE_ACCESS.includes(sh.client_access)) errs.push(`share.client_access は ${SHARE_ACCESS.join(' / ')}`);
+  if (!NOTIFY_CHANNELS.includes(sh.notify.channel)) errs.push(`share.notify.channel は ${NOTIFY_CHANNELS.join(' / ')}`);
+  if (!UPDATE_TIMINGS.includes(sh.update_timing)) errs.push(`share.update_timing は ${UPDATE_TIMINGS.join(' / ')}`);
+  for (const m of sh.members) {
+    if (!m.name) warns.push('share.members に名前の無い人がいます');
+    if (m.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m.email)) warns.push(`メールアドレスの形式が不正: ${m.email}`);
+    if (m.access && !SHARE_ACCESS.includes(m.access)) warns.push(`${m.name ?? '?'} の access「${m.access}」は ${SHARE_ACCESS.join(' / ')}`);
+  }
+  if (sh.platform === 'excel' && (sh.members.length > 1 || sh.client_access === 'edit')) warns.push('Excel ファイルは同時編集に向きません。複数人で編集するなら Google スプレッドシートか Notion を検討してください');
+  if (sh.platform === 'csv') warns.push('CSV は書き出しのみです。取り込み先のツールで編集した内容を戻すには、そのツールから書き出した内容を pull してください');
+  if (sh.platform === 'notion' && !sh.notion.database_id && !sh.notion.data_source_id) warns.push('Notion のデータベースはまだ作られていません（/sales-list の手順で作成）');
+  return { errs, warns, sh };
+}
+function shareMapPath(client) { return path.join(client.dir, 'list', 'share_map.json'); }
+function readShareMap(client) {
+  const p = shareMapPath(client);
+  if (!fs.existsSync(p)) return {};
+  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { fail(`${rel(p)} を読めません: ${e.message}`); }
+}
+function writeShareMap(client, map) { fs.writeFileSync(shareMapPath(client), JSON.stringify(map, null, 2) + '\n', 'utf8'); }
+function saveConfig(client) { fs.writeFileSync(path.join(client.dir, 'config.json'), JSON.stringify(client.config, null, 2) + '\n', 'utf8'); }
+
+// Notion のプロパティ型（標準の列）。in_body はページ本文に入れる長文
+const NOTION_TYPES = {
+  'id': 'rich_text', 'ランク': 'select', 'ICPスコア': 'number', 'ステータス': 'select', '次アクション': 'rich_text', '期限': 'date',
+  '担当者': 'rich_text', '送付日': 'date', '接触チャネル': 'select', '企業名': 'title',
+  '問い合わせ先': 'rich_text', 'WebサイトURL': 'url', 'SNS': 'rich_text', '件名': 'rich_text',
+  '提案文_直接': 'in_body', '提案文_プラットフォーム': 'in_body',
+  '掲載URL': 'url', '案件タイトル': 'rich_text', '依頼内容': 'rich_text', '予算': 'rich_text', '納期・期間': 'rich_text', '依頼条件': 'rich_text', '掲載企業情報': 'rich_text',
+  '業種': 'select', '所在地': 'rich_text', '規模': 'select', 'ニーズ要約': 'rich_text', '推奨サービス': 'multi_select', '属性タグ': 'multi_select',
+  '反応メモ': 'rich_text', '備考': 'rich_text', '登録日': 'date', '更新日時': 'rich_text', 'プラットフォーム': 'select',
+  '調査メモ': 'rich_text', '提案文ファイル': 'rich_text', '原文ファイル': 'rich_text',
+};
+for (const n of [1, 2, 3]) Object.assign(NOTION_TYPES, { [`候補${n}_企業名`]: 'rich_text', [`候補${n}_確度`]: 'number', [`候補${n}_URL`]: 'url', [`候補${n}_根拠`]: 'rich_text' });
+function notionType(prof, c) {
+  if (NOTION_TYPES[c]) return NOTION_TYPES[c];
+  const cc = prof.custom.find((x) => x.name === c);
+  if (cc && Array.isArray(cc.values) && cc.values.length) return cc.multi ? 'multi_select' : 'select';
+  return 'rich_text';
+}
+function notionColumns(prof) { return prof.columns.filter((c) => !prof.hide.has(c) || REQUIRED.includes(c) || c === 'id'); }
+function notionSchema(client) {
+  const { prof } = client;
+  const props = notionColumns(prof).filter((c) => notionType(prof, c) !== 'in_body').map((c) => {
+    const type = notionType(prof, c);
+    const o = { name: c, type };
+    if (type === 'select' || type === 'multi_select') {
+      const opts = (prof.allowed[c] ?? []).filter(Boolean);
+      if (opts.length) o.options = opts;
+    }
+    if (prof.human.includes(c)) o.editable_by_people = true;
+    return o;
+  });
+  props.push({ name: '分類', type: prof.overlap ? 'multi_select' : 'select', options: prof.tabs.map((t) => t.name), note: 'タブの代わり。Notion ではこの列でフィルター・グループ化したビューを作る' });
+  return {
+    title: `営業リスト_${client.config.name ?? client.slug}`,
+    properties: props,
+    body_sections: ['提案文（直接連絡用）', '提案文（プラットフォーム応募用）', '企業特定の候補', '掲載情報', '記録'],
+    views: [{ name: '一覧', note: 'ランク・ICPスコア順' }, ...prof.tabs.map((t) => ({ name: t.name, filter: `分類 に「${t.name}」を含む` })), { name: '進捗ボード', note: 'ステータスでグループ化したボード' }, { name: '自分の担当', note: '担当者でフィルター' }],
+  };
+}
+function notionBody(r) {
+  const lines = [];
+  if (r['提案文_直接']) lines.push('## 提案文（直接連絡用）', '', ...(r['件名'] ? [`件名: ${r['件名']}`, ''] : []), r['提案文_直接'], '');
+  if (r['提案文_プラットフォーム']) lines.push('## 提案文（プラットフォーム応募用）', '', r['提案文_プラットフォーム'], '');
+  const cands = [1, 2, 3].filter((n) => r[`候補${n}_企業名`]);
+  if (cands.length) {
+    lines.push('## 企業特定の候補', '', '| 順位 | 企業名 | 確度 | URL | 根拠 |', '| --- | --- | --- | --- | --- |');
+    for (const n of cands) lines.push(`| ${n} | ${r[`候補${n}_企業名`]} | ${r[`候補${n}_確度`]}% | ${r[`候補${n}_URL`]} | ${String(r[`候補${n}_根拠`] ?? '').replace(/\|/g, '／').replace(/\n/g, ' ')} |`);
+    lines.push('');
+  }
+  const listing = ['案件タイトル', '依頼内容', '予算', '納期・期間', '依頼条件', '掲載企業情報', '掲載URL'].filter((c) => r[c]);
+  if (listing.length) lines.push('## 掲載情報', '', ...listing.map((c) => `- ${c}: ${String(r[c]).replace(/\n/g, ' ')}`), '');
+  const rec = ['調査メモ', '提案文ファイル', '原文ファイル'].filter((c) => r[c]);
+  if (rec.length) lines.push('## 記録', '', ...rec.map((c) => `- ${c}: ${r[c]}`), '');
+  return lines.join('\n').trim();
+}
+function notionPage(r, prof, map) {
+  const properties = {};
+  for (const c of notionColumns(prof)) {
+    const t = notionType(prof, c);
+    const v = r[c] ?? '';
+    if (t === 'in_body' || v === '') continue;
+    if (t === 'number') properties[c] = Number(v);
+    else if (t === 'multi_select') properties[c] = splitMulti(v, prof.multi[c] ?? '|');
+    else properties[c] = v;
+  }
+  const tabs = tabsOfRecord(r, prof).map((t) => t.name);
+  if (tabs.length) properties['分類'] = prof.overlap ? tabs : tabs[0];
+  return { id: r.id, page_id: map?.notion?.[r.id] ?? null, properties, body: notionBody(r) };
+}
+// Google スプレッドシートの update_values は UI と同じく値を解釈するので、数字・日付に見える文字列は ' を付ける
+function sheetCell(c, v) {
+  if (v === '' || v == null) return '';
+  if (NUM_COLS.has(c) && /^\d+$/.test(v)) return Number(v);
+  if (/^[=+\-@]/.test(v) || /^[\d\s.,:\/\-]+%?$/.test(v) || /^\d{1,4}[\/\-年]\d{1,2}([\/\-月]\d{1,2}日?)?$/.test(v)) return `'${v}`;
+  return v;
+}
+function sheetsPayload(client, records) {
+  const { prof } = client;
+  const sorted = sortRecords(records);
+  const tab = (name, cols, rows) => ({ name, header: cols, rows: rows.map((r) => cols.map((c) => sheetCell(c, r[c] ?? ''))) });
+  return {
+    tabs: [
+      tab('一覧', prof.summaryCols, sorted),
+      ...prof.tabs.map((t) => tab(t.name, tabColumns(t, prof), sorted.filter((r) => tabsOfRecord(r, prof).includes(t)))),
+      { name: '凡例', header: ['項目', '説明'], rows: legendRows(client) },
+    ],
+    human_columns: prof.human,
+  };
+}
+function digestText(client, records, since) {
+  const { prof } = client;
+  const sinceDate = since.slice(0, 10);
+  const fresh = sortRecords(records.filter((r) => r['登録日'] && r['登録日'] >= sinceDate && (!r['更新日時'] || r['更新日時'] >= since)));
+  const freshIds = new Set(fresh.map((r) => r.id));
+  const updated = sortRecords(records.filter((r) => !freshIds.has(r.id) && r['更新日時'] && r['更新日時'] >= since));
+  const open = records.filter((r) => !prof.closed.includes(r['ステータス']));
+  const due = sortRecords(open.filter((r) => r['期限'] && r['期限'] <= today()));
+  const unsentA = sortRecords(open.filter((r) => r['ランク'] === 'A' && ['未着手', '調査中', '提案作成済'].includes(r['ステータス'])));
+  const check = sortRecords(open.filter((r) => r['候補1_確度'] !== '' && Number(r['候補1_確度']) < 50 && ['未着手', '調査中', '提案作成済'].includes(r['ステータス'])));
+  const line = (r) => `- [${r['ランク'] || '-'}] ${r.id} ${r['企業名']}（${tabsOfRecord(r, prof).map((t) => t.name).join('/') || r['プラットフォーム']}${r['候補1_確度'] ? ` / 候補1 ${r['候補1_確度']}%` : ''}）${r['次アクション'] ? ` → ${r['次アクション']}${r['期限'] ? `（${r['期限']}）` : ''}` : ''}${r['担当者'] ? ` @${r['担当者']}` : ''}`;
+  const out = [`*${client.config.name ?? client.slug} 営業リスト ${since} 以降の更新*`, `新規 ${fresh.length} 件 / 更新 ${updated.length} 件 / 期限切れ・今日まで ${due.length} 件`];
+  const sec = (title, rows, max = 10) => { if (rows.length) out.push('', `*${title}*`, ...rows.slice(0, max).map(line), ...(rows.length > max ? [`- ほか ${rows.length - max} 件`] : [])); };
+  sec('新規', fresh); sec('更新', updated); sec('期限切れ・今日まで', due); sec('A ランクで未送付', unsentA); sec('候補の確認が必要（確度 50% 未満）', check);
+  const sh = shareOf(client.config);
+  if (client.config.spreadsheet?.current_url && sh.platform === 'google_sheets') out.push('', `シート: ${client.config.spreadsheet.current_url}`);
+  if (sh.notion.url && sh.platform === 'notion') out.push('', `Notion: ${sh.notion.url}`);
+  return out.join('\n');
+}
+
 // ---------- クライアント管理コマンド ----------
 function copyTemplate(src, dst, vars) {
   let text = fs.readFileSync(src, 'utf8');
@@ -825,6 +983,7 @@ const cmds = {
       const r = fromInput(item, blankRecord(client.prof), client.prof);
       if (!r.id) r.id = nextId([...records, ...added]);
       if (!r['登録日']) r['登録日'] = today();
+      if (!r['更新日時']) r['更新日時'] = jstStamp();
       if (!r['ステータス']) r['ステータス'] = client.prof.allowed['ステータス'][0];
       if (!r['接触チャネル']) r['接触チャネル'] = '未定';
       if (!r['企業名'] && r['候補1_企業名']) r['企業名'] = r['候補1_企業名'];
@@ -868,7 +1027,9 @@ const cmds = {
       if (!r) { errs.push(`id が見つかりません: ${item.id}（クライアント: ${client.slug}）`); continue; }
       const { id, ...rest } = item;
       const next = fromInput(rest, r, client.prof);
-      for (const c of client.prof.columns) if ((next[c] ?? '') !== (r[c] ?? '')) diffs.push([id, c, r[c], next[c]]);
+      const changed = client.prof.columns.filter((c) => c !== '更新日時' && (next[c] ?? '') !== (r[c] ?? ''));
+      if (changed.length && !('更新日時' in rest)) next['更新日時'] = jstStamp();
+      for (const c of changed) diffs.push([id, c, r[c], next[c]]);
       Object.assign(r, next);
       errs.push(...validateRecord(client, r, records.indexOf(r)));
     }
@@ -972,8 +1133,160 @@ const cmds = {
 
   export(client) {
     const { records } = load(client);
-    fs.writeFileSync(client.exportPath, '﻿' + toCSV(client.prof.columns, sortRecords(records), '\r\n'), 'utf8');
-    console.log(`書き出し: ${rel(client.exportPath)}（UTF-8 BOM / CRLF、${records.length} 件）`);
+    const rows = sortRecords(records).map((r) => ({ ...r, 分類: tabsOfRecord(r, client.prof).map((t) => t.name).join('|') }));
+    fs.writeFileSync(client.exportPath, '\uFEFF' + toCSV([...client.prof.columns, '分類'], rows, '\r\n'), 'utf8');
+    console.log(`書き出し: ${rel(client.exportPath)}（UTF-8 BOM / CRLF、${records.length} 件。末尾の「分類」はタブ名）`);
+  },
+
+  share(client) {
+    const { errs, warns, sh } = checkShare(client.config);
+    console.log(`# ${client.config.name ?? client.slug} の共有設定（config.json の share${client.config.share ? '' : '。未設定のため標準'}）\n`);
+    printTable(['項目', '設定'], [
+      ['共有先', `${SHARE_PLATFORMS[sh.platform] ?? sh.platform}（${sh.platform}）`],
+      ['更新のタイミング', { each_intake: '取り込みのたび', daily: '1 日 1 回', weekly: '週 1 回', manual: '依頼したとき' }[sh.update_timing] ?? sh.update_timing],
+      ['クライアントの見え方', { none: '見せない', view: '閲覧のみ', comment: 'コメント可', edit: '編集可' }[sh.client_access] ?? sh.client_access],
+      ['通知', sh.notify.channel === 'none' ? 'なし' : `${sh.notify.channel} ${sh.notify.target}（${sh.notify.frequency}）`],
+      ['最終書き出し', sh.last_push || '-'],
+      ['最終通知', sh.last_notify || '-'],
+      ...(sh.platform === 'notion' ? [['Notion', sh.notion.url || '（未作成）']] : []),
+      ...(sh.platform === 'google_sheets' ? [['シート', client.config.spreadsheet?.current_url || '（未作成）']] : []),
+    ]);
+    if (sh.members.length) { console.log('\nメンバー'); printTable(['名前', '役割', '権限', 'メール'], sh.members.map((m) => [m.name ?? '', m.role ?? '', m.access ?? '', m.email ?? ''])); }
+    if (sh.client_contacts.length) { console.log('\nクライアント側の閲覧者'); printTable(['名前', 'メール'], sh.client_contacts.map((m) => [m.name ?? '', m.email ?? ''])); }
+    warns.forEach((w) => console.error(`注意: ${w}`));
+    if (errs.length) { errs.forEach((e) => console.error(`エラー: ${e}`)); process.exit(1); }
+  },
+
+  'notion-schema'(client) { console.log(JSON.stringify(notionSchema(client), null, 2)); },
+
+  payload(client, args) {
+    const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : undefined; };
+    const format = opt('--format') ?? shareOf(client.config).platform;
+    let { records } = load(client);
+    const ids = opt('--ids');
+    if (ids) { const set = new Set(ids.split(',')); records = records.filter((r) => set.has(r.id)); }
+    const since = opt('--since') ?? (args.includes('--changed') ? shareOf(client.config).last_push : '');
+    if (since) records = records.filter((r) => (r['更新日時'] || r['登録日'] || '') >= since);
+    let out, count;
+    if (format === 'notion') {
+      const map = readShareMap(client);
+      out = { database: shareOf(client.config).notion, pages: sortRecords(records).map((r) => notionPage(r, client.prof, map)) };
+      count = `${out.pages.length} 件（新規 ${out.pages.filter((x) => !x.page_id).length} / 更新 ${out.pages.filter((x) => x.page_id).length}）`;
+    } else if (format === 'google_sheets' || format === 'sheets') {
+      if (since || ids) console.error('注意: シートはタブ全体を書き直すため、--since / --ids を無視して全件を出力します');
+      out = sheetsPayload(client, load(client).records);
+      count = out.tabs.map((t) => `${t.name}(${t.rows.length})`).join(' / ');
+    } else if (format === 'rows') {
+      out = sortRecords(records).map((r) => ({ ...Object.fromEntries(Object.entries(r).filter(([, v]) => v !== '')), 分類: tabsOfRecord(r, client.prof).map((t) => t.name).join('|') }));
+      count = `${out.length} 件`;
+    } else fail('--format は notion / google_sheets / rows（excel・csv は sheet / export を使う）');
+    const text = JSON.stringify(out, null, 2);
+    const file = opt('--out');
+    if (file) { fs.writeFileSync(file, text, 'utf8'); console.log(`書き出し: ${rel(path.resolve(file))}（${format}: ${count}）`); }
+    else console.log(text);
+  },
+
+  pull(client, args) {
+    const all = args.includes('--all');
+    const src = args.find((a) => !a.startsWith('--'));
+    if (!src) fail('使い方: pull <json | csv ファイル | -> [--all]   （共有先から読んだ行 [{"id":"T-0001", "列名": "値", ...}, ...]）');
+    let rows;
+    const text = src === '-' ? fs.readFileSync(0, 'utf8') : fs.readFileSync(src, 'utf8');
+    if (/\.csv$/i.test(src)) {
+      const grid = parseCSV(text).filter((r) => r.some((x) => x !== ''));
+      const header = grid[0] ?? [];
+      rows = grid.slice(1).map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ''])).valueOf()).map((o) => { if (!o.id) delete o.id; return o; });
+    } else {
+      try { rows = JSON.parse(text); } catch (e) { fail(`JSON を読めません: ${e.message}`); }
+    }
+    if (!Array.isArray(rows)) fail('配列で渡してください');
+    const { records } = load(client);
+    const byId = new Map(records.map((r) => [r.id, r]));
+    const updates = [], added = [], unknown = [];
+    const map = readShareMap(client);
+    let mapped = 0;
+    const conflicts = [];
+    const str = (k, v) => (Array.isArray(v) ? v.join(client.prof.multi[k] ?? '|') : v == null ? '' : String(v));
+    for (const row of rows) {
+      const { id, page_id, 分類, _alt = {}, ...rest } = row;
+      const cols = all ? Object.keys(rest).filter((k) => client.prof.columns.includes(k)) : client.prof.human.filter((k) => k in rest);
+      const r0 = id && byId.get(id);
+      // 同じ行が複数のタブ・ビューにある時は、原本と違う（人が変えた）値を採る
+      const pick = Object.fromEntries(cols.map((k) => {
+        const cands = [str(k, rest[k]), ...(_alt[k] ?? []).map((v) => str(k, v))];
+        if (!r0) return [k, cands[0]];
+        const changed = [...new Set(cands.filter((v) => v !== (r0[k] ?? '')))];
+        if (changed.length > 1) conflicts.push(`${id} ${k}: ${changed.join(' / ')}（${changed[0]} を採用）`);
+        return [k, changed[0] ?? cands[0]];
+      }));
+      if (id && byId.has(id)) {
+        const r = byId.get(id);
+        const diff = Object.fromEntries(Object.entries(pick).filter(([k, v]) => (r[k] ?? '') !== v));
+        if (Object.keys(diff).length) updates.push({ id, ...diff });
+      } else if (all) added.push({ ...pick, ...(id ? { id } : {}) });
+      else unknown.push(id || rest['企業名'] || '（id なし）');
+      if (page_id && id) { map.notion = { ...(map.notion ?? {}), [id]: page_id }; mapped++; }
+    }
+    if (mapped) writeShareMap(client, map);
+    if (updates.length) cmds.apply(client, [JSON.stringify(updates), '--inline']);
+    else console.log(`取り込む変更なし [${client.slug}]`);
+    if (added.length) {
+      const tmp = path.join(client.dir, 'list', '.pull_added.json');
+      fs.writeFileSync(tmp, JSON.stringify(added), 'utf8');
+      try { cmds.add(client, [tmp]); } finally { fs.rmSync(tmp, { force: true }); }
+    }
+    if (unknown.length) console.error(`注意: 原本に無い行は取り込んでいません（--all で追加）: ${unknown.join(', ')}`);
+    if (conflicts.length) console.error(`注意: 複数の場所で違う値に変えられていました（確認してください）:\n  ${conflicts.join('\n  ')}`);
+  },
+
+  map(client, args) {
+    const [platform, ...pairs] = args;
+    if (!platform || !pairs.length) fail('使い方: map notion T-0001=<page_id> [T-0002=<page_id> ...]');
+    const map = readShareMap(client);
+    map[platform] = map[platform] ?? {};
+    for (const p of pairs) { const i = p.indexOf('='); if (i < 0) fail(`形式が不正: ${p}`); map[platform][p.slice(0, i)] = p.slice(i + 1); }
+    writeShareMap(client, map);
+    console.log(`記録: ${rel(shareMapPath(client))}（${platform} ${Object.keys(map[platform]).length} 件）`);
+  },
+
+  pushed(client, args) {
+    const key = args.includes('--notify') ? 'last_notify' : 'last_push';
+    client.config.share = { ...(client.config.share ?? {}), [key]: jstStamp() };
+    saveConfig(client);
+    console.log(`記録: share.${key} = ${client.config.share[key]}`);
+  },
+
+  digest(client, args) {
+    const i = args.indexOf('--since');
+    const sh = shareOf(client.config);
+    const since = i >= 0 ? args[i + 1] : (sh.last_notify || new Date(Date.now() + 9 * 3600000 - 86400000).toISOString().slice(0, 16).replace('T', ' '));
+    console.log(digestText(client, load(client).records, since));
+  },
+
+  renumber(client, args) {
+    const [oldId, newArg] = args;
+    if (!oldId) fail('使い方: renumber <旧 id> [新 id]   （他のメンバーと id が重なった時に使う）');
+    const { records } = load(client);
+    const r = records.find((x) => x.id === oldId);
+    if (!r) fail(`id が見つかりません: ${oldId}`);
+    const map = readShareMap(client);
+    const newId = newArg ?? nextId(records, Object.values(map).flatMap((m) => Object.keys(m)));
+    if (records.some((x) => x.id === newId)) fail(`新しい id は既に使われています: ${newId}`);
+    for (const d of ['intake', 'research', 'proposals']) {
+      const dir = path.join(client.dir, d);
+      if (!fs.existsSync(dir)) continue;
+      for (const f of fs.readdirSync(dir)) if (f.startsWith(`${oldId}_`)) {
+        const to = f.replace(`${oldId}_`, `${newId}_`);
+        fs.renameSync(path.join(dir, f), path.join(dir, to));
+        const p = path.join(dir, to);
+        fs.writeFileSync(p, fs.readFileSync(p, 'utf8').split(oldId).join(newId), 'utf8');
+      }
+    }
+    for (const c of FILE_COLS) if (r[c]) r[c] = r[c].replace(`${oldId}_`, `${newId}_`);
+    r.id = newId; r['更新日時'] = jstStamp();
+    for (const k of Object.keys(map)) if (map[k][oldId]) { map[k][newId] = map[k][oldId]; delete map[k][oldId]; }
+    save(client, records); if (Object.keys(map).length) writeShareMap(client, map);
+    console.log(`変更: ${oldId} → ${newId}（ファイル名と参照も変更）`);
   },
 
   hearing(client, args) {
@@ -1039,6 +1352,18 @@ function help() {
 分類（タブ・独自項目・ステータス。config.json の "sheet"）
   config                             現在の分類設定を表示し、設定の誤りを検査
   sheet --demo                       分類の確認用プレビュー（タブごとに例の行。list/preview.xlsx）
+
+共有（共有先・メンバー・通知。config.json の "share"）
+  share                              共有設定を表示し、設定の誤りを検査
+  payload --format notion|google_sheets|rows [--changed | --since "YYYY-MM-DD HH:MM"] [--ids a,b] [--out f]
+                                     共有先に書き込むデータ（Notion のページ、シートのタブごとの値、行の JSON）
+  notion-schema                      Notion データベースのプロパティ定義（分類はタブの代わりに「分類」列）
+  pull <json|csv> [--all]            共有先から読んだ行を取り込む（既定は人が編集する列だけ。--all は全列＋新しい行）
+                                     Excel は python3 -I sales/scripts/xlsx_rows.py <file.xlsx> で JSON にしてから
+  map notion T-0001=<page_id> ...    共有先のページ id を記録（list/share_map.json）
+  pushed [--notify]                  書き出し（または通知）した日時を記録
+  digest [--since "YYYY-MM-DD HH:MM"] チーム向けの更新要約（新規・更新・期限切れ・未送付の A・確認待ち）
+  renumber <旧 id> [新 id]           id の付け直し（他のメンバーと重なった時）
 
 ヒアリング（質問: sales/_templates/hearing.json）
   hearing [--prefill <json>]         先方に送るヒアリングシート（hearing/sheet.html と sheet.md）
