@@ -1,0 +1,13 @@
+{
+  "name": "TELOS",
+  "slug": "telos",
+  "created": "2026-10-08",
+  "services": [
+    { "id": "instagram", "label": "Instagram 構築・運用" },
+    { "id": "line", "label": "Official LINE 構築・運用" },
+    { "id": "ads", "label": "Meta 広告運用" },
+    { "id": "creative", "label": "クリエイティブ制作（単発）" }
+  ],
+  "industries": [],
+  "_comment": "記入済みサンプル。このリポジトリのサイト（constants.tsx）から作成。新しいクライアントは init で作り、/sales-setup で埋める。"
+}
