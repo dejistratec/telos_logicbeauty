@@ -4,5 +4,12 @@
   "created": "{{TODAY}}",
   "services": [],
   "industries": [],
-  "_comment": "services: 営業先に提案する商材の一覧 [{\"id\":\"英小文字id\",\"label\":\"表示名\"}]。targets.csv の「推奨サービス」列はこの id だけを許可。industries: 営業先の業種の許可値（空なら自由入力）。/sales-setup が埋めます。"
+  "spreadsheet": {
+    "auto_publish": true,
+    "folder_id": "",
+    "current_id": "",
+    "current_url": "",
+    "previous_ids": []
+  },
+  "_comment": "services: 提案する商材 [{\"id\":\"英小文字id\",\"label\":\"表示名\"}]。推奨サービス列はこの id だけを許可。industries: 営業先の業種の許可値（空なら自由入力）。spreadsheet: /sales-list が出力先を記録（手で編集しない）。"
 }

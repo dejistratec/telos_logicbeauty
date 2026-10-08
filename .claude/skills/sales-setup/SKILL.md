@@ -51,7 +51,12 @@ argument-hint: [slug または社名] [サイト URL ／ 資料のパス ／ 貼
 - §5 チャネルの優先順位は、商材の性質（BtoB／BtoC、単価、意思決定者）から仮説で。
 - 代行会社名義の可能性があれば `sales/_shared/agency.md` の `【要記入】` が残っていることをユーザーに伝える。
 
-### 7. 検証と報告
+### 7. スプレッドシートの出力先を決める
+- Google のツールを確認する（ToolSearch で `google sheets` `google drive`）。Google Sheets コネクタがあれば同じシートを直接更新でき、リンクが変わらない。Drive コネクタだけなら出力のたびに新しいシートになる。どちらも無ければ xlsx を渡す。
+- Sheets コネクタが無い場合は、「Google Sheets コネクタを追加すると、同じスプレッドシートに追記・更新できてリンクが変わらない」と 1 行伝える。
+- `config.json` の `spreadsheet.auto_publish` は既定で true。ユーザーがスプレッドシートを使わないなら false にする。
+
+### 8. 検証と報告
 - `node sales/scripts/targets.mjs validate`（0 件でも config の警告が消えることを確認）。
 - チャットには: 作ったファイル一覧 ／ 商材 id 一覧 ／ ICP コアの 1 行要約 ／ **`【要確認】` と `【仮説】` の一覧**（ユーザーが埋めるべき箇所。価格・名義・実績が最優先）／ 次の一手（`/sales-intake` か `/sales-prospect`）。
 
